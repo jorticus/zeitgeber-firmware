@@ -10,8 +10,6 @@
 #ifndef APP_H
 #define	APP_H
 
-typedef void (*proc_t)(void);
-
 typedef struct {
     proc_t init;
     proc_t process;

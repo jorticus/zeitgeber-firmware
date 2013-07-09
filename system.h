@@ -19,6 +19,11 @@ typedef INT16 int16;
 typedef INT32 int32;
 typedef enum { false, true } bool;
 
+// Generic function pointer
+typedef void (*proc_t)(void);
+
+#define isr __attribute__((interrupt, auto_psv))
+#define shadow_isr __attribute__((interrupt, shadow, auto_psv))
 
 #endif	/* SYSTEM_H */
 
