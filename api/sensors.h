@@ -11,5 +11,10 @@
 #define	SENSORS_H
 
 extern bool InitializeSensors();
+extern void ProcessSensors();
+
+
+// Ambient light level, 0-255
+extern uint8 ambient_light;
 
 #endif	/* SENSORS_H */
