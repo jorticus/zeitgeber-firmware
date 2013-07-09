@@ -40,8 +40,9 @@ void InitializeIO() {
     _TRIS(OL_DC) = OUTPUT;
     _TRIS(OL_CS) = OUTPUT;
     _TRIS(OL_RESET) = OUTPUT;
-    _TRIS(OL_SHDN) = OUTPUT;
-    _LAT(OL_SHDN) = 0;          // OLED supply off
+    _TRIS(OL_POWER) = OUTPUT;
+    OL_DATA_TRIS &= ~OL_DATA_MASK; // D0..D7 output
+    _LAT(OL_POWER) = 0;          // OLED supply off
     
     /// Buttons ///
     _TRIS(BTN1) = INPUT;
@@ -134,6 +135,9 @@ void Initialize() {
         // we could revert to showing debug information through the USB port?
     }
 
+    // Display loading message on OLED
+    
+
     if (!InitializeUsb()) {
         // Error initializing USB
         // Display error message on screen
@@ -161,6 +165,7 @@ int main() {
     Initialize();
 
     //ProcessGpio(); //How fast does GPIO need to be processed?
+    //ProcessUsb();
 
     while(1) {
         ProcessTasks();

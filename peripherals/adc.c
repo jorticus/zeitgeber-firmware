@@ -38,5 +38,10 @@ void InitializeAdc() {
     //AD1CON1bits.ADON = 1;
 }
 
+uint16 ReadAdc(uint8 channel) {
+    //TODO
+    return 0;
+}
+
 ////////// Interrupts //////////////////////////////////////////////////////////
 

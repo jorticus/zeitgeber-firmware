@@ -46,8 +46,12 @@
 #define OL_DC(R)       R(E,2)
 #define OL_CS(R)       R(E,3)
 #define OL_RESET(R)    R(E,4)
-#define OL_SHDN(R)     R(F,1)
-//#define OL_DATA(f) LATD
+#define OL_POWER(R)     R(F,1)
+
+#define OL_DATA_TRIS  TRISD
+#define OL_DATA_LAT   LATD
+#define OL_DATA_PORT  PORTD
+#define OL_DATA_MASK  0x00FF
 
 /// Buttons ///
 #define BTN1(R)        R(B,14)
@@ -104,6 +108,7 @@
 // Primary oscillator is 32MHz
 // Secondary oscillator is 32.768kHz (For RTCC module)
 
+#define POSC 32000000ULL
 
 #endif	/* HARDWARE_H */
 
