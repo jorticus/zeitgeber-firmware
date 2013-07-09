@@ -21,17 +21,25 @@
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-extern void oled_write(char c);
-extern void oled_writebuf(char* buf, uint size);
-extern char oled_read();
+extern void ssd1351_write(char c);
+extern void ssd1351_writebuf(char* buf, uint size);
+extern char ssd1351_read();
 
 extern void ssd1351_command(uint8 cmd);
 extern void ssd1351_data(uint8 data);
+
+// Send a command followed by data
+extern void ssd1351_send(uint8 cmd, uint8 data);
+extern void ssd1351_sendv(uint8 cmd, uint8 count, ...);
+extern void ssd1351_sendbuf(uint8 cmd, uint8* buf, uint8 len);
 
 ////////// Macros //////////////////////////////////////////////////////////////
 
 #define mSetCommandMode() _LAT(OL_DC) = COMMAND
 #define mSetDataMode() _LAT(OL_DC) = DATA
+
+#define RESET _LAT(OL_RESET)
+#define POWER _LAT(OL_POWER)
 
 
 #endif	/* SSD1351_H */

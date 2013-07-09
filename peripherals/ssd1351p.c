@@ -17,6 +17,7 @@
 
 ////////// Includes ////////////////////////////////////////////////////////////
 
+#include <stdarg.h>
 #include <system.h>
 #include "hardware.h"
 #include "ssd1351p.h"
@@ -70,15 +71,36 @@ void ssd1351_data(uint8 data) {
     ssd1351_write(data);
 }
 
-/*void ssd1351_WriteCommand(uint8 cmd, ...) {
+void ssd1351_send(uint8 cmd, uint8 data) {
+    mSetCommandMode();
+    ssd1351_write(cmd);
+
+    mSetDataMode();
+    ssd1351_write(data);
+}
+
+void ssd1351_sendv(uint8 cmd, uint8 count, ...) {
     va_list ap;
-    va_start(ap, cmd);
+    va_start(ap, count);
 
     mSetCommandMode();
     ssd1351_write(cmd);
 
     mSetDataMode();
     uint i;
-    for (i=0; i<
+    for (i=0; i<count; i++)
+        ssd1351_write(va_arg(ap, uint8));
 
-}*/
+    va_end(ap);
+}
+
+
+void ssd1351_sendbuf(uint8 cmd, uint8* buf, uint8 len) {
+    mSetCommandMode();
+    ssd1351_write(cmd);
+
+    mSetDataMode();
+    uint i;
+    for (i=0; i<len; i++)
+        ssd1351_write(buf[i]);
+}

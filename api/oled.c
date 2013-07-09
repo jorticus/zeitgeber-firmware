@@ -14,48 +14,49 @@
 #include "oled.h"
 //#include "comms.h"
 #include "drivers/ssd1351.h"
+#include "peripherals/ssd1351p.h"
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 bool InitializeOled() {
 
+    //TODO: Test display for communication by attempting to communicate
 
+    // Fully power on the display
+    OledPowerOn();
 
+    // Show loading message/image
+    //TODO
 
-    return FALSE;
+    return true;
 }
 
 void OledProcess() {
 //    OledStateProcess();
 }
 
+
+void OledDisplayOn() {
+    ssd1351_DisplayOn();
+}
+
+void OledDisplayOff() {
+    ssd1351_DisplayOff();
+}
+
+
 void OledPowerOn() {
-    // 1. VCI & VDDIO on (always on from system power)
-    // 2. Send display off command
-    // 3. Initialization
-    // 4. Clear screen
-    // 5. Power up VCC (OL_POWER=1)
-    // 6. Delay 100ms
-    // 7. Send display on command
-
-    _LAT(OL_RESET) = 0;
-
-    // Send initialization sequence
     ssd1351_PowerOn();
-
-    _LAT(OL_POWER) = 1;
 }
 
 void OledPowerOff() {
-    // 1. Send display off command
-    // 2. Power down VCC (OL_POWER=0)
-    // 3. Delay 100ms
-    // 4. Power down VCI & VDDIO (always on from system power)
-    // Since VCI & VDDIO are always on, we don't need to delay.
-
-    _LAT(OL_RESET) = 1;
-    _LAT(OL_POWER) = 0;
-
+    ssd1351_PowerOff();
 }
+
+void OledClear() {
+    ssd1351_ClearScreen();
+}
+
+
 
 

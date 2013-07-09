@@ -30,11 +30,14 @@
 #include "hardware.h"
 #include "core/scheduler.h"
 
+// Peripherals
 #include "peripherals/adc.h"
 #include "peripherals/pwm.h"
 #include "peripherals/gpio.h"
 #include "peripherals/rtc.h"
 
+// API
+#include "api/power_monitor.h"
 #include "api/oled.h"
 
 // User-mode applications

@@ -14,6 +14,11 @@
 #include "api/app.h"
 #include "api/api.h"
 
+// Sample 128x128 image
+// 5:6:5 16-bit pixel format, RGB ordering
+//#include "tools/wolf.h"
+//__prog__ uint16* wolf_bytes = (__prog__ uint16*)&wolf_image; 
+
 ////////// App Definition //////////////////////////////////////////////////////
 
 void appmain_Initialize();
