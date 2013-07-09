@@ -9,9 +9,10 @@
 
 #include <system.h>
 #include "HMC5883.h"
+//#include "peripherals/i2c.h"
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-void InitializeHMC5883() {
-
+bool hmc5883_init() {
+    return false;
 }

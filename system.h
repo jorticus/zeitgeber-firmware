@@ -17,7 +17,7 @@ typedef UINT16 uint16;
 typedef INT8 int8;
 typedef INT16 int16;
 typedef INT32 int32;
-typedef BOOL bool;
+typedef enum { false, true } bool;
 
 
 #endif	/* SYSTEM_H */

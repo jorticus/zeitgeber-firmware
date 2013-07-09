@@ -19,5 +19,7 @@ typedef struct {
 
 #define APP(init, process) {init, process}
 
+extern void RegisterUserApplication(application_t* app);
+
 #endif	/* APP_H */
 

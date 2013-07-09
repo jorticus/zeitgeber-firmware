@@ -21,4 +21,5 @@ void InitializeLightSensor() {
 uint ReadLightSensor() {
     // Read ADC channel (blocking)
     //TODO: non-blocking read
+    return 0;
 }

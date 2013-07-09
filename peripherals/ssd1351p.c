@@ -1,9 +1,8 @@
 /*
- * File:   oled/comms.c
+ * File:   oled/ssd1351.c
  * Author: Jared
  *
- * Created on 5 July 2013, 4:07 PM
- *
+ * Created on 9 July 2013, 12:51 PM
  * OLED is configured for 68XX-parallel (8-bit) communication
  *
  * Pins:
@@ -20,7 +19,7 @@
 
 #include <system.h>
 #include "hardware.h"
-#include "comms.h"
+#include "ssd1351p.h"
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
@@ -56,7 +55,7 @@ char ssd1351_read() {
     // Delay?
 
     _LAT(OL_CS) = 1;
-    
+
 
     return c;
 }

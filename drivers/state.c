@@ -9,8 +9,8 @@
 
 #include <system.h>
 #include "hardware.h"
-#include "oled.h"
-#include "comms.h"
+//#include "oled.h"
+//#include "comms.h"
 
 ////////// Methods /////////////////////////////////////////////////////////////
 

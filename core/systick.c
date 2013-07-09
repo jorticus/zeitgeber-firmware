@@ -13,6 +13,6 @@
 // or maybe turn down the timer rate while it sleeps in case an asynchronous interrupt
 // wakes the processor (eg. accelerometer interrupt)
 
-void InitializeSystick() {
+void systick_init() {
     // Configure a system tick timer with interrupt
 }

@@ -17,28 +17,28 @@ button_handlers_t button_handlers;
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-void InitializeGpio() {
+void gpio_init() {
     // Ports are already initialized in the main Initialization routine
 
     // Register PWM/tick handlers for flashing/beeping
 }
 
 
-void ProcessGpio() {
+void gpio_process() {
     // Debouncing
 
     // Callbacks
 }
 
 
-void Flash(uint led) {
+void gpio_flash(uint led) {
 
 }
 
-void Beep() {
+void gpio_beep() {
 
 }
 
-void Vibrate() {
+void gpio_vibrate() {
 
 }

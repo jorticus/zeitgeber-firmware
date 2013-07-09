@@ -12,8 +12,8 @@
 #include <system.h>
 #include "hardware.h"
 #include "oled.h"
-#include "comms.h"
-#include "ssd1351.h"
+//#include "comms.h"
+#include "drivers/ssd1351.h"
 
 ////////// Methods /////////////////////////////////////////////////////////////
 

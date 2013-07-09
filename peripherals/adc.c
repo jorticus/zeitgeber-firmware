@@ -28,7 +28,7 @@
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-void InitializeAdc() {
+void adc_init() {
     _ADC1MD = 0; // Enable ADC peripheral
 
     AD1CON1 = ADC_FORMAT_INTG | ADC_CLK_AUTO | ADC_AUTO_SAMPLING_OFF;
@@ -38,7 +38,7 @@ void InitializeAdc() {
     //AD1CON1bits.ADON = 1;
 }
 
-uint16 ReadAdc(uint8 channel) {
+uint16 adc_read(uint8 channel) {
     //TODO
     return 0;
 }

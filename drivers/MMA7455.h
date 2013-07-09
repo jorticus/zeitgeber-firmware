@@ -8,5 +8,6 @@
 #ifndef MMA7455_H
 #define	MMA7455_H
 
+extern bool mma7455_init();
 
 #endif	/* MMA7455_H */

@@ -8,6 +8,7 @@
 #ifndef APP_MAIN_H
 #define	APP_MAIN_H
 
+extern application_t appmain;
 
 #endif	/* APP_MAIN_H */
 

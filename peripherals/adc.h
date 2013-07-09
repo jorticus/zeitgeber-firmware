@@ -11,6 +11,6 @@
 
 #define VREF 3300 //mV
 
-extern void InitializeAdc();
+extern void adc_init();
 
 #endif	/* ADC_H */

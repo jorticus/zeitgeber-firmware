@@ -10,5 +10,8 @@
 #ifndef SSD1351_H
 #define	SSD1351_H
 
+extern void ssd1351_Init();
+extern void ssd1351_PowerOn();
+extern void ssd1351_PowerOff();
 
 #endif	/* SSD1351_H */

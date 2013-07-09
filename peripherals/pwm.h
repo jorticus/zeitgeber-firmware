@@ -8,6 +8,6 @@
 #ifndef PWM_H
 #define	PWM_H
 
-extern void InitializePwm();
+extern void pwm_init();
 
 #endif	/* PWM_H */

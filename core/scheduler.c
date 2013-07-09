@@ -16,7 +16,7 @@
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
-task_t tasks[MAX_TASKS];
+task_t tasks[MAX_TASKS] = {};
 uint num_tasks = 0;
 
 ////////// Code ////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ task_t* RegisterTask(task_proc_t proc, uint interval) {
 
 void ProcessTasks() {
     uint i;
-    uint time = 0; // TODO: system tick
+    //uint time = 0; // TODO: system tick
     uint next_task = 3000; //TODO: MAX_INT
 
     for (i=0; i<num_tasks; i++) {

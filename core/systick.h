@@ -10,7 +10,7 @@
 #ifndef SYSTICK_H
 #define	SYSTICK_H
 
-void InitializeSystick();
+void systick_init();
 
 #endif	/* SYSTICK_H */
 

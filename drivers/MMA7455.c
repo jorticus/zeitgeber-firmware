@@ -9,9 +9,10 @@
 
 #include <system.h>
 #include "MMA7455.h"
+//#include "peripherals/i2c.h"
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-void InitializeMMA7455() {
-
+bool mma7455_init() {
+    return false;
 }

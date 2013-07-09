@@ -9,9 +9,8 @@
 
 #include <system.h>
 #include "hardware.h"
-#include "oled.h"
-#include "comms.h"
 #include "ssd1351.h"
+#include "peripherals/ssd1351.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 

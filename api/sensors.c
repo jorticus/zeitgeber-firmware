@@ -10,15 +10,15 @@
 #include <system.h>
 #include "sensors.h"
 
-#include "HMC5883.h"
-#include "MMA7455.h"
+#include "drivers/HMC5883.h"
+#include "drivers/MMA7455.h"
 #include "light.h"
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 bool InitializeSensors() {
-    if (!InitializeHMC5883()) return FALSE;
-    if (!InitializeMMA7455()) return FALSE;
+    if (!hmc5883_init()) return FALSE;
+    if (!mma7455_init()) return FALSE;
     //InitializeLight();
 
     return TRUE;

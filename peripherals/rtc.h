@@ -21,7 +21,7 @@ typedef struct {
 
 extern volatile rtc_time_t rtc_time;
 
-extern void InitializeRtc();
+extern void rtc_init();
 
 // Localized calendar strings
 extern const char* days[];          // Monday, Tuesday, ...

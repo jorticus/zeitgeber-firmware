@@ -38,7 +38,7 @@ __inline__ void ClearRtcWren() {
 
 
 
-void InitializeRtc() {
+void rtc_init() {
     _RTCCMD = 0;    // Enable peripheral module
     Nop();          // Saftey NOP
 

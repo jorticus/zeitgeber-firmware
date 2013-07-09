@@ -39,12 +39,12 @@ extern button_handlers_t button_handlers;
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-extern void InitializeGpio();
-extern void ProcessGpio();
+extern void gpio_init();
+extern void gpio_process();
 
-extern void Flash(uint led);
-extern void Beep();
-extern void Vibrate();
+extern void gpio_flash(uint led);
+extern void gpio_beep();
+extern void gpio_vibrate();
 
 
 #endif	/* GPIO_H */

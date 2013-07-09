@@ -7,22 +7,39 @@
  * Zeitgebers are events that keep our circadian rhythms regulated.
  * An alarm clock is an example of an artificial zeitgeber
  *
+ * Code is organised into the following layer model:
+ * Hardware Layer       Hardware specific definitions (hardware.h)
+ * Peripheral Layer     PIC peripherals; connects the driver layer to the hardware layer (peripherals/...)
+ * Driver Layer         Drivers; provides ways of communicating with attached sensors/devices (drivers/...)
+ * API Layer            API; to provide an easy to use interface of the drivers to the user-mode application (api/...)
+ * Application Layer    User-mode applications (applications/...)
+ *
+ * In addition there is also the core/... directory, which contains
+ * the system kernel and other system related code.
+ * 
+ * And finally, the main.c initializes all the peripherals and apis
+ * (drivers are initialized through the appropriate api)
+ * and is also in charge of running the kernel.
+ *
+ * Peripherals/drivers may define their own interrupts.
+ *
+ * User-mode applications should only need access to the API code, nothing else.
  */
 
 #include <system.h>
 #include "hardware.h"
 #include "core/scheduler.h"
-#include "core/rtc.h"
-#include "core/adc.h"
-#include "core/pwm.h"
 
+#include "peripherals/adc.h"
+#include "peripherals/pwm.h"
 #include "peripherals/gpio.h"
-#include "peripherals/power_monitor.h"
-#include "peripherals/sensors/sensors.h"
-#include "peripherals/bluetooth/bluetooth.h"
-#include "peripherals/usb/usb.h"
-#include "peripherals/oled/oled.h"
+#include "peripherals/rtc.h"
 
+#include "api/oled.h"
+
+// User-mode applications
+#include "api/app.h"
+#include "applications/main/appmain.h"
 
 void InitializeIO() {
 
@@ -120,15 +137,18 @@ void Initialize() {
     InitializeIO();
 
     _LAT(LED1) = 1;
-    
-    InitializeAdc();
-    InitializePwm();
-    InitializeGpio();
 
-    InitializeRtc();
-    InitializePowerMonitor(); // Battery charging/power supply monitor
-    
+    // Core
+
     // Peripherals
+    adc_init();
+    pwm_init();
+    gpio_init();
+    rtc_init();
+    
+    // API
+    InitializePowerMonitor(); // Battery charging/power supply monitor
+
     if (!InitializeOled()) {
         // Error initializing the OLED display
         // Since the display is not initialized,
@@ -138,7 +158,7 @@ void Initialize() {
     // Display loading message on OLED
     
 
-    if (!InitializeUsb()) {
+    /*if (!InitializeUsb()) {
         // Error initializing USB
         // Display error message on screen
     }
@@ -151,7 +171,7 @@ void Initialize() {
     if (!InitializeBluetooth()) {
         // Error initializing bluetooth
         // Display error message on screen/usb status
-    }
+    }*/
 
     _LAT(LED1) = 0;
 
@@ -163,6 +183,8 @@ void Initialize() {
 int main() {
 
     Initialize();
+
+    RegisterUserApplication(&appmain);
 
     //ProcessGpio(); //How fast does GPIO need to be processed?
     //ProcessUsb();
