@@ -8,37 +8,47 @@
 #ifndef MMA7455_H
 #define	MMA7455_H
 
+#include "util/vector.h"
+
 typedef enum {
     range_8g = 0b00,
     range_4g = 0b10,
     range_2g = 0b01
-} mma7455_range_t;
+} accel_range_t;
 
 typedef enum {
-    mmaStandby,         // Low power standby mode (2.5uA)
-    mmaMeasure,         // XYZ measurement mode
-    mmaLevelDetect,
-    mmaPulseDetect
-} mma7455_mode_t;
+    accStandby,         // Low power standby mode (2.5uA)
+    accMeasure,         // XYZ measurement mode
+    accLevelDetect,     // Level detect mode
+    accPulseDetect      // Pulse detect mode
+} accel_mode_t;
 
 
 // Current XYZ reading (updated automatically if in mmaMeasure mode)
-extern vector3_t mma7455_current;
+extern vector3_t accel_current;
 
 
 
-extern bool mma7455_init();
+extern bool accel_init();
 
 // Set accelerometer operating mode
-extern void mma7455_SetMode(mma7455_mode_t mode);
+extern void accel_SetMode(accel_mode_t mode);
+
+// Turn off accelerometer to save power. Equivalent to accel_SetMode(accStandby);
+extern void accel_Standby();
 
 // Set accelerometer g range
-extern void mma7455_SetRange(mma7455_range_t range);
+extern void accel_SetRange(accel_range_t range);
 
 // Perform an offset calibration
-extern void mma7455_Calibrate();
+extern void accel_Calibrate();
 
 // Perform a manual reading (you should check the DRDY bit before reading)
-extern vector3_t mma7455_ReadXYZ();
+extern vector3_t accel_ReadXYZ();
+
+// Called when interrupt is executed for the specified mode
+// ie. to set up a callback for the pulse detect mode
+// Registering NULL will disable the callback
+extern void accel_RegisterCallback(accel_mode_t mode, proc_t cb);
 
 #endif	/* MMA7455_H */

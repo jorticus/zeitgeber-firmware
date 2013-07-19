@@ -17,4 +17,10 @@ extern void ProcessSensors();
 // Ambient light level, 0-255
 extern uint8 ambient_light;
 
+// Accelerometer
+#include "drivers/MMA7455.h"
+
+// Magnetometer
+#include "drivers/HMC5883.h"
+
 #endif	/* SENSORS_H */

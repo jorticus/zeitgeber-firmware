@@ -61,61 +61,70 @@
 #define SPI3W       5   // SPI 3/4 wire mode (0=4wire, 1=3wire)
 #define DRPD        6   // Data ready status output to INT1 disable
 
-typedef struct {
-    unsigned :5;
-    unsigned PERR:1;    // Parity error detected in trim data
-    unsigned DOVR:1;    // Data is overwritten
-    unsigned DRDY:1;    // Data is ready
-} mma7455_status_t;
+typedef union {
+    struct {
+        unsigned :5;
+        unsigned PERR:1;    // Parity error detected in trim data
+        unsigned DOVR:1;    // Data is overwritten
+        unsigned DRDY:1;    // Data is ready
+    };
+    uint8 val;
+} accel_status_t;
 
-#define mDataReady mma7455_Status().DRDY
+#define mDataReady accel_Status().DRDY
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
-vector3_t mma7455_current;
-mma7455_mode_t mma7455_mode = mmaStandby;
-mma7455_range_t mma7455_range = range_2g; // TODO: what is the default
+vector3_t accel_current;
+accel_mode_t accel_mode = accStandby;
+accel_range_t accel_range = range_2g; // TODO: what is the default
+
+proc_t accel_callbacks[4];
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-bool mma7455_init() {
+bool accel_init() {
 
     // Check WhoAmI register
 
     return false;
 }
 
-void mma7455_write(uint8 reg, uint8 value) {
+void accel_write(uint8 reg, uint8 value) {
 
 }
 
-uint8 mma7455_read(uint8 reg) {
-
+uint8 accel_read(uint8 reg) {
+    return 0;
 }
 
-void mma7455_modify(uint8 reg, uint8 value, uint8 mask) {
-    uint8 value = mma7455_read(reg);
-    value &= ~mask;
-    value |= value & mask;
-    mma7455_write(reg, value);
+void accel_modify(uint8 reg, uint8 value, uint8 mask) {
+    uint8 curr = accel_read(reg);
+    curr &= ~mask;
+    curr |= value & mask;
+    accel_write(reg, curr);
 }
 
-void mma7455_SetMode(mma7455_mode_t mode) {
-    if (mode != mma7455_mode) {
-        mma7455_mode = mode;
-        mma7455_modify(MCTL, mode << MODE, 0b11 << MODE);
+void accel_SetMode(accel_mode_t mode) {
+    if (mode != accel_mode) {
+        accel_mode = mode;
+        accel_modify(MCTL, mode << MODE, 0b11 << MODE);
     }
 }
 
-void mma7455_SetRange(mma7455_range_t range) {
-    if (range != mma7455_range) {
-        mma7455_range = range;
-        mma7455_modify(MCTL, range << GLVL, 0b11 << GLVL);
+void accel_Standby() {
+    accel_SetMode(accStandby);
+}
+
+void accel_SetRange(accel_range_t range) {
+    if (range !=accel_range) {
+        accel_range = range;
+        accel_modify(MCTL, range << GLVL, 0b11 << GLVL);
     }
 }
 
 
-void mma7455_Calibrate() {
+void accel_Calibrate() {
     // Read offset
 
     // Store into offset drift registers
@@ -123,37 +132,43 @@ void mma7455_Calibrate() {
     // See Freescale app note AN3745
 }
 
-vector3_t mma7455_ReadXYZ() {
+vector3_t accel_ReadXYZ() {
 
     // Normalize the result independant of the range setting
     //TODO: verify if this is what we want
     int16 scale;
-    switch (mma7455_range) {
+    switch (accel_range) {
         case range_2g: scale = 2; break;
         case range_4g: scale = 4; break;
         case range_8g: scale = 8; break;
     }
 
     // Read low byte first to ensure high byte is latched
-    mma7455_current.x = (mma7455_read(XOUTL) | mma7455_read(XOUTH) << 8) * scale;
-    mma7455_current.y = (mma7455_read(YOUTL) | mma7455_read(YOUTH) << 8) * scale;
-    mma7455_current.z = (mma7455_read(ZOUTL) | mma7455_read(ZOUTH) << 8) * scale;
+    accel_current.x = (accel_read(XOUTL) | accel_read(XOUTH) << 8) * scale;
+    accel_current.y = (accel_read(YOUTL) | accel_read(YOUTH) << 8) * scale;
+    accel_current.z = (accel_read(ZOUTL) | accel_read(ZOUTH) << 8) * scale;
 
-    return mma7455_current;
+    return accel_current;
 }
 
-uint8 mma7455_ReadTemperature() {
-    return mma7455_read(TOUT);
+uint8 accel_ReadTemperature() {
+    return accel_read(TOUT);
 }
 
-mma7455_status_t mma7455_Status() {
-    return (mma7455_status_t)mma7455_read(STATUS);
+accel_status_t accel_Status() {
+    return (accel_status_t)accel_read(STATUS);
 }
 
-void mma7455_ClearInterrupts() {
-    mma7455_write(0x03);
-    mma7455_write(0x00);
+void accel_ClearInterrupts() {
+    //accel_write(0x03);
+    //accel_write(0x00);
 }
+
+void accel_RegisterCallback(accel_mode_t mode, proc_t cb) {
+
+}
+
+//TODO: Pulse/Level detection stuff
 
 ////////// Interrupts //////////////////////////////////////////////////////////
 
@@ -161,31 +176,41 @@ void mma7455_ClearInterrupts() {
 // INT1 signifies different events depending on mode.
 // In mmaMeasure mode, INT1 is the DRDY status bit, signifying data is ready to be read
 
-void mma7455_isr() {
+void accel_isr() {
 
-    switch (mma7455_mode) {
+    //TODO: Do we need to modify the INTREG bits (swap INT1/INT2 pin status) depending on mode??
+    // The hardware is configured to use only one interrupt
+
+    switch (accel_mode) {
 
         // Data ready, read next sample (stored in 'current')
-        case mmaMeasure: {
-            mma7455_ReadXYZ();
+        case accMeasure: {
+            accel_ReadXYZ();
             break;
         }
 
         // Level detect interrupt
-        case mmaLevelDetect: {
-            mma7455_ClearInterrupts();
+        case accLevelDetect: {
+            accel_ClearInterrupts();
 
             //TODO: Do something here
             break;
         }
 
         // Pulse detect interrupt
-        case mmaPulseDetect: {
-            mma7455_ClearInterrupts();
+        case accPulseDetect: {
+            accel_ClearInterrupts();
 
             //TODO: Do soemthing here
             break;
         }
+
+        case accStandby:
+            break;
     }
+
+    // Execute callback
+    proc_t cb = accel_callbacks[(uint8)accel_mode];
+    if (cb != NULL) cb();
 }
 

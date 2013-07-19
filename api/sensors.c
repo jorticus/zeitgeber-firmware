@@ -16,7 +16,6 @@
 #include <i2c.h>
 #include "drivers/HMC5883.h"
 #include "drivers/MMA7455.h"
-#include "light.h"
 
 ////////// Global Variables ////////////////////////////////////////////////////
 
@@ -30,8 +29,8 @@ bool InitializeSensors() {
 
 
     // Initialize Magnetometer/Accelerometer
-    if (!hmc5883_init()) return FALSE;
-    if (!mma7455_init()) return FALSE;
+    if (!mag_init()) return FALSE;
+    if (!accel_init()) return FALSE;
 
     // Initialize Ambient Light
 

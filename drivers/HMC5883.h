@@ -11,6 +11,6 @@
 #ifndef HMC5883_H
 #define	HMC5883_H
 
-extern bool hmc5883_init();
+extern bool mag_init();
 
 #endif	/* HMC5883_H */

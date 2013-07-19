@@ -13,6 +13,21 @@
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-bool hmc5883_init() {
+bool mag_init() {
     return false;
+}
+
+void mag_write(uint8 reg, uint8 value) {
+
+}
+
+uint8 mag_read(uint8 reg) {
+    return 0;
+}
+
+void mag_modify(uint8 reg, uint8 value, uint8 mask) {
+    uint8 curr = mag_read(reg);
+    curr &= ~mask;
+    curr |= value & mask;
+    mag_write(reg, curr);
 }
