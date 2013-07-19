@@ -28,7 +28,10 @@
 
 #include <system.h>
 #include "hardware.h"
+
+// Core
 #include "core/scheduler.h"
+#include "core/os.h"
 
 // Peripherals
 #include "peripherals/adc.h"
@@ -186,6 +189,8 @@ void Initialize() {
 int main() {
 
     Initialize();
+
+    InitializeOS();
 
     RegisterUserApplication(&appmain);
 

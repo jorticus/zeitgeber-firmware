@@ -8,6 +8,8 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <system.h>
+#include "core/scheduler.h"
+#include "core/os.h"
 #include "app.h"
 
 ////////// Variables ///////////////////////////////////////////////////////////
@@ -17,11 +19,13 @@
 application_t* installed_apps[MAX_APPLICATIONS];
 uint app_count = 0;
 
-//TODO: Find a way of organising apps on the OLED,
-// but also allowing them to run in the background.
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void RegisterUserApplication(application_t* app) {
+
+    // Assign a scheduler task to the app
+    app->task = RegisterTask(app->process, APP_INTERVAL);
+
     installed_apps[app_count++] = app;
 }
