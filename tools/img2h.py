@@ -1,9 +1,9 @@
 
 from PIL import Image
 
-IMG_FILENAME = 'test.jpg'
-H_FILENAME = 'image.h'
-IMG_NAME = 'test'
+IMG_FILENAME = 'wolf.jpg'
+H_FILENAME = 'wolf.h'
+IMG_NAME = 'wolf'
 
 DISP_WIDTH = 128
 DISP_HEIGHT = 128
@@ -25,8 +25,8 @@ if 1.0 > im_ratio:
 
 # Landscape
 elif 1.0 < im_ratio:
-    im_width = int(DISP_HEIGHT/im_ratio)
-    im = im.resize((im_height, DISP_HEIGHT), Image.ANTIALIAS)
+    im_width = int(DISP_WIDTH*im_ratio)
+    im = im.resize((im_width, DISP_HEIGHT), Image.ANTIALIAS)
     im = im.crop((im_width/2 - DISP_WIDTH/2, 0, im_width/2 + DISP_WIDTH/2, DISP_HEIGHT))
 
 # Square
@@ -34,7 +34,7 @@ else:
     im = im.resize((DISP_WIDTH, DISP_HEIGHT), Image.ANTIALIAS)
 
 
-im.save('out.png')
+im.save('out.png')      
 
 ########## Extract Raw Pixels ##########
 
@@ -62,9 +62,10 @@ for y in range(DISP_HEIGHT):
 # R4 R3 R2 R1 R0 G5 G4 G3 G2 G1 G0 B4 B3 B2 B1 B0
 
 pixels = ["0x%.4x" % (
-    (p[0]*32/256) << 11 | (p[1]*64/256) << 5 | (p[1]*32/256)
+    (p[0]*32/256) << 11 | (p[1]*64/256) << 5 | (p[2]*32/256)
 ) for p in pixels]
-dataformat = 'const uint16 __attribute__((space(prog)))'
+#dataformat = 'const uint16 __attribute__((space(prog)))'
+dataformat = 'uint16 PROGMEM'
 byte_multiplier = 2
 
 # 256 color (3:3:2) format (8 bits, 1 byte per pixel)
@@ -87,7 +88,7 @@ f.write("#define %s_WIDTH\t%d\n" % (IMG_NAME.upper(), DISP_WIDTH))
 f.write("#define %s_HEIGHT\t%d\n" % (IMG_NAME.upper(), DISP_HEIGHT))
 f.write("#define {0}_SIZE\t({0}_WIDTH * {0}_HEIGHT * {1})".format(IMG_NAME.upper(), byte_multiplier))
 f.write("\n")
-f.write("%s %s[%d] = {\n" % (dataformat, IMG_NAME, size))
+f.write("%s %s_bytes[%d] = {\n" % (dataformat, IMG_NAME, size))
 
 try:
     i = 0

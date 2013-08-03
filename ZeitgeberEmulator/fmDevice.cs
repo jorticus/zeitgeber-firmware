@@ -46,7 +46,7 @@ namespace ZeitgeberEmulator
                     i += 2;
 
                     byte r = (byte)(((color & 0xF800) >> 11) * 255 / 31);
-                    byte g = (byte)(((color & 0x07E0) >> 5) * 255 / 60);
+                    byte g = (byte)(((color & 0x07E0) >> 5) * 255 / 63);
                     byte b = (byte)((color & 0x001F) * 255 / 31);
                     bmp.SetPixel(x, y, Color.FromArgb(r,g,b));
                 }
