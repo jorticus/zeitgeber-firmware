@@ -21,12 +21,6 @@ color_t screen[DISPLAY_SIZE];
 //extern const font_t* active_font;
 //extern unsigned int font_size;
 
-#ifndef WIN32
-#define INLINE __inline__
-#else
-#define INLINE
-#endif
-
 // Uncomment to rotate the screen 90 deg clockwise
 //#define ROTATE90
 
@@ -181,15 +175,7 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
 }
 
 void DrawImage(int x, int y, int w, int h, image_t image) {
-	uint ix, iy;
-
-	for (iy = 0; iy < image.height; iy++) {
-		for (ix = 0; ix < image.width; ix++) {
-			uint idx = ix + (iy*image.width);
-			color_t pixel = image.pixels[idx];
-			SetPixel(ix,iy,pixel);
-		}
-	}
+	BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY);
 
 
    /* int idx = 0;
@@ -240,3 +226,126 @@ image_t OffsetImage(int x, int y, image_t image) {
 
     //return new_image;
 }
+
+
+INLINE uint max(uint a, uint b) {
+	return (a < b) ? b : a;
+}
+INLINE uint min(uint a, uint b) {
+	return (a < b) ? a : b;
+}
+
+uint16 threshold(uint16 color) {
+	return (color > COLOR(0x7F,0x7F,0x7F)) ? 0xFFFF : 0x0000;
+}
+
+// Copy a source image to the screen using the specified drawing operation
+void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t drawop) {
+	if (src != NULL) {
+		uint x,y,w,h;
+		uint destDelta, srcDelta;
+		color_t *srcbuf, *destbuf, *maskbuf;
+
+		if (width == 0) width = src->width;
+		if (height == 0) height = src->height;
+
+		// If mask isn't defined, make it something valid
+		if (mask == NULL) mask = src;
+
+		srcbuf = &src->pixels[0];
+		destbuf = &screen[0];
+		maskbuf = &mask->pixels[0]; //TODO: Tradeoff between mask image size (1 bit) and performance (16 bit)
+
+
+		// Calculate minimum clipping region
+		w = min(src->width, width);
+		h = min(src->height, height);
+
+		// Offset the source image
+		// Use if statement because this is less likely to be used (and can be optimised away)
+		if (xsrc != 0 || ysrc != 0) {
+			srcbuf += xsrc + (ysrc * src->width);
+		}
+
+		// Offset the dest buffer
+		// No if statement because this is more likely to be used
+		destbuf += xdest + (ydest * DISPLAY_WIDTH);
+
+		// Precompute deltas
+		destDelta = DISPLAY_WIDTH - w;
+		srcDelta = src->width - w;
+
+		// Copy pixels from the image directly to the screen buffer
+		for (y = 0; y < h; y++) {
+			for (x = 0; x < w; x++) {
+				switch (drawop) {
+
+					// Win32 Bit Blit Operations
+					case BLACKNESS:		*destbuf = 0x0000; break;
+					//case MERGECOPY:		*destbuf = *srcbuf & threshold(*maskbuf); break;
+					case MERGECOPY:		if (threshold(*maskbuf)) *destbuf = *srcbuf; break;
+					case MERGEPAINT:	*destbuf = *destbuf | ~*srcbuf; break;
+					case NOTSRCCOPY:	*destbuf = ~*srcbuf; break;
+					case NOTSRCERASE:	*destbuf = ~(*destbuf | *srcbuf); break;
+					case PATCOPY:		*destbuf |= threshold(*maskbuf); break;
+					case PATINVERT:		*destbuf = *destbuf ^ threshold(*maskbuf); break;
+					case PATPAINT:		*destbuf = *destbuf | ~*srcbuf | threshold(*maskbuf); break;
+					case SRCAND:		*destbuf = *destbuf & *srcbuf; break;
+					case SRCCOPY:		*destbuf = *srcbuf; break;
+					case SRCERASE:		*destbuf = ~*destbuf & *srcbuf; break;
+					case SRCINVERT:		*destbuf = *destbuf ^ *srcbuf; break;
+					case SRCPAINT:		*destbuf = *destbuf | *srcbuf; break;
+					case WHITENESS:		*destbuf = 0xFFFF; break;
+
+					// Extra Operations
+					case ADD:			*destbuf += *srcbuf; break;
+					case SUBTRACTSRC:	*destbuf = *destbuf - *srcbuf; break;
+					case SUBTRACTDEST:	*destbuf = *srcbuf - *destbuf; break;
+
+					// Advanced Operations (Slow/Experimental)
+					/*case MULTIPLY: {
+						//TODO: Optimise
+						color_s src, dest;
+						src.val = *srcbuf;
+						dest.val = *destbuf;
+
+						dest.r = (uint32)dest.r * (uint32)src.r >> 5;
+						dest.g = (uint32)dest.g * (uint32)src.g >> 6;
+						dest.b = (uint32)dest.b * (uint32)src.b >> 5;
+
+						*destbuf = dest.val;
+					} break;*/
+					
+					// Additive blending, limited
+					case ADDLIMIT: {
+						uint32 val = *destbuf + *srcbuf;
+						if (val > 0xFFFF) val = 0xFFFF;
+						*destbuf = val;
+					} break;
+
+					// 50% Alpha Blend
+					case BLEND: {
+						//TODO: Optimise
+						color_s src, dest;
+						src.val = *srcbuf;
+						dest.val = *destbuf;
+
+						dest.r = dest.r/2 + src.r/2;
+						dest.g = dest.g/2 + src.g/2;
+						dest.b = dest.b/2 + src.b/2;
+
+						*destbuf = dest.val;
+					} break;
+				}
+				destbuf++; srcbuf++; maskbuf++;
+			}
+
+			// Skip over pixels that lie outside the clipping region
+			destbuf += destDelta;
+			srcbuf += srcDelta;
+
+		}
+
+	}
+}
+

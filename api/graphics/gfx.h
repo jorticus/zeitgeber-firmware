@@ -48,7 +48,6 @@ typedef uint16 color_t;
 
 //////////////////////////////////
 
-
 typedef struct {
     color_t *pixels;
     int width;
@@ -61,6 +60,33 @@ typedef struct {
 
 //#define WHITE 1
 //#define BLACK 0
+
+//TODO: Rename and cleanup non-useful operations
+typedef enum {
+	// Standard Win32 Bit-Blit Operations
+	BLACKNESS,		// dest = 0
+	MERGECOPY,		// if (mask) dest = src		- Draw image over dest masked by mask
+	MERGEPAINT,		// dest = dest | ~src
+	NOTSRCCOPY,		// dest = ~src				- Draw inverted image
+	NOTSRCERASE,	// dest = ~(dest | src)
+	PATCOPY,		// dest = mask				- Display the mask (for debugging)
+	PATINVERT,		// dest = dest ^ mask		- Invert the dest with the given mask
+	PATPAINT,		// deat = dest | ~src | mask
+	SRCAND,			// dest = dest & src
+	SRCCOPY,		// dest = src				- Same as DrawImage
+	SRCERASE,		// dest = ~dest & src
+	SRCINVERT,		// dest = dest ^ src
+	SRCPAINT,		// dest = dest | src
+	WHITENESS,		// dest = 1
+
+	// Experimental (Possibly Slow)
+	ADD,			// dest = dest + src
+	ADDLIMIT,		// dest = dest + src (limited between 0-1)
+	SUBTRACTSRC,	// dest = dest - src
+	SUBTRACTDEST,	// dest = src - dest
+	//MULTIPLY,		// dest = dest * src (normalized)
+	BLEND,			// dest = dest*0.5 + src*0.5 (alpha blending)
+} drawop_t;
 
 ///// Low Level /////
 
@@ -87,6 +113,7 @@ extern void DrawRoundedBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, c
 extern void DrawLine(int x0, int y0, int x1, int y1, color_t color);
 extern void DrawImage(int x, int y, int w, int h, image_t image);
 //extern image_t OffsetImage(int x, int y, image_t image);
+void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t rop);
 
 ///// Fonts /////
 

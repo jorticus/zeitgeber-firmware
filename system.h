@@ -17,6 +17,7 @@ typedef unsigned short uint16;
 typedef signed char int8;
 typedef signed short int16;
 typedef signed int int32;
+typedef unsigned int uint32;
 
 #define false 0
 #define true 1
@@ -27,6 +28,7 @@ typedef signed int int32;
 #define TRUE 1
 
 #define PROGMEM
+#define INLINE
 
 #else
 
@@ -43,6 +45,7 @@ typedef INT32 int32;
 typedef enum { false, true } bool;
 
 #define PROGMEM __prog__
+#define INLINE __inline__
 
 #endif
 

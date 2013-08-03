@@ -29,11 +29,6 @@ void appmain_Process();
 void appmain_Draw();
 
 application_t appmain = APPLICATION("Main", appmain_Initialize, appmain_Process, appmain_Draw);
-/*application_t appmain = {
-    appmain_Initialize,
-    appmain_Process,
-    appmain_Draw,
-};*/
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -52,11 +47,20 @@ void appmain_Process() {
 
 // Called periodically when isForeground==true (30Hz)
 void appmain_Draw() {
+	static uint i = 0;
     //NOTE: Even though it is not enforced, it is recommended to only draw within the specified bounds
 
     //TODO: Provide some way to draw to the statusbar at the top of the display
 
-	DrawImage(0,0,DISPLAY_WIDTH,DISPLAY_HEIGHT,wolf_image);
+	//DrawImage(0,0,DISPLAY_WIDTH,DISPLAY_HEIGHT,wolf_image);
+
+	DrawImage(0,0, 0,0, wolf_image);
+
+	BitBlit(&wolf_image, NULL, 32,32, 0,0, 0,0, MERGECOPY);
+
+
+	//i++;
+	//if (i++ == (DISPLAY_WIDTH - wolf_image.width)) i = 0;
 
 
 	//DrawString("Hello World", 8,8, RED);
