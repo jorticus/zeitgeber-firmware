@@ -35,27 +35,25 @@ void SetForegroundApp(application_t* app) {
     if (foreground_app != NULL)
         foreground_app->isForeground = false;
     app->isForeground = true;
+	foreground_app = app;
+
+	//TODO: Do we set the old app to tsIdle?? Or execute some callback?
+	app->task->state = tsRun;
 
     //TODO: Maybe some sort of transition between screens?
 }
 
 // Called periodically
 void Draw() {
-
-	// Test
-	SetPixel(8,8, COLOR(255,0,0));
-
-	DrawString("Hello World", 8,8, COLOR(255,0,0));
-
-	DrawChar("e", 8,16, COLOR(0,0,255));
-
-	DrawLine(10,20,200,100, COLOR(0,255,0));
-
+	// Clear screen & set defaults
+	DrawBox(0,0,DISPLAY_WIDTH,DISPLAY_HEIGHT,SHADE(40),BLACK);
+	SetFont(fonts.Stellaris);
+	SetFontSize(1);
 
     // Draw foreground app
-    /*if (foreground_app != NULL) {
+    if (foreground_app != NULL) {
         foreground_app->draw();
-    }*/
+    }
 
     // Draw status bar icons here
     // ...

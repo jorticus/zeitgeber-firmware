@@ -17,8 +17,10 @@
 
 // Sample 128x128 image
 // 5:6:5 16-bit pixel format, RGB ordering
-//#include "tools/wolf.h"
-//__prog__ uint16* wolf_bytes = (__prog__ uint16*)&wolf_image; 
+#include "tools/wolf.h"
+//PROGMEM uint16* wolf_bytes = (PROGMEM uint16*)&wolf_image; 
+
+const image_t wolf_image = {wolf_bytes, WOLF_WIDTH, WOLF_HEIGHT};
 
 ////////// App Definition //////////////////////////////////////////////////////
 
@@ -53,4 +55,12 @@ void appmain_Draw() {
     //NOTE: Even though it is not enforced, it is recommended to only draw within the specified bounds
 
     //TODO: Provide some way to draw to the statusbar at the top of the display
+
+	DrawImage(0,0,DISPLAY_WIDTH,DISPLAY_HEIGHT,wolf_image);
+
+
+	//DrawString("Hello World", 8,8, RED);
+
+
+
 }

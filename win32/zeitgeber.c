@@ -109,6 +109,8 @@ DLLEXPORT void zInitialize() {
 
 	RegisterUserApplication(&appmain);
 
+	SetForegroundApp(&appmain);
+
 	// Update OLED
 	UpdateDisplay();
 }

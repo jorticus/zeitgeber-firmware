@@ -26,6 +26,7 @@ typedef signed int int32;
 #define FALSE 0
 #define TRUE 1
 
+#define PROGMEM
 
 #else
 
@@ -40,6 +41,8 @@ typedef INT16 int16;
 typedef INT32 int32;
 
 typedef enum { false, true } bool;
+
+#define PROGMEM __prog__
 
 #endif
 

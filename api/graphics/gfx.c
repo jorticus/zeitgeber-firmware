@@ -181,7 +181,18 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
 }
 
 void DrawImage(int x, int y, int w, int h, image_t image) {
-    int idx = 0;
+	uint ix, iy;
+
+	for (iy = 0; iy < image.height; iy++) {
+		for (ix = 0; ix < image.width; ix++) {
+			uint idx = ix + (iy*image.width);
+			color_t pixel = image.pixels[idx];
+			SetPixel(ix,iy,pixel);
+		}
+	}
+
+
+   /* int idx = 0;
     int mask = 1;
 	color_t chunk = image.pixels[0];
 
@@ -191,7 +202,7 @@ void DrawImage(int x, int y, int w, int h, image_t image) {
     w += x;
     h += y;
 
-    /*int ix, iy;
+    int ix, iy;
     for (iy = y; iy < ih; iy++) {
         for (ix = x; ix < iw; ix++) {
             // Retrieve the current pixel

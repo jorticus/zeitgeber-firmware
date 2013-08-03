@@ -34,7 +34,7 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task->interval = interval;
 
     task->state = tsStop;
-    task->next_run = interval; // should be current tick + interval
+    task->next_run = 0; // should be current tick + interval
     task->cpu_time = 0;
 	task->ticks = 0;
 
