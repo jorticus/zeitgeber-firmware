@@ -81,6 +81,8 @@ extern void DrawImage(int x, int y, int w, int h, image_t image);
 
 ///// Fonts /////
 
+#include <api/graphics/font.h>
+
 // Draw a character using the current font
 extern int DrawChar(char c, uint8 x, uint8 y, color_t color) ;
 

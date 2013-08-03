@@ -21,6 +21,7 @@ typedef struct {
 
 
 extern void SetFont(const font_t* font);
+void SetFontSize(unsigned int size);
 
 // Hard-coded fonts available for use
 typedef struct {

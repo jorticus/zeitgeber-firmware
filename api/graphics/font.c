@@ -114,10 +114,10 @@ int DrawChar(char c, uint8 x, uint8 y, color_t color) {
 
     // active_font->data is a pointer to a multidimensional array of [96][char_width]
     // which is really just a 1D array of size 96*char_width.
-    uint8 idx = CharIndex(active_font, c);
+    int idx = CharIndex(active_font, c);
     const uint8* chr = &active_font->data[idx];
 
-    uint8 width = CharWidth(active_font, c);
+	uint8 width = CharWidth(active_font, c);
 
     // Draw pixels
     if (font_size == 1) { // For performance, avoid scaling if size==1
@@ -159,4 +159,5 @@ int StringWidth(const char* str) {
         int cw = CharWidth(active_font, idx);
         width += (cw + 1) * font_size;
     }
+	return width;
 }
