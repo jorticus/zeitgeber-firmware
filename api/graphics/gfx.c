@@ -27,6 +27,9 @@ color_t screen[DISPLAY_SIZE];
 #define INLINE
 #endif
 
+// Uncomment to rotate the screen 90 deg clockwise
+//#define ROTATE90
+
 
 ////////// Utilities ///////////////////////////////////////////////////////////
 
@@ -54,7 +57,11 @@ void ClearImage() {
 }
 
 INLINE uint byte_index(uint8 x, uint8 y) {
+#ifdef ROTATE90
+	return ((DISPLAY_HEIGHT-y-1) + (x*DISPLAY_WIDTH));
+#else
 	return (x + (y * DISPLAY_WIDTH));
+#endif
 }
 
 /*INLINE int bit_index(uint8 x) {

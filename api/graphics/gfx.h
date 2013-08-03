@@ -25,17 +25,26 @@ typedef union {
 
 typedef uint16 color_t;
 
+// NOTE: Do not use the following macros for run-time color calculation, they haven't been optimised.
+
+// Define a constant RGB color (0-255)
 #define COLOR(R,G,B) (color_t)(((R*32/256)<<11) | ((G*32/256)<<5) | (B*32/256))
 
-// Grayscale format
-/*typedef union {
-    uint8 val;
-} color_t;*/
+// Define a color using a 24-bit hex (WARNING: since colors are 16-bit, some resolution will be lost)
+#define HEXCOLOR32(H) (color_t)( ((((H&0xFF0000)>>16)*32/256)<<11) | ((((H&0x00FF00)>>8)*32/256)<<5) | ((H&0x0000FF)*32/256) )
+
+// Define a color using a 12-bit hex (NOTE: not all colors can be produced using this)
+//TODO: This doesn't work for 0x888
+#define HEXCOLOR(H) (color_t)( (H&0xF00)<<4 | (H&0x0F0)<<3 | (H&0x00F)<<1)
+
+#include "colors.h"
+
 
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 128
 
 #define DISPLAY_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT*sizeof(color_t))
+
 
 //////////////////////////////////
 
@@ -50,8 +59,8 @@ typedef struct {
 #define NO_FILL 16
 #define NO_LINE 16
 
-#define WHITE 1
-#define BLACK 0
+//#define WHITE 1
+//#define BLACK 0
 
 ///// Low Level /////
 
