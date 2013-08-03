@@ -81,9 +81,10 @@ typedef enum {
 
 	// Experimental (Possibly Slow)
 	ADD,			// dest = dest + src
-	ADDLIMIT,		// dest = dest + src (limited between 0-1)
-	SUBTRACTSRC,	// dest = dest - src
-	SUBTRACTDEST,	// dest = src - dest
+	SUBTRACT,
+	//ADDLIMIT,		// dest = dest + src (limited between 0-1)
+	//SUBTRACTSRC,	// dest = dest - src
+	//SUBTRACTDEST,	// dest = src - dest
 	//MULTIPLY,		// dest = dest * src (normalized)
 	BLEND,			// dest = dest*0.5 + src*0.5 (alpha blending)
 } drawop_t;

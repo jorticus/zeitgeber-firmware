@@ -298,9 +298,9 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 					case WHITENESS:		*destbuf = 0xFFFF; break;
 
 					// Extra Operations
-					case ADD:			*destbuf += *srcbuf; break;
-					case SUBTRACTSRC:	*destbuf = *destbuf - *srcbuf; break;
-					case SUBTRACTDEST:	*destbuf = *srcbuf - *destbuf; break;
+					//case ADD:			*destbuf += *srcbuf; break;
+					//case SUBTRACTSRC:	*destbuf = *destbuf - *srcbuf; break;
+					//case SUBTRACTDEST:	*destbuf = *srcbuf - *destbuf; break;
 
 					// Advanced Operations (Slow/Experimental)
 					/*case MULTIPLY: {
@@ -317,10 +317,50 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 					} break;*/
 					
 					// Additive blending, limited
-					case ADDLIMIT: {
+					/*case ADDLIMIT: {
 						uint32 val = *destbuf + *srcbuf;
 						if (val > 0xFFFF) val = 0xFFFF;
 						*destbuf = val;
+					} break;*/
+
+					case ADD: {
+						color_s src, dest;
+						uint8 r,g,b;
+						src.val = *srcbuf;
+						dest.val = *destbuf;
+
+						r = dest.r + src.r;
+						g = dest.g + src.g;
+						b = dest.b + src.b;
+
+						if (r > 0x1F) r = 0x1F;
+						if (g > 0x3F) g = 0x3F;
+						if (b > 0x1F) b = 0x1F;
+
+						dest.r = r; dest.g = g; dest.b = b;
+						*destbuf = dest.val;
+					} break;
+
+					case SUBTRACT: {
+						color_s src, dest;
+						int8 r,g,b;
+						src.val = ~*srcbuf;
+						dest.val = *destbuf;
+
+						r = dest.r;
+						g = dest.g;
+						b = dest.b;
+
+						r -= src.r;
+						g -= src.g;
+						b -= src.b;
+
+						if (r < 0) r = 0;
+						if (g < 0) g = 0;
+						if (b < 0) b = 0;
+
+						dest.r = r; dest.g = g; dest.b = b;
+						*destbuf = dest.val;
 					} break;
 
 					// 50% Alpha Blend
