@@ -12,20 +12,20 @@
 
 ///// DISPLAY CONFIGURATION /////
 
-//#define DFMT_RGB_343
-//#define DFMT_RGB_888
-//#define DFMT_GRAY_8
-//#define DFMT_BW
 
-// RGB (3:4:3) format
+// RGB (5:6:5) 16-bit format
 typedef union {
     struct {
-        unsigned r: 3;
-        unsigned g: 4;
-        unsigned b: 3;
+        unsigned r: 5;
+        unsigned g: 6;
+        unsigned b: 5;
     };
-    uint8 val;
-} color_t;
+    uint16 val;
+} color_s;
+
+typedef uint16 color_t;
+
+#define COLOR(R,G,B) (color_t)(((R*32/256)<<11) | ((G*32/256)<<5) | (B*32/256))
 
 // Grayscale format
 /*typedef union {
@@ -55,9 +55,11 @@ typedef struct {
 
 ///// Low Level /////
 
-extern void Setpixel(uint8 x, uint8 y, color_t color);
-extern void TogglePixel(uint8 x, uint8 y);
-extern uint8 GetPixel(uint8 x, uint8 y);
+#include <system.h>
+
+void SetPixel(uint8 x, uint8 y, color_t color);
+void TogglePixel(uint8 x, uint8 y);
+color_t GetPixel(uint8 x, uint8 y);
 
 ///// Display /////
 

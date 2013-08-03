@@ -49,23 +49,23 @@
 ////////// Font Table //////////////////////////////////////////////////////////
 
 const fonts_t fonts = {
-    .Stellaris = &font_Stellaris,
-    .PZim3x5 = &font_PZim3x5,
-    .f5x5 = &font_f5x5,
-    .BMPlain = &font_BMPlain,
-    .m38 = &font_m38,
-    .Bubble = &font_Bubble,
-    .Haiku = &font_Haiku,
-    .Blokus = &font_Blokus,
-    .SuperDigital = &font_SuperDigital,
-    .Sloth = &font_Sloth,
-    .SevenSeg = &font_SevenSeg,
-    .Raumsond = &font_Raumsond,
-    .TamaMini02 = &font_TamaMini02,
-    .ZxPix = &font_ZxPix,
-    .BMSPA = &font_BMSPA,
-    .Aztech = &font_Aztech,
-    .Formplex12 = &font_Formplex12,
+    &font_Stellaris,
+    &font_PZim3x5,
+    &font_f5x5,
+    &font_BMPlain,
+    &font_m38,
+    &font_Bubble,
+    &font_Haiku,
+    &font_Blokus,
+    &font_SuperDigital,
+    &font_Sloth,
+    &font_SevenSeg,
+    &font_Raumsond,
+    &font_TamaMini02,
+    &font_ZxPix,
+    &font_BMSPA,
+    &font_Aztech,
+    &font_Formplex12,
 };
 
 
@@ -110,14 +110,14 @@ static int CharWidth(const font_t* font, char c) {
 }
 
 int DrawChar(char c, uint8 x, uint8 y, color_t color) {
-    int i, j;
+    uint8 i, j;
 
     // active_font->data is a pointer to a multidimensional array of [96][char_width]
     // which is really just a 1D array of size 96*char_width.
-    int idx = CharIndex(active_font, c);
+    uint8 idx = CharIndex(active_font, c);
     const uint8* chr = &active_font->data[idx];
 
-    int width = CharWidth(active_font, c);
+    uint8 width = CharWidth(active_font, c);
 
     // Draw pixels
     if (font_size == 1) { // For performance, avoid scaling if size==1

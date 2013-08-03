@@ -20,6 +20,8 @@ typedef enum {
 } app_state_t;
 
 typedef struct {
+	char name[6];
+
     proc_t init;
     proc_t process;
     proc_t draw;
@@ -30,10 +32,13 @@ typedef struct {
     task_t* task;
 } application_t;
 
-#define APP(init, process, draw) {init, process, draw, asIdle}
+#define APPLICATION(name, init, process, draw) {name, init, process, draw, asIdle, false, NULL}
 
 // Register a user-mode application with the system
 void RegisterUserApplication(application_t* app);
+
+// Create a new application struct
+//application_t NewApplication(proc_t init, proc_t process, proc_t draw);
 
 
 #endif	/* APP_H */

@@ -8,6 +8,8 @@
 #include <system.h>
 #include "systick.h"
 
+volatile uint systick = 0;
+
 // Note: since we want to stop the systick interrupt from waking the CPU
 // out of sleep mode, we'll need to add the number of ticks spent sleeping somehow?
 // or maybe turn down the timer rate while it sleeps in case an asynchronous interrupt

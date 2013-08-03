@@ -9,16 +9,23 @@
 
 #include <system.h>
 #include "gfx.h"
+#include <drivers\ssd1351.h>
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
 // Internal screen buffer
-static color_t screen[DISPLAY_SIZE];
+color_t screen[DISPLAY_SIZE];
 
 // Custom fonts
 //#include "font.h"
 //extern const font_t* active_font;
 //extern unsigned int font_size;
+
+#ifndef WIN32
+#define INLINE __inline__
+#else
+#define INLINE
+#endif
 
 
 ////////// Utilities ///////////////////////////////////////////////////////////
@@ -33,55 +40,48 @@ int abs(int v) {
 void UpdateDisplay() {
     //TODO: Copy screen buffer to OLED display
     // or are there more efficient ways of updating the display? (by region?)
+	ssd1351_UpdateScreen((uint8*)screen, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 }
 
 ////////// Low Level Functions /////////////////////////////////////////////////
 
 void ClearImage() {
     int i;
-    for (i = 0; i < IMAGE_SIZE; i++) {
-        screen[i] = 0x00;
+    for (i = 0; i < DISPLAY_SIZE; i++) {
+		color_t  c = {0x00};
+        screen[i] = c;
     }
 }
 
-/*__inline__ int byte_index(uint8 x, uint8 y) {
-    return (x >> 3) + (y * BYTES_PER_LINE);
+INLINE uint byte_index(uint8 x, uint8 y) {
+	return (x + (y * DISPLAY_WIDTH));
 }
 
-__inline__ int bit_index(uint8 x) {
+/*INLINE int bit_index(uint8 x) {
     return x % 8;
 }*/
 
 // Set a single pixel to be black (0) or white (1)
 
 void SetPixel(uint8 x, uint8 y, color_t color) {
-    int idx = byte_index(x, y);
-    uint8 mask = 1 << bit_index(x);
-
-    // Clear bit
-   /* screen[idx] &= ~mask;
-
-    // Set bit if value is true
-    if (color.val)
-        screen[idx] |= mask;*/
+    uint idx = byte_index(x,y);
+	screen[idx] = color;
 }
 
-// Toggle a pixel between white and black
-
+// Invert the colour of a pixel (XOR)
 void TogglePixel(uint8 x, uint8 y) {
-    int idx = byte_index(x, y);
-    uint8 mask = 1 << bit_index(x);
-
-    screen[idx] ^= mask;
+    uint idx = byte_index(x,y);
+	screen[idx] ^= 0xFFFF;
 }
 
 // Returns 0 (black) or 1 (white) for the given pixel
 
-uint8 GetPixel(uint8 x, uint8 y) {
-    int idx = byte_index(x, y);
-    uint8 mask = 1 << bit_index(x);
+color_t GetPixel(uint8 x, uint8 y) {
+    //int idx = byte_index(x, y);
+    //uint8 mask = 1 << bit_index(x);
 
-    return screen[idx] & mask ? 1 : 0;
+    //return screen[idx] & mask ? 1 : 0;
+	return 0;
 }
 
 
@@ -93,16 +93,16 @@ void DrawBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t fill) {
     int i, j;
 
     // Draw box fill
-    if (fill != NO_FILL) {
+	//if (fill.val != NO_FILL) {
         for (j = y + 1; j < y + h - 1; j++) {
             for (i = x; i < x + w - 1; i++) {
                 SetPixel(i, j, fill);
             }
         }
-    }
+    //}
 
     // Draw box border
-    if (border != NO_LINE) {
+    //if (border.val != NO_LINE) {
         for (i = y; i < (y + h); i++) {
             SetPixel(x, i, border);
             SetPixel(x + w - 1, i, border);
@@ -111,7 +111,7 @@ void DrawBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t fill) {
             SetPixel(i, y, border);
             SetPixel(i, y + h - 1, border);
         }
-    }
+    //}
 }
 
 // Draw a box with rounded corners (rounded by 1px)
@@ -120,16 +120,16 @@ void DrawRoundedBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t 
     int i, j;
 
     // Draw box fill
-    if (fill != NO_FILL) {
+    //if (fill != NO_FILL) {
         for (j = y + 1; j < y + h; j++) {
             for (i = x; i < x + w - 2; i++) {
                 SetPixel(i, j, fill);
             }
         }
-    }
+    //}
 
     // Draw box border
-    if (border != NO_LINE) {
+    //if (border != NO_LINE) {
         for (i = y + 1; i < (y + h); i++) {
             SetPixel(x - 1, i, border);
             SetPixel(x + w - 2, i, border);
@@ -138,7 +138,7 @@ void DrawRoundedBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t 
             SetPixel(i, y, border);
             SetPixel(i, y + h, border);
         }
-    }
+    //}
 }
 
 
@@ -146,18 +146,16 @@ void DrawRoundedBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t 
 
 void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
     //Bresenham's Line Algorithm
-
     int dx, dy;
+	int sx, sy, err;
+	int e2;
+
     dx = abs(x1 - x0);
     dy = abs(y1 - y0);
-
-    int sx, sy, err;
 
     sx = (x0 < x1) ? 1 : -1;
     sy = (y0 < y1) ? 1 : -1;
     err = dx - dy;
-
-    int e2;
 
     while (1) {
         SetPixel(x0, y0, color);
@@ -178,7 +176,7 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
 void DrawImage(int x, int y, int w, int h, image_t image) {
     int idx = 0;
     int mask = 1;
-    uint8 chunk = image.pixels[0];
+	color_t chunk = image.pixels[0];
 
     // Precalculate x,y position for performance
     int iw = x + image.width;
@@ -186,7 +184,7 @@ void DrawImage(int x, int y, int w, int h, image_t image) {
     w += x;
     h += y;
 
-    int ix, iy;
+    /*int ix, iy;
     for (iy = y; iy < ih; iy++) {
         for (ix = x; ix < iw; ix++) {
             // Retrieve the current pixel
@@ -198,7 +196,7 @@ void DrawImage(int x, int y, int w, int h, image_t image) {
             if (mask == (1 << 8)) {
                 mask = 1;
                 idx++;
-                chunk = image.pixels[idx];
+                chunk = image.pixels[idx].val;
             }
 
             // Clip pixels outside the specified region
@@ -207,18 +205,20 @@ void DrawImage(int x, int y, int w, int h, image_t image) {
             }
         }
 
-    }
+    }*/
 }
 
 // Return the image offset by some amount
 // IMPORTANT: x must be a multiple of 8 (0,8,16,...)
 
 image_t OffsetImage(int x, int y, image_t image) {
+	int offset;
+
     x >>= 8;
 
-    int offset = x + (y * image.width);
+    offset = x + (y * image.width);
 
-    image_t new_image = {&image.pixels[offset], image.width - x, image.height - y};
+    //image_t new_image = {&image.pixels[offset], image.width - x, image.height - y};
 
-    return new_image;
+    //return new_image;
 }

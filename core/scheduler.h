@@ -21,6 +21,8 @@ typedef enum {
 } task_state_t;
 
 typedef struct {
+	char name[6];
+
     task_proc_t proc;
     //task_proc_t start;
     //task_proc_t stop;
@@ -30,6 +32,7 @@ typedef struct {
     uint interval;
     uint cpu_time;
     uint next_run;
+	uint ticks;
 } task_t;
 
 ////////// Constants ///////////////////////////////////////////////////////////
@@ -38,7 +41,7 @@ typedef struct {
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-extern task_t* RegisterTask(task_proc_t proc, uint interval);
+extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
 extern void ProcessTasks();
 
 

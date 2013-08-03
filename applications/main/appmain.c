@@ -13,7 +13,7 @@
 #include <system.h>
 #include "api/app.h"
 #include "api/api.h"
-#include "api/gfx/gfx.h"
+#include "api/graphics/gfx.h"
 
 // Sample 128x128 image
 // 5:6:5 16-bit pixel format, RGB ordering
@@ -26,12 +26,12 @@ void appmain_Initialize();
 void appmain_Process();
 void appmain_Draw();
 
-//application_t appmain = APP(appmain_Initialize, appmain_Process, appmain_Draw);
-application_t appmain = {
-    .init       = appmain_Initialize,
-    .process    = appmain_Process,
-    .draw       = appmain_Draw,
-};
+application_t appmain = APPLICATION("Main", appmain_Initialize, appmain_Process, appmain_Draw);
+/*application_t appmain = {
+    appmain_Initialize,
+    appmain_Process,
+    appmain_Draw,
+};*/
 
 ////////// Variables ///////////////////////////////////////////////////////////
 

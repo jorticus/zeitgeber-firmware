@@ -10,10 +10,16 @@
 
 #include "util/vector.h"
 
-typedef enum {
+/*typedef enum ee {
     range_8g = 0b00,
     range_4g = 0b10,
     range_2g = 0b01
+} accel_range_t;*/
+
+typedef enum ee {
+    range_8g = 0,
+    range_4g = 2,
+    range_2g = 1
 } accel_range_t;
 
 typedef enum {

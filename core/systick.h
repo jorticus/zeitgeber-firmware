@@ -10,6 +10,8 @@
 #ifndef SYSTICK_H
 #define	SYSTICK_H
 
+extern volatile uint systick;
+
 void systick_init();
 
 #endif	/* SYSTICK_H */

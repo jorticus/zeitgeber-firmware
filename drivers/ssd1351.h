@@ -33,4 +33,7 @@ extern void ssd1351_SetContrast(uint8 contrast);
 // Clear the screen pixels
 extern void ssd1351_ClearScreen();
 
+// Draw pixels to the screen
+void ssd1351_UpdateScreen(uint8* buf, uint8 w, uint8 h);
+
 #endif	/* SSD1351_H */
