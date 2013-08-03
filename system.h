@@ -8,6 +8,27 @@
 #ifndef SYSTEM_H
 #define	SYSTEM_H
 
+#ifdef WIN32
+
+#include "win32\stdafx.h"
+typedef unsigned short uint;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef signed char int8;
+typedef signed short int16;
+typedef signed int int32;
+
+#define false 0
+#define true 1
+#define bool char
+
+#define NULL 0
+#define FALSE 0
+#define TRUE 1
+
+
+#else
+
 #include <p24Fxxxx.h>
 #include <GenericTypeDefs.h>
 
@@ -17,7 +38,12 @@ typedef UINT16 uint16;
 typedef INT8 int8;
 typedef INT16 int16;
 typedef INT32 int32;
+
 typedef enum { false, true } bool;
+
+#endif
+
+
 
 // Generic function pointer
 typedef void (*proc_t)(void);

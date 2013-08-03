@@ -52,9 +52,14 @@ void InitializePowerMonitor() {
 
 //TODO: Check STAT1/STAT2 inputs and VBAT, update status accordingly
 void ProcessPowerMonitor() {
+	uint level;
 
     // Convert the two STAT pins into a byte, then typecast directly to the charge_status enum
+#ifdef _MSC_VER
+	// charge_status is updated through interface.h in win32
+#else
     charge_status = (charge_status_t)( (_PORT(PW_STAT1) << 1) | _PORT(PW_STAT2) );
+#endif
 
     battery_voltage = 0; //ReadAdc(AN_VBAT_CHANNEL) * 2; // The battery voltage is divided by 2
     //TODO: Average the battery voltage
@@ -73,7 +78,7 @@ void ProcessPowerMonitor() {
     // the watch will turn itself off to save power.
 
     // Convert the battery voltage to a percentage that can be displayed
-    uint level = battery_voltage - BATTERY_0_VOLTAGE;
+    level = battery_voltage - BATTERY_0_VOLTAGE;
     level = level / (BATTERY_100_VOLTAGE - BATTERY_0_VOLTAGE);
     battery_level = level; // Atomic write
 }

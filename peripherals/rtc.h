@@ -16,7 +16,7 @@
 #define RTCC_OUTPUT_EN 1
 
 typedef struct {
-
+	char i;
 } rtc_time_t;
 
 extern volatile rtc_time_t rtc_time;

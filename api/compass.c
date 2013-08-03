@@ -32,12 +32,13 @@ void StopCompass() {
 
 // Get the compass heading
 compass_dir_t GetCompassHeading() {
+	uint16 d;
     // Offset by 22 degrees, so North is between 0 and 45, etc.
     uint16 a = compass_angle + 23; //NOTE: 45/2 = 22.5
     if (a >= 360) a -= 360;
 
     // Convert to an index (0 to 7) corresponding to a region
-    uint16 d = a / 45;
+    d = a / 45;
 
     // Typecast d to enum of N,NE,E,...
     return (compass_dir_t)d;

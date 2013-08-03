@@ -31,7 +31,7 @@ extern bool wut; // Can't remember what I was going to put here.
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-extern void InitializePowerMonitor();
-extern void ProcessPowerMonitor();
+void InitializePowerMonitor();
+void ProcessPowerMonitor();
 
 #endif	/* POWER_H */

@@ -21,18 +21,25 @@
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void EnableBluetooth() {
+#ifndef WIN32
     _CNPUE(BT_RDYN_CN) = 1; // RDYN line must have a pull-up
     _LAT(BT_RESET) = 0;
     _LAT(BT_REQN) = 1;
+#endif
 }
 
 void DisableBluetooth() {
+#ifndef WIN32
     _LAT(BT_RESET) = 1;
     _CNPUE(BT_RDYN_CN) = 0; // Disable pull-up
     _LAT(BT_REQN) = 0;
+#endif
 }
 
 bool InitializeBluetooth() {
+#ifdef WIN32
+	return true;
+#else
     // Set up SPI1
 
     // Enable bluetooth chip
@@ -45,5 +52,6 @@ bool InitializeBluetooth() {
     DisableBluetooth();
 
     return FALSE;
+#endif
 }
 

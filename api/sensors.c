@@ -13,7 +13,7 @@
 #include <system.h>
 #include "sensors.h"
 
-#include <i2c.h>
+//#include <i2c.h>
 #include "drivers/HMC5883.h"
 #include "drivers/MMA7455.h"
 

@@ -10,6 +10,86 @@
 #ifndef HARDWARE_H
 #define	HARDWARE_H
 
+#define OUTPUT 0
+#define INPUT 1
+
+#define ANALOG 1
+#define DIGITAL 0
+
+#ifdef WIN32 
+
+// MACROS FOR EASY PIN HANDLING IN PIC C18/C30
+#define _TRIS(pin)           
+#define _PORT(pin)            pin
+#define _LAT(pin)            pin
+
+/// OLED ///
+#define OL_RESET    hw_ol_reset
+#define OL_POWER    hw_ol_power
+
+/// Buttons ///
+#define BTN1        hw_btn1
+#define BTN2        hw_btn2
+#define BTN3        hw_btn3
+#define BTN4        hw_btn4
+
+/// Status LEDs ///
+#define LED1        hw_led1
+#define LED2        hw_led2
+
+/// Misc GPIO ///
+#define VMOTOR      hw_vmotor
+#define PEIZO       hw_peizo
+#define VBUS_SENSE  hw_vbus_sense
+
+/// Sensors ///
+#define INTM        hw_intm
+#define INTA        hw_inta
+
+/// Power Supply ///
+#define PW_STAT1    hw_pw_stat1
+#define PW_STAT2    hw_pw_stat2
+#define PW_CE      hw_pw_ce
+
+/// Bluetooth ///
+#define BT_RESET    hw_bt_reset
+
+/// Analog ///
+#define AN_VBAT     hw_an_vbat
+//#define AN_TEMP     R(B,1)    // AN1  // Not implemented in Rev2
+#define AN_LIGHT    hw_an_light
+
+extern bool hw_ol_power;
+extern bool hw_ol_reset;
+
+extern bool hw_btn1;
+extern bool hw_btn2;
+extern bool hw_btn3;
+extern bool hw_btn4;
+
+extern bool hw_led1;
+extern bool hw_led2;
+
+extern bool hw_vmotor;
+extern bool hw_peizo;
+
+extern bool hw_vbus_sense;
+
+extern bool hw_intm;
+extern bool hw_inta;
+
+extern bool hw_pw_stat1;
+extern bool hw_pw_stat2;
+extern bool hw_pw_ce;
+
+extern bool hw_bt_reset;
+
+//extern uint16 hw_an_vbat;
+//extern uint16 hw_an_light;
+
+extern uint16 hw_dummy;
+
+#else
 
 // MACROS FOR EASY PIN HANDLING IN PIC C18/C30
 #define _TRIS(pin)            pin(_TRIS_F)
@@ -31,12 +111,6 @@
 #define _CNPUE_F(alpha)    (_CN ## alpha ## PUE)
 #define _CNPDE(pin)            pin(_CNPDE_F)
 #define _CNPDE_F(alpha)    (_CN ## alpha ## PDE)
-
-#define OUTPUT 0
-#define INPUT 1
-
-#define ANALOG 1
-#define DIGITAL 0
 
 ////////// GPIO Configuration //////////////////////////////////////////////////
 
@@ -102,6 +176,8 @@
 #define AN_LIGHT(R)    R(B,2)    // AN2
 
 // AN3 (RB3), AN4 (RB4), RD9 are broken out on testpads
+
+#endif
 
 ////////// Hardware Configuration //////////////////////////////////////////////
 
