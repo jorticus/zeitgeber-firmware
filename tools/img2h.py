@@ -1,12 +1,23 @@
 
+import sys
+import os.path
 from PIL import Image
 
-IMG_FILENAME = 'wolf.jpg'
-H_FILENAME = 'wolf.h'
-IMG_NAME = 'wolf'
+IMG_FILENAME = 'gaben.jpg'
+SIZE = (128,128)
 
-DISP_WIDTH = 128
-DISP_HEIGHT = 128
+SAVE_OUTPUT_IMAGE = False
+
+
+if len(sys.argv) >= 2:
+    IMG_FILENAME = ' '.join(sys.argv[1:])
+
+(IMG_PATH, IMG_FNAME) = os.path.split(IMG_FILENAME)
+IMG_NAME = os.path.splitext(IMG_FNAME)[0]
+H_FILENAME = os.path.join(IMG_PATH, IMG_NAME + '.h')
+
+DISP_WIDTH = SIZE[0]
+DISP_HEIGHT = SIZE[1]
 
 ########## Resize/crop ##########
 im = Image.open(IMG_FILENAME)
@@ -34,7 +45,8 @@ else:
     im = im.resize((DISP_WIDTH, DISP_HEIGHT), Image.ANTIALIAS)
 
 
-im.save('out.png')      
+if SAVE_OUTPUT_IMAGE:
+    im.save('out.png')
 
 ########## Extract Raw Pixels ##########
 
