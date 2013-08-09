@@ -114,7 +114,7 @@ extern void DrawRoundedBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, c
 extern void DrawLine(int x0, int y0, int x1, int y1, color_t color);
 extern void DrawImage(int x, int y, int w, int h, image_t image);
 //extern image_t OffsetImage(int x, int y, image_t image);
-void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t rop);
+void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t rop, bool invert);
 
 ///// Fonts /////
 

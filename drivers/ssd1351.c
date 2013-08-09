@@ -167,3 +167,7 @@ void ssd1351_ClearScreen() {
 //TODO: How to write pixels to the screen?
 // Can we implement efficient modes of just writing a windowed region of the display?
 // Can we do a Read-Modify-Write on existing pixels?
+
+void ssd1351_UpdateScreen(uint8* buf, uint8 w, uint8 h) {
+	//onDisplayUpdate(buf, w, h);
+}

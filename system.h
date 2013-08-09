@@ -44,7 +44,7 @@ typedef INT32 int32;
 
 typedef enum { false, true } bool;
 
-#define PROGMEM __prog__
+#define PROGMEM //__prog__
 #define INLINE __inline__
 
 #endif

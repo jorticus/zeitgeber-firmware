@@ -14,7 +14,9 @@
 ////////// Variables ///////////////////////////////////////////////////////////
 
 // Internal screen buffer
-color_t screen[DISPLAY_SIZE];
+//color_t screen[DISPLAY_SIZE];
+color_t screen[1];
+
 
 // Custom fonts
 //#include "font.h"
@@ -175,7 +177,7 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
 }
 
 void DrawImage(int x, int y, int w, int h, image_t image) {
-	BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY);
+	BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY,0);
 
 
    /* int idx = 0;
@@ -240,7 +242,7 @@ uint16 threshold(uint16 color) {
 }
 
 // Copy a source image to the screen using the specified drawing operation
-void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t drawop) {
+void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t drawop, bool invert) {
 	if (src != NULL) {
 		uint x,y,w,h;
 		uint destDelta, srcDelta;
@@ -278,23 +280,24 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 		// Copy pixels from the image directly to the screen buffer
 		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++) {
+				color_t srccol = (invert) ? ~*srcbuf : *srcbuf;
 				switch (drawop) {
 
 					// Win32 Bit Blit Operations
 					case BLACKNESS:		*destbuf = 0x0000; break;
 					//case MERGECOPY:		*destbuf = *srcbuf & threshold(*maskbuf); break;
-					case MERGECOPY:		if (threshold(*maskbuf)) *destbuf = *srcbuf; break;
-					case MERGEPAINT:	*destbuf = *destbuf | ~*srcbuf; break;
-					case NOTSRCCOPY:	*destbuf = ~*srcbuf; break;
-					case NOTSRCERASE:	*destbuf = ~(*destbuf | *srcbuf); break;
+					case MERGECOPY:		if (threshold(*maskbuf)) *destbuf = srccol; break;
+					case MERGEPAINT:	*destbuf = *destbuf | ~srccol; break;
+					case NOTSRCCOPY:	*destbuf = ~srccol; break;
+					case NOTSRCERASE:	*destbuf = ~(*destbuf | srccol); break;
 					case PATCOPY:		*destbuf |= threshold(*maskbuf); break;
 					case PATINVERT:		*destbuf = *destbuf ^ threshold(*maskbuf); break;
-					case PATPAINT:		*destbuf = *destbuf | ~*srcbuf | threshold(*maskbuf); break;
+					case PATPAINT:		*destbuf = *destbuf | ~srccol | threshold(*maskbuf); break;
 					case SRCAND:		*destbuf = *destbuf & *srcbuf; break;
-					case SRCCOPY:		*destbuf = *srcbuf; break;
-					case SRCERASE:		*destbuf = ~*destbuf & *srcbuf; break;
-					case SRCINVERT:		*destbuf = *destbuf ^ *srcbuf; break;
-					case SRCPAINT:		*destbuf = *destbuf | *srcbuf; break;
+					case SRCCOPY:		*destbuf = srccol; break;
+					case SRCERASE:		*destbuf = ~*destbuf & srccol; break;
+					case SRCINVERT:		*destbuf = *destbuf ^ srccol; break;
+					case SRCPAINT:		*destbuf = *destbuf | srccol; break;
 					case WHITENESS:		*destbuf = 0xFFFF; break;
 
 					// Extra Operations
@@ -326,7 +329,7 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 					case ADD: {
 						color_s src, dest;
 						uint8 r,g,b;
-						src.val = *srcbuf;
+						src.val = srccol;
 						dest.val = *destbuf;
 
 						r = dest.r + src.r;
@@ -344,7 +347,7 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 					case SUBTRACT: {
 						color_s src, dest;
 						int8 r,g,b;
-						src.val = ~*srcbuf;
+						src.val = srccol;
 						dest.val = *destbuf;
 
 						r = dest.r;
@@ -367,7 +370,7 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 					case BLEND: {
 						//TODO: Optimise
 						color_s src, dest;
-						src.val = *srcbuf;
+						src.val = srccol;
 						dest.val = *destbuf;
 
 						dest.r = dest.r/2 + src.r/2;
