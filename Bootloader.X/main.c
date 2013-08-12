@@ -58,25 +58,15 @@
 
 /** INCLUDES *******************************************************/
 #include "./USB/usb.h"
-#include "HardwareProfile.h"
+#include "MyHardwareProfile.h"
 #include "./USB/usb_function_hid.h"
 
 /** CONFIGURATION **************************************************/
 
-#define __PIC24FJ256DA206__
-//#define __PIC24FJ256DA210__
+_CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
+_CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV8 & IESO_OFF) // For 32MHz OSC
+_CONFIG3(0xFFFF);
 
-#if defined(PIC24FJ256DA210_DEV_BOARD)
-    #ifdef __PIC24FJ256DA206__ //Defined by MPLAB when using 24FJ256GB110 device
-    _CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
-    _CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_ON & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV8 & IESO_OFF)
-
-    #else
-        #error No hardware board defined, see "HardwareProfile.h" and __FILE__
-    #endif
-#else
-    #warning No hardware board defined, see "HardwareProfile.h".  Please define configuration bits for your board here.
-#endif
 
 
 
@@ -263,8 +253,6 @@ int main(void)
     mInitSwitch2();
     mInitAllLEDs();
 
-    mLED_1 = 1;
-
     /*if(sw2 == 1)
     {
         __asm__("goto 0x1400");
@@ -323,16 +311,24 @@ int main(void)
  *******************************************************************/
 static void InitializeSystem(void)
 {
-  	#if defined(__PIC24FJ256DA210__)
-		//ANSA = 0x0000;
-		ANSB = 0x0000;
-		ANSC = 0x0000;
-		ANSD = 0x0000;
-		//ANSE = 0x0000;
-		ANSF = 0x0000;
-		ANSG = 0x0000;
-	#endif        
 
+    ANSB = 0x0000;
+    ANSC = 0x0000;
+    ANSD = 0x0000;
+    ANSF = 0x0000;
+    ANSG = 0x0000;
+
+    // Reference Clock Out
+    //_RODIV = 0b0101;  // 1MHz
+    //_ROEN = 1;
+
+    //TRISGbits.TRISG2 = 1;
+    //TRISGbits.TRISG3 = 1;
+    //_LATG2 = 1;
+    //_LATG3 = 1;
+
+    _CN83PUE = 1;   //D+
+    //_CN84PUE = 1; //D-
 
     #if defined(PIC24FJ256DA210_DEV_BOARD)
     //On the PIC24FJ64GB004 Family of USB microcontrollers, the PLL will not power up and be enabled
@@ -387,6 +383,7 @@ static void InitializeSystem(void)
     #if defined(USE_SELF_POWER_SENSE_IO)
     tris_self_power = INPUT_PIN;	// See HardwareProfile.h
     #endif
+    
     
     USBDeviceInit();	//usb_device.c.  Initializes USB module SFRs and firmware
     					//variables to known states.
@@ -507,6 +504,7 @@ void BlinkUSBStatus(void)
         else if(USBDeviceState == DEFAULT_STATE)
         {
             mLED_Only_2_On();
+            //mLED_Both_Off();
         }
         else if(USBDeviceState == ADDRESS_STATE)
         {

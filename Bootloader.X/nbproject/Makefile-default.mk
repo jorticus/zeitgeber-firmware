@@ -45,11 +45,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1847356646/usb_device.o ${OBJECTDIR}/_ext/1933592704/usb_function_hid.o ${OBJECTDIR}/main.o ${OBJECTDIR}/usb_descriptors.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1847356646/usb_device.o.d ${OBJECTDIR}/_ext/1933592704/usb_function_hid.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/usb_descriptors.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/usb_device.o ${OBJECTDIR}/usb_function_hid.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/usb_descriptors.o.d ${OBJECTDIR}/usb_device.o.d ${OBJECTDIR}/usb_function_hid.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1847356646/usb_device.o ${OBJECTDIR}/_ext/1933592704/usb_function_hid.o ${OBJECTDIR}/main.o ${OBJECTDIR}/usb_descriptors.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/usb_device.o ${OBJECTDIR}/usb_function_hid.o
 
 
 CFLAGS=
@@ -73,18 +73,6 @@ MP_LINKER_FILE_OPTION=,--script=p24FJ256DA206.gld
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/1847356646/usb_device.o: C:/Microchip/Microchip/USB/usb_device.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1847356646 
-	@${RM} ${OBJECTDIR}/_ext/1847356646/usb_device.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  C:/Microchip/Microchip/USB/usb_device.c  -o ${OBJECTDIR}/_ext/1847356646/usb_device.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1847356646/usb_device.o.d"        -g -D__DEBUG -D__MPLAB_DEBUGGER_PICKIT2=1  -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1847356646/usb_device.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/_ext/1933592704/usb_function_hid.o: C:/Microchip/Microchip/USB/HID\ Device\ Driver/usb_function_hid.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1933592704 
-	@${RM} ${OBJECTDIR}/_ext/1933592704/usb_function_hid.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  "C:/Microchip/Microchip/USB/HID Device Driver/usb_function_hid.c"  -o ${OBJECTDIR}/_ext/1933592704/usb_function_hid.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1933592704/usb_function_hid.o.d"        -g -D__DEBUG -D__MPLAB_DEBUGGER_PICKIT2=1  -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1933592704/usb_function_hid.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/main.o.d 
@@ -97,19 +85,19 @@ ${OBJECTDIR}/usb_descriptors.o: usb_descriptors.c  nbproject/Makefile-${CND_CONF
 	${MP_CC} $(MP_EXTRA_CC_PRE)  usb_descriptors.c  -o ${OBJECTDIR}/usb_descriptors.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/usb_descriptors.o.d"        -g -D__DEBUG -D__MPLAB_DEBUGGER_PICKIT2=1  -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/usb_descriptors.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
+${OBJECTDIR}/usb_device.o: usb_device.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/usb_device.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  usb_device.c  -o ${OBJECTDIR}/usb_device.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/usb_device.o.d"        -g -D__DEBUG -D__MPLAB_DEBUGGER_PICKIT2=1  -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/usb_device.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/usb_function_hid.o: usb_function_hid.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/usb_function_hid.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  usb_function_hid.c  -o ${OBJECTDIR}/usb_function_hid.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/usb_function_hid.o.d"        -g -D__DEBUG -D__MPLAB_DEBUGGER_PICKIT2=1  -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/usb_function_hid.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
 else
-${OBJECTDIR}/_ext/1847356646/usb_device.o: C:/Microchip/Microchip/USB/usb_device.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1847356646 
-	@${RM} ${OBJECTDIR}/_ext/1847356646/usb_device.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  C:/Microchip/Microchip/USB/usb_device.c  -o ${OBJECTDIR}/_ext/1847356646/usb_device.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1847356646/usb_device.o.d"        -g -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1847356646/usb_device.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/_ext/1933592704/usb_function_hid.o: C:/Microchip/Microchip/USB/HID\ Device\ Driver/usb_function_hid.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1933592704 
-	@${RM} ${OBJECTDIR}/_ext/1933592704/usb_function_hid.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  "C:/Microchip/Microchip/USB/HID Device Driver/usb_function_hid.c"  -o ${OBJECTDIR}/_ext/1933592704/usb_function_hid.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1933592704/usb_function_hid.o.d"        -g -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1933592704/usb_function_hid.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/main.o.d 
@@ -121,6 +109,18 @@ ${OBJECTDIR}/usb_descriptors.o: usb_descriptors.c  nbproject/Makefile-${CND_CONF
 	@${RM} ${OBJECTDIR}/usb_descriptors.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  usb_descriptors.c  -o ${OBJECTDIR}/usb_descriptors.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/usb_descriptors.o.d"        -g -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/usb_descriptors.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/usb_device.o: usb_device.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/usb_device.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  usb_device.c  -o ${OBJECTDIR}/usb_device.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/usb_device.o.d"        -g -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/usb_device.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/usb_function_hid.o: usb_function_hid.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/usb_function_hid.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  usb_function_hid.c  -o ${OBJECTDIR}/usb_function_hid.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/usb_function_hid.o.d"        -g -omf=elf -O0 -I"C:/Microchip/Microchip" -I"C:/Microchip/Microchip/Include" -I"C:/Microchip/Microchip/Include/USB" -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/usb_function_hid.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 
