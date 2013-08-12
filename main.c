@@ -24,6 +24,8 @@
  * Peripherals/drivers may define their own interrupts.
  *
  * User-mode applications should only need access to the API code, nothing else.
+ *
+ * ERRATA (xxxDAxxx) http://ww1.microchip.com/downloads/en/DeviceDoc/80000505g.pdf
  */
 
 #include <system.h>
@@ -47,13 +49,26 @@
 #include "api/app.h"
 #include "applications/main/appmain.h"
 
-void InitializeIO() {
+// 0x0000, 0xFBFF, 0xFFFF, 0xF2DF
+// 0xFFFF, 0xFBFF, 0xFFFF, 0xF2DF
 
+// 0xFFFF, 0xFFFF, 0xFFF3, 0x7BFF
+
+//_CONFIG1(0xFFFF);
+//_CONFIG2(0xFFFF);
+//_CONFIG3(0);
+//_CONFIG4(0);
+_CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
+_CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV4 & IESO_OFF)
+_CONFIG3(0xFFFF);
+_CONFIG4(0xFFFF);
+
+void InitializeIO() {
     // Initialize all the IO pins immediately into a valid state
 
     /// Analog ///
-    _ANS(AN_VBAT) = ANALOG;
-    _ANS(AN_LIGHT) = ANALOG;
+//    _ANS(AN_VBAT) = ANALOG;
+//    _ANS(AN_LIGHT) = ANALOG;
     _TRIS(AN_VBAT) = INPUT;
     _TRIS(AN_LIGHT) = INPUT;
 
@@ -82,7 +97,7 @@ void InitializeIO() {
     /// Misc GPIO ///
     _TRIS(VMOTOR) = OUTPUT;
     _TRIS(PEIZO) = OUTPUT;
-    _TRIS(VBUS_SENSE) = INPUT;
+//    _TRIS(VBUS_SENSE) = INPUT;
     _LAT(VMOTOR) = 0;
     _LAT(PEIZO) = 0;
 
@@ -136,13 +151,19 @@ void InitializeIO() {
     PMD4 = 0xFFFF;
     PMD5 = 0xFFFF;
     PMD6 = 0xFFFF;
-
 }
 
 void Initialize() {
     InitializeIO();
 
     _LAT(LED1) = 1;
+    _LAT(LED2) = 1;
+
+    while(1) {
+        int i;
+        for (i=0; i<10000; i++);
+        _TOGGLE(LED1);
+    }
 
     // Core
 
@@ -187,7 +208,6 @@ void Initialize() {
 }
 
 int main() {
-
     Initialize();
 
     InitializeOS();

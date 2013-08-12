@@ -105,6 +105,9 @@ extern uint16 hw_dummy;
 #define _ANS(pin)            pin(_ANS_F)
 #define _ANS_F(alpha,bit)    (ANS ## alpha ## bits.ANS ## alpha ## bit)
 
+#define _TOGGLE(pin)            pin(_TOGGLE_F)
+#define _TOGGLE_F(alpha,bit)    __builtin_btg((void*)&LAT ## alpha, bit)
+
 #define _CNIEn(pin)            pin(_CNIEn_F)
 #define _CNIEn_F(alpha)    (_CN ## alpha ## IE)
 #define _CNPUE(pin)            pin(_CNPUE_F)
