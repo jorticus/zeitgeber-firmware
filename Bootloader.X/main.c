@@ -58,7 +58,7 @@
 
 /** INCLUDES *******************************************************/
 #include "./USB/usb.h"
-#include "MyHardwareProfile.h"
+#include "HardwareProfile.h"
 #include "./USB/usb_function_hid.h"
 
 /** CONFIGURATION **************************************************/
@@ -215,6 +215,7 @@ PacketToFromPC PacketFromPCBuffer;
 USB_HANDLE USBOutHandle = 0;
 USB_HANDLE USBInHandle = 0;
 BOOL blinkStatusValid = TRUE;
+BOOL isProgramming = FALSE;
 
 unsigned char MaxPageToErase;
 unsigned long ProgramMemStopAddress;
@@ -229,34 +230,65 @@ unsigned char ConfigsProtected;
 /** DECLARATIONS ***************************************************/
 #pragma code
 
-/********************************************************************
- * Function:        void main(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
- * Overview:        Main program entry point.
- *
- * Note:            None
- *******************************************************************/
-#if defined(__18CXX)
-void main(void)
-#else
-int main(void)
-#endif
-{   
-    mInitSwitch2();
-    mInitAllLEDs();
+void RunUserFirmware()
+{
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+    _CNPUE(USB_DPLUS_CN) = 0;
+    __asm__("goto 0x1400");
+}
 
-    /*if(sw2 == 1)
-    {
-        __asm__("goto 0x1400");
-    }*/
+void InitializeIO()
+{
+    ANSB = 0x0000;
+    ANSC = 0x0000;
+    ANSD = 0x0000;
+    ANSF = 0x0000;
+    ANSG = 0x0000;
+
+    /// Buttons ///
+    _TRIS(BTN1) = INPUT;
+    _TRIS(BTN2) = INPUT;
+    _TRIS(BTN3) = INPUT;
+    _TRIS(BTN4) = INPUT;
+
+    /// Status LEDs ///
+    _TRIS(LED1) = OUTPUT;
+    _TRIS(LED2) = OUTPUT;
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+
+    /// Power Supply ///
+    _TRIS(PW_STAT1) = INPUT;
+    _TRIS(PW_STAT2) = INPUT;
+    _TRIS(PW_CE) = OUTPUT;
+    _LAT(PW_CE) = 0;        // Enable charging
+
+    /// OLED ///
+    _TRIS(OL_POWER) = OUTPUT;
+    _TRIS(OL_RESET) = OUTPUT;
+    _LAT(OL_POWER) = 0;     // Disable +12V
+    _LAT(OL_RESET) = 1;     // Disable OLED
+
+    // Reference Clock Out
+    //_RODIV = 0b0101;  // 1MHz
+    //_ROEN = 1;
+
+    /// USB ///
+    _TRIS(USB_DPLUS) = INPUT;
+    _TRIS(USB_DMINUS) = INPUT;
+    _CNPUE(USB_DPLUS_CN) = 0;
+    _TRIS(USB_VBUS) = INPUT;
+}
+
+int main(void)
+{   
+    InitializeIO();
+
+    // Start main application if any of the buttons are pressed
+    if (_PORT(BTN1) || _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4)) {
+        RunUserFirmware();
+    }
 
     InitializeSystem();
 
@@ -285,52 +317,28 @@ int main(void)
 
 		// Application-specific tasks.
 		// Application related code may be added here, or in the ProcessIO() function.
-        ProcessIO();        
+        ProcessIO();
+
+        // Start main application if any of the buttons are pressed
+        if (_PORT(BTN1) || _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4)) {
+            RunUserFirmware();
+        }
     }//end while
 }//end main
 
 /********************************************************************
- * Function:        static void InitializeSystem(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        InitializeSystem is a centralize initialization
  *                  routine. All required USB initialization routines
  *                  are called from here.
  *
  *                  User application initialization routine should
  *                  also be called from here.                  
- *
- * Note:            None
  *******************************************************************/
 static void InitializeSystem(void)
 {
+    InitializeIO();
+    _LAT(LED1) = 1;
 
-    ANSB = 0x0000;
-    ANSC = 0x0000;
-    ANSD = 0x0000;
-    ANSF = 0x0000;
-    ANSG = 0x0000;
-
-    // Reference Clock Out
-    //_RODIV = 0b0101;  // 1MHz
-    //_ROEN = 1;
-
-    //TRISGbits.TRISG2 = 1;
-    //TRISGbits.TRISG3 = 1;
-    //_LATG2 = 1;
-    //_LATG3 = 1;
-
-    _CN83PUE = 1;   //D+
-    //_CN84PUE = 1; //D-
-
-    #if defined(PIC24FJ256DA210_DEV_BOARD)
     //On the PIC24FJ64GB004 Family of USB microcontrollers, the PLL will not power up and be enabled
     //by default, even if a PLL enabled oscillator configuration is selected (such as HS+PLL).
     //This allows the device to power up at a lower initial operating frequency, which can be
@@ -344,7 +352,6 @@ static void InitializeSystem(void)
     }
     
     //Device switches over automatically to PLL output after PLL is locked and ready.
-    #endif
 
 
 //	The USB specifications require that USB peripheral devices must never source
@@ -364,9 +371,7 @@ static void InitializeSystem(void)
 //	bus sense feature is optional.  This firmware can be made to use this bus
 //	sense feature by making sure "USE_USB_BUS_SENSE_IO" has been defined in the
 //	HardwareProfile.h file.    
-    #if defined(USE_USB_BUS_SENSE_IO)
-    tris_usb_bus_sense = INPUT_PIN; // See HardwareProfile.h
-    #endif
+    // USE_USB_BUS_SENSE_IO
     
 //	If the host PC sends a GetStatus (device) request, the firmware must respond
 //	and let the host know if the USB peripheral device is currently bus powered
@@ -384,20 +389,17 @@ static void InitializeSystem(void)
     tris_self_power = INPUT_PIN;	// See HardwareProfile.h
     #endif
     
-    
+    _CNPUE(USB_DPLUS_CN) = 1; // Required, though not mentioned in the datasheet.
     USBDeviceInit();	//usb_device.c.  Initializes USB module SFRs and firmware
     					//variables to known states.
     UserInit();
+
+    _LAT(LED1) = 1;
 
 }//end InitializeSystem
 
 void UserInit(void)
 {
-    //Initialize all of the LED pins
-    mInitAllLEDs();
-    
-    //Initialize all of the push buttons
-    mInitAllSwitches();
     
     //initialize the variable holding the handle for the last
     // transmission
@@ -406,32 +408,20 @@ void UserInit(void)
 
     blinkStatusValid = TRUE;
 
-	//Initialize bootloader state variables
-	MaxPageToErase = MaxPageToEraseNoConfigs;		//Assume we will not allow erase/programming of config words (unless host sends override command)
-	ProgramMemStopAddress = ProgramMemStopNoConfigs;
-	ConfigsProtected = LOCKCONFIG;					//Assume we will not erase or program the vector table at first.  Must receive unlock config bits/vectors command first.
-	BootState = IdleState;
-	ProgrammedPointer = InvalidAddress;	
-	BufferedDataIndex = 0;
+    //Initialize bootloader state variables
+    MaxPageToErase = MaxPageToEraseNoConfigs;		//Assume we will not allow erase/programming of config words (unless host sends override command)
+    ProgramMemStopAddress = ProgramMemStopNoConfigs;
+    ConfigsProtected = LOCKCONFIG;					//Assume we will not erase or program the vector table at first.  Must receive unlock config bits/vectors command first.
+    BootState = IdleState;
+    ProgrammedPointer = InvalidAddress;
+    BufferedDataIndex = 0;
 }//end UserInit
 
 
 /********************************************************************
- * Function:        void ProcessIO(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        This function is a place holder for other user
  *                  routines. It is a mixture of both USB and
  *                  non-USB tasks.
- *
- * Note:            None
  *******************************************************************/
 void ProcessIO(void)
 {   
@@ -450,16 +440,6 @@ void ProcessIO(void)
 
 
 /********************************************************************
- * Function:        void BlinkUSBStatus(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        BlinkUSBStatus turns on and off LEDs 
  *                  corresponding to the USB device state.
  *
@@ -474,82 +454,88 @@ void BlinkUSBStatus(void)
     if(led_count == 0)led_count = 10000U;
     led_count--;
 
-    #define mLED_Both_Off()         {mLED_1_Off();mLED_2_Off();}
+    /*#define mLED_Both_Off()         {mLED_1_Off();mLED_2_Off();}
     #define mLED_Both_On()          {mLED_1_On();mLED_2_On();}
     #define mLED_Only_1_On()        {mLED_1_On();mLED_2_Off();}
-    #define mLED_Only_2_On()        {mLED_1_Off();mLED_2_On();}
+    #define mLED_Only_2_On()        {mLED_1_Off();mLED_2_On();}*/
 
-    if(USBSuspendControl == 1)
+    if (USBDeviceState == CONFIGURED_STATE) {
+        if (isProgramming) {
+            if (led_count==0) {
+                _TOGGLE(LED2);
+            }
+        } else {
+            _LAT(LED2) = 1;
+        }
+
+    } else {
+        _LAT(LED2) = 0;
+    }
+
+    /*if(USBSuspendControl == 1)
     {
         if(led_count==0)
         {
-            mLED_1_Toggle();
-            mSetLED_2(mLED_1);        // Both blink at the same time
-        }//end if
+            // Both blink at the same time
+            _TOGGLE(LED1);
+            _LAT(LED2) = _LAT(LED1);
+        }
     }
     else
     {
         if(USBDeviceState == DETACHED_STATE)
         {
-            mLED_Both_Off();
+            _LAT(LED1) = 0;
+            _LAT(LED2) = 0;
         }
         else if(USBDeviceState == ATTACHED_STATE)
         {
-            mLED_Both_On();
+            _LAT(LED1) = 1;
+            _LAT(LED2) = 1;
         }
         else if(USBDeviceState == POWERED_STATE)
         {
-            mLED_Only_1_On();
+            _LAT(LED1) = 1;
+            _LAT(LED2) = 0;
         }
         else if(USBDeviceState == DEFAULT_STATE)
         {
-            mLED_Only_2_On();
-            //mLED_Both_Off();
+            _LAT(LED1) = 0;
+            _LAT(LED2) = 1;
         }
         else if(USBDeviceState == ADDRESS_STATE)
         {
             if(led_count == 0)
             {
-                mLED_1_Toggle();
-                mLED_2_Off();
+                _TOGGLE(LED1);
+                _LAT(LED2) = 0;
             }//end if
         }
         else if(USBDeviceState == CONFIGURED_STATE)
         {
             if(led_count==0)
             {
-                mLED_1_Toggle();
-                mSetLED_2(!mLED_1);       // Alternate blink                
+                _TOGGLE(LED1);
+                _LAT(LED2) = !_LAT(LED1);
             }//end if
         }//end if(...)
     }//end if(UCONbits.SUSPND...)
+     */
 
 }//end BlinkUSBStatus
 
 
 
 /******************************************************************************
- * Function:        void ProcessIO(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        This function is a place holder for other user routines.
  *                  It is a mixture of both USB and non-USB tasks.
- *
- * Note:            None
  *****************************************************************************/
 void BootApplication(void)
 {
 	unsigned char i;
 	unsigned int j;
 	DWORD_VAL FlashMemoryValue;
-
+    
     if(BootState == IdleState)
     {
         //Are we done sending the last response.  We need to be before we 
@@ -631,9 +617,11 @@ void BootApplication(void)
 			{
 				for(ErasePageTracker = BeginPageToErase; ErasePageTracker < (MaxPageToErase + 1); ErasePageTracker++)
 				{
+                    _TOGGLE(LED2);
 					EraseFlash();
 					USBDeviceTasks(); 	//Call USBDriverService() periodically to prevent falling off the bus if any SETUP packets should happen to arrive.
 				}
+                _LAT(LED2) = 1;
 
                 NVMCONbits.WREN = 0;		//Good practice to clear WREN bit anytime we are not expecting to do erase/write operations, further reducing probability of accidental activation.
 				BootState = IdleState;				
@@ -641,6 +629,8 @@ void BootApplication(void)
 				break;
 			case PROGRAM_DEVICE:
 			{
+                _LAT(LED2) = 0;
+                
 				if(ProgrammedPointer == (unsigned long)InvalidAddress)
 					ProgrammedPointer = PacketFromPC.Address;
 				
@@ -666,6 +656,8 @@ void BootApplication(void)
 				break;
 			case PROGRAM_COMPLETE:
 			{
+                _LAT(LED2) = 1;
+
 				WriteFlashSubBlock();
 				ProgrammedPointer = InvalidAddress;		//Reinitialize pointer to an invalid range, so we know the next PROGRAM_DEVICE will be the start address of a contiguous section.
 				BootState = IdleState;
@@ -706,7 +698,8 @@ void BootApplication(void)
 				{
 					Nop();
 				}
-				Reset();
+				//Reset();
+                RunUserFirmware();
 			}
 				break;
 		}//End switch
@@ -728,7 +721,12 @@ void EraseFlash(void)
 
 	asm("DISI #16");					//Disable interrupts for next few instructions for unlock sequence
 	__builtin_write_NVM();
+
+         
+
     while(NVMCONbits.WR == 1){}
+
+   
 
 //	EECON1bits.WREN = 0;  //Good practice now to clear the WREN bit, as further protection against any future accidental activation of self write/erase operations.
 }	

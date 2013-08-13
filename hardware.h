@@ -117,6 +117,12 @@ extern uint16 hw_dummy;
 
 ////////// GPIO Configuration //////////////////////////////////////////////////
 
+/// USB ///
+#define USB_DPLUS(R)    R(G,2)
+#define USB_DMINUS(R)   R(G,3)
+#define USB_VBUS(R)     R(F,7)
+#define USB_DPLUS_CN(CN)    CN(83) // Pull-up required for USB enumeration?
+
 /// OLED ///
 #define OL_E(R)        R(E,0)
 #define OL_RW(R)       R(E,1)

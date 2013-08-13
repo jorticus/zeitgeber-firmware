@@ -42,93 +42,26 @@
 #ifndef HARDWARE_PROFILE_ZEITGEBER_H
 #define HARDWARE_PROFILE_ZEITGEBER_H
 
+// Import hardware configuration from main project
+#include <..\hardware.h>
+
+
+//#define USE_SELF_POWER_SENSE_IO
+//#define tris_self_power     TRISAbits.TRISA2    // Input
+#define self_power          1
+
+
+//#define USE_USB_BUS_SENSE_IO
+//#define tris_usb_bus_sense  TRISFbits.TRISF7    // Input
+#define USB_BUS_SENSE       _PORT(USB_VBUS)
+
+//Uncomment this to make the output HEX of this project
+//   to be able to be bootloaded using the HID bootloader
+//#define PROGRAMMABLE_WITH_USB_HID_BOOTLOADER
+
 #define PIC24FJ256DA210_DEV_BOARD
 
-    /*******************************************************************/
-    /******** USB stack hardware selection options *********************/
-    /*******************************************************************/
-    //This section is the set of definitions required by the MCHPFSUSB
-    //  framework.  These definitions tell the firmware what mode it is
-    //  running in, and where it can find the results to some information
-    //  that the stack needs.
-    //These definitions are required by every application developed with
-    //  this revision of the MCHPFSUSB framework.  Please review each
-    //  option carefully and determine which options are desired/required
-    //  for your application.
+#define CLOCK_FREQ 32000000
 
-    //#define USE_SELF_POWER_SENSE_IO
-    #define tris_self_power     TRISAbits.TRISA2    // Input
-    #define self_power          1
-
-    //#define USE_USB_BUS_SENSE_IO
-    #define tris_usb_bus_sense  TRISFbits.TRISF7    // Input
-    #define USB_BUS_SENSE       PORTFbits.RF7
-   
-    //Uncomment this to make the output HEX of this project 
-    //   to be able to be bootloaded using the HID bootloader
-    //#define PROGRAMMABLE_WITH_USB_HID_BOOTLOADER
-
-    /*******************************************************************/
-    /*******************************************************************/
-    /*******************************************************************/
-    /******** Application specific definitions *************************/
-    /*******************************************************************/
-    /*******************************************************************/
-    /*******************************************************************/
-
-    /** Board definition ***********************************************/
-    //These defintions will tell the main() function which board is
-    //  currently selected.  This will allow the application to add
-    //  the correct configuration bits as wells use the correct
-    //  initialization functions for the board.  These defitions are only
-    //  required in the stack provided demos.  They are not required in
-    //  final application design.
-    #define DEMO_BOARD YOUR_DEMO_BOARD
-    #define YOUR_DEMO_BOARD
-    #define CLOCK_FREQ 32000000
-
-    /** LED ************************************************************/
-    #define mInitAllLEDs()      TRISEbits.TRISE6 = 0; TRISGbits.TRISG6 = 0;
-    
-    #define mLED_1              LATGbits.LATG8
-    #define mLED_2              LATEbits.LATE6
-    #define mLED_3              
-    #define mLED_4              
-
-    #define mGetLED_1()         mLED_1
-    #define mGetLED_2()         mLED_2
-    #define mGetLED_3()         1
-    #define mGetLED_4()         1
-    
-    #define mLED_1_On()         mLED_1 = 1;
-    #define mLED_2_On()         mLED_2 = 1;
-    #define mLED_3_On()         
-    #define mLED_4_On()        
-    
-    #define mLED_1_Off()        mLED_1 = 0;
-    #define mLED_2_Off()        mLED_2 = 0;
-    #define mLED_3_Off()        
-    #define mLED_4_Off()        
-    
-    #define mLED_1_Toggle()     mLED_1 = !mLED_1;
-    #define mLED_2_Toggle()     mLED_2 = !mLED_2;
-    #define mLED_3_Toggle()     
-    #define mLED_4_Toggle() 
-
-    #define mSetLED_1(in)         mLED_1 = in
-    #define mSetLED_2(in)         mLED_2 = in
-    #define mSetLED_3(in)         
-    #define mSetLED_4(in)             
-    
-    /** SWITCH *********************************************************/
-    #define mInitSwitch2()      {TRISBbits.TRISB14 = 1;}
-    #define mInitSwitch3()      {TRISDbits.TRISD11 = 1;}
-    #define mInitAllSwitches()  mInitSwitch2();mInitSwitch3();
-    #define sw2                 PORTBbits.RB14
-    #define sw3                 PORTDbits.RD11
-
-    /** I/O pin definitions ********************************************/
-    #define INPUT_PIN 1
-    #define OUTPUT_PIN 0
 
 #endif  //HARDWARE_PROFILE_PIC24FJ64GB004_PIM_H

@@ -58,10 +58,10 @@
 //_CONFIG2(0xFFFF);
 //_CONFIG3(0);
 //_CONFIG4(0);
-_CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
-_CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV4 & IESO_OFF)
-_CONFIG3(0xFFFF);
-_CONFIG4(0xFFFF);
+//_CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
+//_CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV4 & IESO_OFF)
+//_CONFIG3(0xFFFF);
+//_CONFIG4(0xFFFF);
 
 void InitializeIO() {
     // Initialize all the IO pins immediately into a valid state
@@ -81,6 +81,7 @@ void InitializeIO() {
     _TRIS(OL_POWER) = OUTPUT;
     OL_DATA_TRIS &= ~OL_DATA_MASK; // D0..D7 output
     _LAT(OL_POWER) = 0;          // OLED supply off
+    _LAT(OL_RESET) = 1;          // Disable OLED
     
     /// Buttons ///
     _TRIS(BTN1) = INPUT;
@@ -111,7 +112,7 @@ void InitializeIO() {
     _TRIS(PW_STAT1) = INPUT;
     _TRIS(PW_STAT2) = INPUT;
     _TRIS(PW_CE) = OUTPUT;
-    _LAT(PW_CE) = 0;        // Disable charging
+    _LAT(PW_CE) = 0;        // Enable charging
 
     /// Bluetooth ///
     _TRIS(BT_MISO) = INPUT;
@@ -133,6 +134,12 @@ void InitializeIO() {
     _CNPUE(BTN4_CN) = 1;
     _CNPUE(SDA_CN) = 1;
     _CNPUE(SCL_CN) = 1;
+
+    /// USB ///
+    _TRIS(USB_DPLUS) = INPUT;
+    _TRIS(USB_DMINUS) = INPUT;
+    _TRIS(USB_VBUS) = INPUT;
+    //_CNPUE(USB_DPLUS_CN) = 1; // Required when USB is enabled
 
     /// Peripheral Pin Select ///
     // BT_MISO : SDI
@@ -156,13 +163,14 @@ void InitializeIO() {
 void Initialize() {
     InitializeIO();
 
-    _LAT(LED1) = 1;
+    _LAT(LED1) = 0;
     _LAT(LED2) = 1;
 
     while(1) {
-        int i;
-        for (i=0; i<10000; i++);
+        UINT32 i;
+        for (i=0; i<100000; i++);
         _TOGGLE(LED1);
+        _TOGGLE(LED2);
     }
 
     // Core
