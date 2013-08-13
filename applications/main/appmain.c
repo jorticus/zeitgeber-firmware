@@ -17,10 +17,8 @@
 
 // Sample 128x128 image
 // 5:6:5 16-bit pixel format, RGB ordering
-#include "tools/wolf.h"
-//PROGMEM uint16* wolf_bytes = (PROGMEM uint16*)&wolf_image; 
-
-const image_t wolf_image = {wolf_bytes, WOLF_WIDTH, WOLF_HEIGHT};
+//#include "tools/wolf.h"
+//const PROGMEM image_t wolf_image = {wolf_bytes, WOLF_WIDTH, WOLF_HEIGHT};
 
 ////////// App Definition //////////////////////////////////////////////////////
 
@@ -54,9 +52,9 @@ void appmain_Draw() {
 
 	//DrawImage(0,0,DISPLAY_WIDTH,DISPLAY_HEIGHT,wolf_image);
 
-	DrawImage(0,0, 0,0, wolf_image);
+	//DrawImage(0,0, 0,0, wallpaper);
 
-	BitBlit(&wolf_image, NULL, 32,32, 0,0, 0,0, MERGECOPY);
+	//BitBlit(&wolf_image, NULL, 32,32, 0,0, 0,0, MERGECOPY);
 
 
 	//i++;

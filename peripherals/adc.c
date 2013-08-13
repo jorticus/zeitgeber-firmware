@@ -34,7 +34,7 @@
 
 volatile uint8 adc_values[ADC_CHANNELS];
 volatile adc_status_t adc_status[ADC_CHANNELS];
-proc_t adc_callbacks[ADC_CHANNELS];
+adc_conversion_cb adc_callbacks[ADC_CHANNELS];
 //uint8 adc_channels = 0;
 
 ////////// Local Variables /////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ uint16 vref = VREF;
 
 void adc_enable();
 void adc_disable();
-void adc_calibrate();
+void adc_Calibrate();
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
@@ -62,7 +62,7 @@ void adc_init() {
     adc_enable();
 
     // Calibrate against the internal bandgap reference
-    adc_calibrate();
+    adc_Calibrate();
 
     //adc_disable();
     //AD1CON1bits.ADON = 1;
