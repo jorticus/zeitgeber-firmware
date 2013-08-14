@@ -14,8 +14,9 @@
 ////////// Variables ///////////////////////////////////////////////////////////
 
 // Internal screen buffer
-//color_t screen[DISPLAY_SIZE];
-color_t screen[1];
+#pragma udata
+color_t __attribute__((far)) screen[1];
+//color_t screen[1];
 
 
 // Custom fonts
@@ -25,6 +26,7 @@ color_t screen[1];
 
 // Uncomment to rotate the screen 90 deg clockwise
 //#define ROTATE90
+#pragma code
 
 
 ////////// Utilities ///////////////////////////////////////////////////////////
@@ -39,7 +41,17 @@ int abs(int v) {
 void UpdateDisplay() {
     //TODO: Copy screen buffer to OLED display
     // or are there more efficient ways of updating the display? (by region?)
-	ssd1351_UpdateScreen((uint8*)screen, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	//ssd1351_UpdateScreen((uint8*)screen, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+
+    ssd1351_SetCursor(0,0);
+
+    uint x,y;
+    uint i;
+    for (i=0; i<(DISPLAY_WIDTH*DISPLAY_HEIGHT); i++) {
+        color_t c = screen[i];
+        ssd1351_data((c & 0xFF00) >> 8);
+        ssd1351_data(c & 0x00FF);
+    }
 }
 
 ////////// Low Level Functions /////////////////////////////////////////////////
@@ -67,8 +79,12 @@ INLINE uint byte_index(uint8 x, uint8 y) {
 // Set a single pixel to be black (0) or white (1)
 
 void SetPixel(uint8 x, uint8 y, color_t color) {
-    uint idx = byte_index(x,y);
-	screen[idx] = color;
+    //uint idx = byte_index(x,y);
+	//screen[idx] = color;
+
+    ssd1351_SetCursor(x,y);
+    ssd1351_data((color & 0xFF00) >> 8);
+    ssd1351_data(color & 0x00FF);
 }
 
 // Invert the colour of a pixel (XOR)
@@ -177,8 +193,15 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
 }
 
 void DrawImage(int x, int y, int w, int h, image_t image) {
-	BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY,0);
+	//BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY,0);
 
+    color_t* c = &image.pixels[0];
+    uint ix,iy;
+    for (iy=0; iy<h; iy++) {
+        for (ix=0; ix<w; ix++) {
+            SetPixel(ix,iy,(*c++));
+        }
+    }
 
    /* int idx = 0;
     int mask = 1;

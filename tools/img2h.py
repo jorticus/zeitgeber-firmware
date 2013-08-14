@@ -4,7 +4,7 @@ import os.path
 from PIL import Image
 
 IMG_FILENAME = 'gaben.jpg'
-SIZE = (128,128)
+SIZE = (64,64)
 
 SAVE_OUTPUT_IMAGE = False
 

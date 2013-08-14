@@ -11,6 +11,7 @@
 #include "hardware.h"
 #include "ssd1351.h"
 #include "peripherals/ssd1351p.h"
+#include "api/graphics/gfx.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
@@ -74,22 +75,38 @@ const uint8 gamma_lut[] = {
     0x96, 0x9B, 0xA0, 0xA5, 0xAA, 0xAF, 0xB4
 };
 
+#define DISPLAY_WIDTH 128
+#define DISPLAY_HEIGHT 128
+
+void ssd1351_FillScreen(color_t c) ;
+
 ////////// Methods /////////////////////////////////////////////////////////////
 
 bool ssd1351_Test() {
     // Check that we can communicate with the display
 
-    _LAT(OL_RESET) = 0;
+    //_LAT(OL_RESET) = 0;
 
-    //Delay?
+    UINT32 i;
+    for (i=0; i<100000; i++);
+
+
 
     // Master contrast is 0b1111 on reset
     ssd1351_command(CMD_MASTER_CONTRAST);
+    //ssd1351_command(CMD_FRONT_CLOCK_DIV);
+
+    for (i=0; i<1000; i++);
+
+    //ssd1351_read();
+
+    for (i=0; i<1000; i++);
+
     uint8 value = ssd1351_read();
 
-    _LAT(OL_RESET) = 1;
+    //_LAT(OL_RESET) = 1;
 
-    return value ? true : false;
+    return (value == 0b1111) ? true : false;
 }
 
 void ssd1351_PowerOn() {
@@ -97,11 +114,25 @@ void ssd1351_PowerOn() {
 
     //NOTE: ssd1351_command(x) is equivalent to ssd1351_sendv(x, 0)
 
+    //ssd1351_command(CMD_DISPLAY_ON);
+    //return;
+   // ssd1351_write(0xAA);
+    //return;
+    UINT32 i;
+    
+    _LAT(OL_RESET) = 1;
+    for (i=0; i<10000; i++);
     _LAT(OL_RESET) = 0;
+    for (i=0; i<100000; i++);
+    _LAT(OL_RESET) = 1;
+    for (i=0; i<100000; i++);
+
 
     // Unlock locked commands
     ssd1351_sendv(CMD_SET_COMMAND_LOCK,         1, 0x12);
     ssd1351_sendv(CMD_SET_COMMAND_LOCK,         1, 0xB1);
+
+    ssd1351_sendv(CMD_SET_GPIO, 1,0x0F);
     
     // Turn off display
     ssd1351_command(CMD_DISPLAY_OFF);
@@ -111,15 +142,17 @@ void ssd1351_PowerOn() {
     ssd1351_sendv(CMD_SET_MUX_RATIO,            1, 0x7F);   // Display row configuration (interlaced)
     ssd1351_sendv(CMD_SET_DISPLAY_OFFSET,       1, 0x00);
     ssd1351_sendv(CMD_SET_DISPLAY_START_LINE,   1, 0x00);
-    ssd1351_sendv(CMD_COLORDEPTH,               1, 0xB4); //0x74
+    ssd1351_sendv(CMD_COLORDEPTH,               1, 0x74); //0x74: 65K color, 0xB4: 262K color, 0x34: 256 color
     ssd1351_sendv(CMD_SET_GPIO,                 1, 0x00);                   // Disable GPIO
     ssd1351_sendv(CMD_FUNCTION_SELECTION,       1, 0x01);
-    ssd1351_sendv(CMD_SET_VSL,                  3, 0xA0, 0xB5, 0x55);       // External VSL
+    //ssd1351_sendv(CMD_FUNCTION_SELECTION,       1, 0x00);
+    //ssd1351_sendv(CMD_SET_VSL,                  3, 0xA0, 0xB5, 0x55);       // External VSL
+    ssd1351_sendv(CMD_SET_VSL,                  3, 0xA2, 0xB5, 0x55);       // Internal VSL
 
     // Contrast/gamma display settings
     ssd1351_sendv(CMD_SET_CONTRAST,             3, 0xC8, 0x80, 0xC8);   // R,G,B contrast values
     ssd1351_sendv(CMD_MASTER_CONTRAST,          1, 0x0F);            // Full master contrast
-    ssd1351_sendbuf(CMD_GRAYSCALE_LUT,          (uint8*)gamma_lut, sizeof(gamma_lut));
+    //ssd1351_sendbuf(CMD_GRAYSCALE_LUT,          (uint8*)gamma_lut, sizeof(gamma_lut));
 
     ssd1351_sendv(CMD_SET_PHASE_LENGTH,         1, 0x32);
     ssd1351_sendv(CMD_ENHANCE_DRIVING_SCHEME,   3, 0xA4, 0x00, 0x00);
@@ -137,6 +170,9 @@ void ssd1351_PowerOn() {
     _LAT(OL_POWER) = 1;
     
     ssd1351_DisplayOn();
+
+    ssd1351_FillScreen(COLOR(0,0,0));
+    //ssd1351_command(0xA5); // Screen all on
 }
 
 void ssd1351_DisplayOn() {
@@ -164,10 +200,33 @@ void ssd1351_ClearScreen() {
     //TODO: How do we clear the screen?
 }
 
+void ssd1351_SetCursor(uint x, uint y) {
+    ssd1351_command(CMD_WRITE_RAM);
+    ssd1351_sendv(CMD_SET_COLUMN_ADDR, 2,x, DISPLAY_WIDTH-1);
+    ssd1351_sendv(CMD_SET_ROW_ADDR, 2,y, DISPLAY_HEIGHT-1);
+    ssd1351_command(CMD_WRITE_RAM);
+
+}
+void ssd1351_FillScreen(color_t c) {
+    ssd1351_SetCursor(0,0);
+
+    uint x,y;
+    for (y=0; y<DISPLAY_WIDTH; y++) {
+        for (x=0; x<DISPLAY_WIDTH; x++) {
+            ssd1351_data((c & 0xFF00) >> 8);
+            ssd1351_data(c & 0x00FF);
+        }
+    }
+
+
+}
+
+
+
 //TODO: How to write pixels to the screen?
 // Can we implement efficient modes of just writing a windowed region of the display?
 // Can we do a Read-Modify-Write on existing pixels?
 
 void ssd1351_UpdateScreen(uint8* buf, uint8 w, uint8 h) {
-	//onDisplayUpdate(buf, w, h);
+
 }

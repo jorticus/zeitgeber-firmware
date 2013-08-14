@@ -235,6 +235,11 @@ void RunUserFirmware()
     _LAT(LED1) = 0;
     _LAT(LED2) = 0;
     _CNPUE(USB_DPLUS_CN) = 0;
+
+    // Wait for button to be released
+    while (_PORT(BTN1) || _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4))
+        ;
+    
     __asm__("goto 0x1400");
 }
 
@@ -459,6 +464,8 @@ void BlinkUSBStatus(void)
     #define mLED_Only_1_On()        {mLED_1_On();mLED_2_Off();}
     #define mLED_Only_2_On()        {mLED_1_Off();mLED_2_On();}*/
 
+   // _LAT(LED1) = _PORT(USB_VBUS);
+
     if (USBDeviceState == CONFIGURED_STATE) {
         if (isProgramming) {
             if (led_count==0) {
@@ -471,6 +478,8 @@ void BlinkUSBStatus(void)
     } else {
         _LAT(LED2) = 0;
     }
+
+    //TODO: Could RunUserFirmware(); when USB becomes detached.
 
     /*if(USBSuspendControl == 1)
     {

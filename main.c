@@ -48,6 +48,13 @@
 // User-mode applications
 #include "api/app.h"
 #include "applications/main/appmain.h"
+#include "drivers/ssd1351.h"
+
+#include "api/graphics/gfx.h"
+#include "tools/DSC09748.h"
+//#include "gui/icons/bat.h"
+
+const image_t img = {DSC09748_bytes, DSC09748_WIDTH, DSC09748_HEIGHT};
 
 // 0x0000, 0xFBFF, 0xFFFF, 0xF2DF
 // 0xFFFF, 0xFBFF, 0xFFFF, 0xF2DF
@@ -128,10 +135,10 @@ void InitializeIO() {
     _CNIEn(INTA_CN) = 1;
 
     /// Pin Pull Ups ///
-    _CNPUE(BTN1_CN) = 1;
+    /*_CNPUE(BTN1_CN) = 1;
     _CNPUE(BTN2_CN) = 1;
     _CNPUE(BTN3_CN) = 1;
-    _CNPUE(BTN4_CN) = 1;
+    _CNPUE(BTN4_CN) = 1;*/
     _CNPUE(SDA_CN) = 1;
     _CNPUE(SCL_CN) = 1;
 
@@ -160,17 +167,76 @@ void InitializeIO() {
     PMD6 = 0xFFFF;
 }
 
+BOOL displayOn = TRUE;
+
+void CheckButtons() {
+    UINT32 i;
+     // Execute bootloader if USB cable is plugged in and a button is pressed
+    if (/*_PORT(USB_VBUS) && */( _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4))) {
+        _LAT(LED1) = 0; _LAT(LED2) = 0;
+        for (i=0; i<100000; i++);
+        while ( _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4));
+        asm("reset");
+    }
+
+    if (_PORT(BTN1)) {
+        displayOn = !displayOn;
+        if (displayOn)
+            ssd1351_DisplayOn();
+        else
+            ssd1351_DisplayOff();
+
+        for (i=0; i<100000; i++);
+    }
+}
+
 void Initialize() {
     InitializeIO();
 
-    _LAT(LED1) = 0;
+    //NOTE: VBUS doesn't do what I want it to do.
+    // Since it's used to charge the li-ion, the charger chip keeps voltage on VBUS for a few seconds.
+    // PW_STAT1 goes LOW when the USB is connected, but it probably can't be used as the VBUS status signal.
+    // Maybe a pull down resistor on VBUS would help?
+
+    _LAT(LED1) = 1;
     _LAT(LED2) = 1;
+
+    _LAT(LED1) = InitializeOled();
+    _LAT(LED2) = 0;
+
+    DrawString("Loading...", 16,16, WHITE);
+    DrawImage(0,0,img.width,img.height,img);
+
+
+    while (1) {
+        UINT32 i;
+        for (i=0; i<100000; i++);
+        //_TOGGLE(LED1);
+
+        //_TOGGLE(LED2);
+
+        CheckButtons();
+    }
 
     while(1) {
         UINT32 i;
         for (i=0; i<100000; i++);
-        _TOGGLE(LED1);
-        _TOGGLE(LED2);
+        //_TOGGLE(LED1);
+        //_TOGGLE(LED2);
+
+        // Display charging status
+        //                  VBUS    STAT1   STAT2
+        // Precharge        1       0       0
+        // Fast charge      1       0       1
+        // Charge done      1       1       0
+        // Fault            1       1       1
+        // Sleep            0       1       1
+        _LAT(LED1) = !_PORT(PW_STAT1);
+        _LAT(LED2) = !_PORT(PW_STAT2);
+
+        // isCharging = (VBUS && !STAT1)
+
+        CheckButtons();
     }
 
     // Core

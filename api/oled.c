@@ -23,12 +23,16 @@ bool InitializeOled() {
     //TODO: Test display for communication by attempting to communicate
 
     // Fully power on the display
-    OledPowerOn();
+    //OledPowerOn();
+    
+    ssd1351_PowerOn();
+
+    //ssd1351_DisplayOn();
 
     // Show loading message/image
     //TODO
 
-    return true;
+   return ssd1351_Test();
 }
 
 void OledProcess() {
