@@ -55,7 +55,8 @@ pixels = ["0x%.4x" % (
     (p[0]*32/256) << 11 | (p[1]*64/256) << 5 | (p[2]*32/256)
 ) for p in pixels]
 #dataformat = 'const uint16 __attribute__((space(prog)))'
-dataformat = 'uint16 PROGMEM'
+dataformat = 'uint16 __eds__'
+attr = '__attribute__((space(prog)))'
 byte_multiplier = 2
 
 # 256 color (3:3:2) format (8 bits, 1 byte per pixel)
@@ -78,7 +79,7 @@ f.write("#define %s_WIDTH\t%d\n" % (IMG_NAME.upper(), DISP_WIDTH))
 f.write("#define %s_HEIGHT\t%d\n" % (IMG_NAME.upper(), DISP_HEIGHT))
 f.write("#define {0}_SIZE\t({0}_WIDTH * {0}_HEIGHT * {1})".format(IMG_NAME.upper(), byte_multiplier))
 f.write("\n")
-f.write("%s %s_bytes[%d] = {\n" % (dataformat, IMG_NAME, size))
+f.write("%s %s_bytes[%d] %s = {\n" % (dataformat, IMG_NAME, size, attr))
 
 try:
     i = 0
@@ -89,7 +90,8 @@ try:
 
 
 finally:
-    f.write("};")
+    f.write("};\n")
+    f.write("const image_t img_%s = {%s_bytes, %s_WIDTH, %s_HEIGHT};\n" % (IMG_NAME, IMG_NAME, IMG_NAME.upper(), IMG_NAME.upper()))
     f.close()
 
 

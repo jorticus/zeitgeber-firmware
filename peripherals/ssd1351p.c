@@ -41,34 +41,21 @@ void ssd1351_write(char c) {
     mDataTrisWrite();
     _LAT(OL_RW) = WRITE;
     _LAT(OL_E) = 1;
-    Nop();
     _LAT(OL_CS) = 0;
-    Nop();
 
     // Write data out
     BYTE b = c;
-    _LATD7 = (b & 0b1); b >>= 1;    //1
-    _LATD6 = (b & 0b1); b >>= 1;    //1
-    _LATD5 = (b & 0b1); b >>= 1;    //1
-    _LATD4 = (b & 0b1); b >>= 1;    //1
-    _LATD3 = (b & 0b1); b >>= 1;    //0
-    _LATD2 = (b & 0b1); b >>= 1;    //1
-    _LATD1 = (b & 0b1); b >>= 1;    //0
-    _LATD0 = (b & 0b1);             //1
-
-    for (i=0; i<200; i++);
+    _LATD7 = (b & 0b1); b >>= 1;
+    _LATD6 = (b & 0b1); b >>= 1;
+    _LATD5 = (b & 0b1); b >>= 1;
+    _LATD4 = (b & 0b1); b >>= 1;
+    _LATD3 = (b & 0b1); b >>= 1;
+    _LATD2 = (b & 0b1); b >>= 1;
+    _LATD1 = (b & 0b1); b >>= 1;
+    _LATD0 = (b & 0b1);
 
     _LAT(OL_CS) = 1;
-
-    for (i=0; i<100; i++);
-
     _LAT(OL_E) = 0;
-
-    for (i=0; i<100; i++);
-
-    //_LAT(OL_CS) = 1;
-
-    //for (i=0; i<10000; i++);
 }
 void ssd1351_writebuf(char* buf, uint size) {
     uint i;
@@ -109,7 +96,7 @@ char ssd1351_read() {
 
     _LAT(OL_CS) = 1;
 
-    Nop();
+   // Nop();
 
     _LAT(OL_E) = 0;
     Nop();

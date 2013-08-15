@@ -167,7 +167,7 @@
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>
-        <property key="scalar-model" value="small-scalar"/>
+        <property key="scalar-model" value="large-scalar"/>
         <property key="use-cci" value="false"/>
       </C30>
       <C30-AS>

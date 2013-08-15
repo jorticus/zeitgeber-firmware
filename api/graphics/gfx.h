@@ -43,13 +43,14 @@ typedef uint16 color_t;
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 128
 
-#define DISPLAY_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT*sizeof(color_t))
+//#define DISPLAY_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT*sizeof(color_t))
+#define DISPLAY_SIZE (DISPLAY_WIDTH*DISPLAY_HEIGHT)
 
 
 //////////////////////////////////
 
 typedef struct {
-    color_t *pixels;
+    __eds__ color_t *pixels;
     int width;
     int height;
 } image_t;
@@ -112,7 +113,7 @@ extern void ClearImage();
 extern void DrawBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t fill);
 extern void DrawRoundedBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t fill);
 extern void DrawLine(int x0, int y0, int x1, int y1, color_t color);
-extern void DrawImage(int x, int y, int w, int h, image_t image);
+extern void DrawImage(int x, int y, image_t image);
 //extern image_t OffsetImage(int x, int y, image_t image);
 void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t rop, bool invert);
 

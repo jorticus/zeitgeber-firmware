@@ -3,8 +3,8 @@ import sys
 import os.path
 from PIL import Image
 
-IMG_FILENAME = 'gaben.jpg'
-SIZE = (64,64)
+IMG_FILENAME = 'fluffy.jpg'
+SIZE = (128,128)
 
 SAVE_OUTPUT_IMAGE = False
 

@@ -14,9 +14,7 @@
 ////////// Variables ///////////////////////////////////////////////////////////
 
 // Internal screen buffer
-#pragma udata
-color_t __attribute__((far)) screen[1];
-//color_t screen[1];
+__eds__ color_t screen[DISPLAY_SIZE] __attribute__((space(eds),section("eds1"),address(0x8000),eds));
 
 
 // Custom fonts
@@ -25,7 +23,7 @@ color_t __attribute__((far)) screen[1];
 //extern unsigned int font_size;
 
 // Uncomment to rotate the screen 90 deg clockwise
-//#define ROTATE90
+#define ROTATE180
 #pragma code
 
 
@@ -39,19 +37,7 @@ int abs(int v) {
 ////////// Device Dependant Functions //////////////////////////////////////////
 
 void UpdateDisplay() {
-    //TODO: Copy screen buffer to OLED display
-    // or are there more efficient ways of updating the display? (by region?)
-	//ssd1351_UpdateScreen((uint8*)screen, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-
-    ssd1351_SetCursor(0,0);
-
-    uint x,y;
-    uint i;
-    for (i=0; i<(DISPLAY_WIDTH*DISPLAY_HEIGHT); i++) {
-        color_t c = screen[i];
-        ssd1351_data((c & 0xFF00) >> 8);
-        ssd1351_data(c & 0x00FF);
-    }
+    ssd1351_UpdateScreen(screen, DISPLAY_SIZE);
 }
 
 ////////// Low Level Functions /////////////////////////////////////////////////
@@ -65,11 +51,7 @@ void ClearImage() {
 }
 
 INLINE uint byte_index(uint8 x, uint8 y) {
-#ifdef ROTATE90
-	return ((DISPLAY_HEIGHT-y-1) + (x*DISPLAY_WIDTH));
-#else
-	return (x + (y * DISPLAY_WIDTH));
-#endif
+    return (x + (y * DISPLAY_WIDTH));
 }
 
 /*INLINE int bit_index(uint8 x) {
@@ -79,12 +61,8 @@ INLINE uint byte_index(uint8 x, uint8 y) {
 // Set a single pixel to be black (0) or white (1)
 
 void SetPixel(uint8 x, uint8 y, color_t color) {
-    //uint idx = byte_index(x,y);
-	//screen[idx] = color;
-
-    ssd1351_SetCursor(x,y);
-    ssd1351_data((color & 0xFF00) >> 8);
-    ssd1351_data(color & 0x00FF);
+    uint idx = byte_index(x,y);
+	screen[idx] = color;
 }
 
 // Invert the colour of a pixel (XOR)
@@ -192,14 +170,14 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
     }
 }
 
-void DrawImage(int x, int y, int w, int h, image_t image) {
+void DrawImage(int x, int y, image_t image) {
 	//BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY,0);
 
-    color_t* c = &image.pixels[0];
+    __eds__ color_t* c = &image.pixels[0];
     uint ix,iy;
-    for (iy=0; iy<h; iy++) {
-        for (ix=0; ix<w; ix++) {
-            SetPixel(ix,iy,(*c++));
+    for (iy=0; iy<image.height; iy++) {
+        for (ix=0; ix<image.width; ix++) {
+            SetPixel(ix+x,iy+y,(*c++));
         }
     }
 
@@ -237,21 +215,6 @@ void DrawImage(int x, int y, int w, int h, image_t image) {
     }*/
 }
 
-// Return the image offset by some amount
-// IMPORTANT: x must be a multiple of 8 (0,8,16,...)
-
-image_t OffsetImage(int x, int y, image_t image) {
-	int offset;
-
-    x >>= 8;
-
-    offset = x + (y * image.width);
-
-    //image_t new_image = {&image.pixels[offset], image.width - x, image.height - y};
-
-    //return new_image;
-}
-
 
 INLINE uint max(uint a, uint b) {
 	return (a < b) ? b : a;
@@ -269,7 +232,7 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 	if (src != NULL) {
 		uint x,y,w,h;
 		uint destDelta, srcDelta;
-		color_t *srcbuf, *destbuf, *maskbuf;
+		__eds__ color_t *srcbuf, *destbuf, *maskbuf;
 
 		if (width == 0) width = src->width;
 		if (height == 0) height = src->height;

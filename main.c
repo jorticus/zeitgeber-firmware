@@ -51,10 +51,23 @@
 #include "drivers/ssd1351.h"
 
 #include "api/graphics/gfx.h"
-#include "tools/DSC09748.h"
+
 //#include "gui/icons/bat.h"
 
-const image_t img = {DSC09748_bytes, DSC09748_WIDTH, DSC09748_HEIGHT};
+//#include "tools/DSC09748.h"
+//const image_t img = {DSC09748_bytes, DSC09748_WIDTH, DSC09748_HEIGHT};
+
+//#include "tools/fluffy.h"
+//const image_t img = {fluffy_bytes, FLUFFY_WIDTH,  FLUFFY_HEIGHT};
+
+#include "gui/Wallpapers/wallpaper8.h"
+#define wallpaper img_wallpaper8
+
+#include <gui/statusbar.h>
+
+//#include "tools/wolf.h"
+//const image_t img = {wolf_bytes, WOLF_WIDTH,  WOLF_HEIGHT};
+
 
 // 0x0000, 0xFBFF, 0xFFFF, 0xF2DF
 // 0xFFFF, 0xFBFF, 0xFFFF, 0xF2DF
@@ -172,7 +185,7 @@ BOOL displayOn = TRUE;
 void CheckButtons() {
     UINT32 i;
      // Execute bootloader if USB cable is plugged in and a button is pressed
-    if (/*_PORT(USB_VBUS) && */( _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4))) {
+    if (_PORT(USB_VBUS) && ( _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4))) {
         _LAT(LED1) = 0; _LAT(LED2) = 0;
         for (i=0; i<100000; i++);
         while ( _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4));
@@ -204,8 +217,13 @@ void Initialize() {
     _LAT(LED1) = InitializeOled();
     _LAT(LED2) = 0;
 
-    DrawString("Loading...", 16,16, WHITE);
-    DrawImage(0,0,img.width,img.height,img);
+    
+    DrawImage(0,0,wallpaper);
+    BitBlit(&img_statusbar, NULL, 0,0, 0,0, 0,0, ADD,0);
+    SetFontSize(2);
+    DrawString("OLED Watch", 8,56, BLACK);
+
+    UpdateDisplay();
 
 
     while (1) {

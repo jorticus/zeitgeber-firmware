@@ -10,6 +10,8 @@
 #ifndef SSD1351_H
 #define	SSD1351_H
 
+#include "api/graphics/gfx.h"
+
 // Check that we can communicate with the display
 extern bool ssd1351_Test();
 
@@ -34,6 +36,12 @@ extern void ssd1351_SetContrast(uint8 contrast);
 extern void ssd1351_ClearScreen();
 
 // Draw pixels to the screen
-void ssd1351_UpdateScreen(uint8* buf, uint8 w, uint8 h);
+void ssd1351_UpdateScreen(__eds__ uint16 *buf, uint size);
+
+// Set the current cursor position
+void ssd1351_SetCursor(uint x, uint y) ;
+
+// Fill the screen with a colour
+void ssd1351_FillScreen(color_t c) ;
 
 #endif	/* SSD1351_H */
