@@ -14,8 +14,11 @@
 
 #define VREF 3300 //mV  //TODO: Calibrate
 
-//TODO: Define available ADC channels
-// or should this be in hardware.h ???
+// Additional analog channels
+#define AN_VBG2     24
+#define AN_VBG      25
+#define AN_VCAP     26
+#define AN_VBG6     27
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
@@ -25,7 +28,11 @@ typedef void (*adc_conversion_cb)(uint16);
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-extern void adc_init();
+void adc_init();
+void adc_enable();
+void adc_disable();
+uint adc_Read(uint8 channel);
+void adc_SetBandgap(bool enabled);
 
 // Optionally register a callback for the ADC channel. Set to NULL to disable callback
 // WARNING: Called from within an ISR, take care to make sure it's thread-safe!

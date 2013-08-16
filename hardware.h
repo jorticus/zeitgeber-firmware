@@ -180,9 +180,11 @@ extern uint16 hw_dummy;
 #define BT_RDYN_CN(CN) CN(28)
 
 /// Analog ///
-#define AN_VBAT(R)     R(B,0)    // AN0
+#define ANR_VBAT(R)     R(B,0)    // AN0
 //#define AN_TEMP(R)     R(B,1)    // AN1  // Not implemented in Rev2
-#define AN_LIGHT(R)    R(B,2)    // AN2
+#define ANR_LIGHT(R)    R(B,2)    // AN2
+#define AN_VBAT         0
+#define AN_LIGHT        2
 
 // AN3 (RB3), AN4 (RB4), RD9 are broken out on testpads
 
