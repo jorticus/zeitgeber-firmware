@@ -45,7 +45,7 @@ void appmain_Process() {
 
 // Called periodically when isForeground==true (30Hz)
 void appmain_Draw() {
-	static uint i = 0;
+//	static uint i = 0;
     //NOTE: Even though it is not enforced, it is recommended to only draw within the specified bounds
 
     //TODO: Provide some way to draw to the statusbar at the top of the display

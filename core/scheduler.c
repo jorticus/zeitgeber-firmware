@@ -44,7 +44,7 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
 void ProcessTasks() {
     uint i;
     //uint time = 0; // TODO: system tick
-    uint next_task = 3000; //TODO: MAX_INT
+//    uint next_task = 3000; //TODO: MAX_INT
 
     for (i=0; i<num_tasks; i++) {
         task_t* task = &tasks[i];

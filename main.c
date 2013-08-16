@@ -60,10 +60,15 @@
 //#include "tools/fluffy.h"
 //const image_t img = {fluffy_bytes, FLUFFY_WIDTH,  FLUFFY_HEIGHT};
 
-#include "gui/Wallpapers/wallpaper8.h"
-#define wallpaper img_wallpaper8
+#include "gui/Wallpapers/wallpaper.h"
+#define wallpaper img_wallpaper
 
 #include <gui/statusbar.h>
+
+#include <gui/icons/battery_50.h>
+
+#include <gui/icons/bat.h>
+
 
 //#include "tools/wolf.h"
 //const image_t img = {wolf_bytes, WOLF_WIDTH,  WOLF_HEIGHT};
@@ -89,8 +94,8 @@ void InitializeIO() {
     /// Analog ///
 //    _ANS(AN_VBAT) = ANALOG;
 //    _ANS(AN_LIGHT) = ANALOG;
-    _TRIS(AN_VBAT) = INPUT;
-    _TRIS(AN_LIGHT) = INPUT;
+    _TRIS(ANR_VBAT) = INPUT;
+    _TRIS(ANR_LIGHT) = INPUT;
 
     /// OLED ///
     _TRIS(OL_E) = OUTPUT;
@@ -203,6 +208,19 @@ void CheckButtons() {
     }
 }
 
+const char* chgstat[] = {
+    NULL,               // VBUS    STAT1   STAT2   Index
+    NULL,               //
+    NULL,               //
+    "Sleep",            // 0       1       1       3
+    "Precharge",        // 1       0       0       4
+    "Fastcharge",       // 1       0       1       5
+    "Done",             // 1       1       0       6
+    "Fault"             // 1       1       1       7
+};
+
+extern const uint8 bitreverse[256];
+#include "api/graphics/font.h"
 void Initialize() {
     InitializeIO();
 
@@ -217,21 +235,54 @@ void Initialize() {
     _LAT(LED1) = InitializeOled();
     _LAT(LED2) = 0;
 
+    _CPDIV = 0b00; //CPU prescaler
+
+
+    adc_init();
+    adc_enable();
+
     
-    DrawImage(0,0,wallpaper);
-    BitBlit(&img_statusbar, NULL, 0,0, 0,0, 0,0, ADD,0);
+    //
+    //BitBlit(&img_statusbar, NULL, 0,0, 0,0, 0,0, ADD,0);
+    
     SetFontSize(2);
-    DrawString("OLED Watch", 8,56, BLACK);
+    SetFont(fonts.f5x5);
+    //DrawString("OLED Watch", 8,56, WHITE);
 
-    UpdateDisplay();
 
 
+    BYTE i = 0;
+    UINT x = 0;
     while (1) {
-        UINT32 i;
-        for (i=0; i<100000; i++);
-        //_TOGGLE(LED1);
+        if (displayOn) {
+            ClearImage();
 
-        //_TOGGLE(LED2);
+            DrawImage(0,0,wallpaper);
+             BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
+
+            char s[10];
+            utoa(s, i, 16);
+            DrawString(s, 8,70, WHITE);
+            utoa(s, bitreverse[i], 16);
+            DrawString(s, 8,90, WHITE);
+
+            i++;
+
+            BYTE chg = (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
+            DrawString(chgstat[chg], 8,8, WHITE);
+
+            utoa(s, i, 10);
+            x = 8;
+            x = DrawString("VBAT: ", x,24,WHITE);
+            x = DrawString(s,        x,24, WHITE);
+            //DrawString("V", x,24, WHITE);
+
+            //_LAT(LED2) = 0;
+
+            UpdateDisplay();
+
+            //_LAT(LED2) = 1;
+        }
 
         CheckButtons();
     }
