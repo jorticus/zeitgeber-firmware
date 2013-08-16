@@ -21,7 +21,7 @@
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-extern void ssd1351_write(char c);
+extern void ssd1351_write(BYTE c);
 extern void ssd1351_writebuf(char* buf, uint size);
 extern char ssd1351_read();
 
