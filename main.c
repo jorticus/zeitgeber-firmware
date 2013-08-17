@@ -79,14 +79,11 @@
 
 // 0xFFFF, 0xFFFF, 0xFFF3, 0x7BFF
 
-//_CONFIG1(0xFFFF);
-//_CONFIG2(0xFFFF);
-//_CONFIG3(0);
-//_CONFIG4(0);
-//_CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
-//_CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV4 & IESO_OFF)
-//_CONFIG3(0xFFFF);
-//_CONFIG4(0xFFFF);
+#ifndef HID_BOOTLOADER
+    _CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
+    _CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV8 & IESO_OFF) // For 32MHz OSC
+    _CONFIG3(0xFFFF);
+#endif
 
 void InitializeIO() {
     // Initialize all the IO pins immediately into a valid state
@@ -189,6 +186,7 @@ BOOL displayOn = TRUE;
 
 void CheckButtons() {
     UINT32 i;
+#ifdef HID_BOOTLOADER
      // Execute bootloader if USB cable is plugged in and a button is pressed
     if (_PORT(USB_VBUS) && ( _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4))) {
         _LAT(LED1) = 0; _LAT(LED2) = 0;
@@ -196,8 +194,9 @@ void CheckButtons() {
         while ( _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4));
         asm("reset");
     }
+#endif
 
-    if (_PORT(BTN1)) {
+    if (_PORT(BTN2)) {
         displayOn = !displayOn;
         if (displayOn)
             ssd1351_DisplayOn();
@@ -208,16 +207,7 @@ void CheckButtons() {
     }
 }
 
-const char* chgstat[] = {
-    NULL,               // VBUS    STAT1   STAT2   Index
-    NULL,               //
-    NULL,               //
-    "Sleep",            // 0       1       1       3
-    "Precharge",        // 1       0       0       4
-    "Fastcharge",       // 1       0       1       5
-    "Done",             // 1       1       0       6
-    "Fault"             // 1       1       1       7
-};
+extern const char* chgstat[];
 
 extern const uint8 bitreverse[256];
 #include "api/graphics/font.h"
@@ -229,17 +219,19 @@ void Initialize() {
     // PW_STAT1 goes LOW when the USB is connected, but it probably can't be used as the VBUS status signal.
     // Maybe a pull down resistor on VBUS would help?
 
-    _LAT(LED1) = 1;
-    _LAT(LED2) = 1;
+    _CPDIV = 0b00; //CPU prescaler
+
+    //_LAT(LED1) = 1;
+    //_LAT(LED2) = 1;
 
     _LAT(LED1) = InitializeOled();
     _LAT(LED2) = 0;
 
-    _CPDIV = 0b00; //CPU prescaler
 
 
     adc_init();
     adc_enable();
+    adc_SetBandgap(true);
 
     
     //
@@ -252,6 +244,7 @@ void Initialize() {
 
 
     BYTE i = 0;
+    UINT v = 0;
     UINT x = 0;
     while (1) {
         if (displayOn) {
@@ -271,11 +264,23 @@ void Initialize() {
             BYTE chg = (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
             DrawString(chgstat[chg], 8,8, WHITE);
 
-            utoa(s, i, 10);
+            v = adc_Read(0);
+            utoa(s, v, 10);
             x = 8;
             x = DrawString("VBAT: ", x,24,WHITE);
             x = DrawString(s,        x,24, WHITE);
-            //DrawString("V", x,24, WHITE);
+
+            v = adc_Read(AN_VCAP);
+            utoa(s, v, 10);
+            x = 8;
+            x = DrawString("VCAP: ", x,38,WHITE);
+            x = DrawString(s,        x,38, WHITE);
+
+            v = adc_Read(AN_VBG);
+            utoa(s, v, 10);
+            x = 8;
+            x = DrawString("VBG:  ", x,52,WHITE);
+            x = DrawString(s,        x,52, WHITE);
 
             //_LAT(LED2) = 0;
 

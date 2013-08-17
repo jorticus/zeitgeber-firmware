@@ -44,6 +44,19 @@ bool battery_good = TRUE;
 uint battery_voltage = 0;
 uint battery_level = 0;
 
+const char* chgstat[] = {
+                        // VBUS    STAT1   STAT2   Index
+    "Battery",        // 0       0       0       0          ???
+    "Battery",         // 0       0       1       1
+    "Battery",          // 0       1       0       2
+
+    "Battery",          // 0       1       1       3
+    "Precharge",        // 1       0       0       4
+    "Charging",         // 1       0       1       5
+    "Charged",          // 1       1       0       6
+    "Fault"             // 1       1       1       7
+};
+
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializePowerMonitor() {
