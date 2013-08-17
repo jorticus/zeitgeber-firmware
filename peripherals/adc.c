@@ -75,7 +75,7 @@ void adc_enable() {
 
     AD1CON1 = ADC_FORMAT_INTG | ADC_CLK_AUTO | ADC_AUTO_SAMPLING_OFF;
     AD1CON2 = ADC_VREF_AVDD_AVSS | ADC_SCAN_OFF | ADC_INTR_EACH_CONV | ADC_ALT_BUF_OFF | ADC_ALT_INPUT_OFF;
-    AD1CON3 = ADC_CONV_CLK_SYSTEM | ADC_SAMPLE_TIME_31 | ADC_CONV_CLK_2Tcy;
+    AD1CON3 = ADC_CONV_CLK_SYSTEM | ADC_SAMPLE_TIME_31 | ADC_CONV_CLK_64Tcy;
 
     AD1CHS = ADC_CH0_NEG_SAMPLEB_VREFN | ADC_CH0_NEG_SAMPLEA_VREFN;
 
@@ -112,13 +112,14 @@ void adc_SetCallback(uint8 channel, adc_conversion_cb callback) {
 
 void adc_StartConversion(uint8 channel) {
 
-    _CH0SA = channel; // MUX A
-
     if (!mAdcEnabled)
         adc_enable();
 
     adc_status[channel] = adcConverting;
+    
     // Start ADC conversion on the specified channel
+    _CH0SA = channel; // MUX A
+    AD1CON1bits.SAMP = 1;
 }
 
 // Blocking read for debugging
@@ -126,7 +127,12 @@ uint adc_Read(uint8 channel) {
     if (!mAdcEnabled)
         adc_enable();
 
-    return 0;
+    _CH0SA = channel; // MUX A
+    AD1CON1bits.SAMP = 1;
+
+    while (!AD1CON1bits.DONE);
+
+    return ADC1BUF0;
 }
 
 
