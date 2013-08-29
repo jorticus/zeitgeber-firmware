@@ -16,6 +16,7 @@
 // Internal screen buffer
 __eds__ color_t screen[DISPLAY_SIZE] __attribute__((space(eds),section("eds1"),address(0x8000),eds));
 
+drawop_t global_drawop = SRCCOPY;
 
 // Custom fonts
 //#include "font.h"
@@ -42,6 +43,115 @@ void UpdateDisplay() {
 
 ////////// Low Level Functions /////////////////////////////////////////////////
 
+
+__inline__ uint16 threshold(uint16 color) {
+	return (color > COLOR(0x7F,0x7F,0x7F)) ? 0xFFFF : 0x0000;
+}
+
+__inline__ void DrawOp(drawop_t drawop, __eds__ color_t* destbuf, __eds__ color_t* srcbuf, __eds__ color_t* maskbuf, bool invert) {
+    color_t srccol = (invert) ? ~*srcbuf : *srcbuf;
+
+    switch (drawop) {
+
+        // Win32 Bit Blit Operations
+        case BLACKNESS:		*destbuf = 0x0000; break;
+        //case MERGECOPY:		*destbuf = *srcbuf & threshold(*maskbuf); break;
+        case MERGECOPY:		if (threshold(*maskbuf)) *destbuf = srccol; break;
+        case MERGEPAINT:	*destbuf = *destbuf | ~srccol; break;
+        case NOTSRCCOPY:	*destbuf = ~srccol; break;
+        case NOTSRCERASE:	*destbuf = ~(*destbuf | srccol); break;
+        case PATCOPY:		*destbuf |= threshold(*maskbuf); break;
+        case PATINVERT:		*destbuf = *destbuf ^ threshold(*maskbuf); break;
+        case PATPAINT:		*destbuf = *destbuf | ~srccol | threshold(*maskbuf); break;
+        case SRCAND:		*destbuf = *destbuf & *srcbuf; break;
+        case SRCCOPY:		*destbuf = srccol; break;
+        case SRCERASE:		*destbuf = ~*destbuf & srccol; break;
+        case SRCINVERT:		*destbuf = *destbuf ^ srccol; break;
+        case SRCPAINT:		*destbuf = *destbuf | srccol; break;
+        case WHITENESS:		*destbuf = 0xFFFF; break;
+
+        // Extra Operations
+        //case ADD:			*destbuf += *srcbuf; break;
+        //case SUBTRACTSRC:	*destbuf = *destbuf - *srcbuf; break;
+        //case SUBTRACTDEST:	*destbuf = *srcbuf - *destbuf; break;
+
+        // Advanced Operations (Slow/Experimental)
+        /*case MULTIPLY: {
+            //TODO: Optimise
+            color_s src, dest;
+            src.val = *srcbuf;
+            dest.val = *destbuf;
+
+            dest.r = (uint32)dest.r * (uint32)src.r >> 5;
+            dest.g = (uint32)dest.g * (uint32)src.g >> 6;
+            dest.b = (uint32)dest.b * (uint32)src.b >> 5;
+
+            *destbuf = dest.val;
+        } break;*/
+
+        // Additive blending, limited
+        /*case ADDLIMIT: {
+            uint32 val = *destbuf + *srcbuf;
+            if (val > 0xFFFF) val = 0xFFFF;
+            *destbuf = val;
+        } break;*/
+
+        case ADD: {
+            color_s src, dest;
+            uint8 r,g,b;
+            src.val = srccol;
+            dest.val = *destbuf;
+
+            r = dest.r + src.r;
+            g = dest.g + src.g;
+            b = dest.b + src.b;
+
+            if (r > 0x1F) r = 0x1F;
+            if (g > 0x3F) g = 0x3F;
+            if (b > 0x1F) b = 0x1F;
+
+            dest.r = r; dest.g = g; dest.b = b;
+            *destbuf = dest.val;
+        } break;
+
+        case SUBTRACT: {
+            color_s src, dest;
+            int8 r,g,b;
+            src.val = srccol;
+            dest.val = *destbuf;
+
+            r = dest.r;
+            g = dest.g;
+            b = dest.b;
+
+            r -= src.r;
+            g -= src.g;
+            b -= src.b;
+
+            if (r < 0) r = 0;
+            if (g < 0) g = 0;
+            if (b < 0) b = 0;
+
+            dest.r = r; dest.g = g; dest.b = b;
+            *destbuf = dest.val;
+        } break;
+
+        // 50% Alpha Blend
+        case BLEND: {
+            //TODO: Optimise
+            color_s src, dest;
+            src.val = srccol;
+            dest.val = *destbuf;
+
+            dest.r = dest.r/2 + src.r/2;
+            dest.g = dest.g/2 + src.g/2;
+            dest.b = dest.b/2 + src.b/2;
+
+            *destbuf = dest.val;
+        } break;
+    }
+}
+
 void ClearImage() {
     int i;
     for (i = 0; i < DISPLAY_SIZE; i++) {
@@ -62,7 +172,8 @@ INLINE uint byte_index(uint8 x, uint8 y) {
 
 void SetPixel(uint8 x, uint8 y, color_t color) {
     uint idx = byte_index(x,y);
-	screen[idx] = color;
+	//screen[idx] = color;
+    DrawOp(global_drawop, &screen[idx], &color, NULL, false);
 }
 
 // Invert the colour of a pixel (XOR)
@@ -223,9 +334,8 @@ INLINE uint min(uint a, uint b) {
 	return (a < b) ? a : b;
 }
 
-uint16 threshold(uint16 color) {
-	return (color > COLOR(0x7F,0x7F,0x7F)) ? 0xFFFF : 0x0000;
-}
+
+
 
 // Copy a source image to the screen using the specified drawing operation
 void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t drawop, bool invert) {
@@ -266,106 +376,7 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
 		// Copy pixels from the image directly to the screen buffer
 		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++) {
-				color_t srccol = (invert) ? ~*srcbuf : *srcbuf;
-				switch (drawop) {
-
-					// Win32 Bit Blit Operations
-					case BLACKNESS:		*destbuf = 0x0000; break;
-					//case MERGECOPY:		*destbuf = *srcbuf & threshold(*maskbuf); break;
-					case MERGECOPY:		if (threshold(*maskbuf)) *destbuf = srccol; break;
-					case MERGEPAINT:	*destbuf = *destbuf | ~srccol; break;
-					case NOTSRCCOPY:	*destbuf = ~srccol; break;
-					case NOTSRCERASE:	*destbuf = ~(*destbuf | srccol); break;
-					case PATCOPY:		*destbuf |= threshold(*maskbuf); break;
-					case PATINVERT:		*destbuf = *destbuf ^ threshold(*maskbuf); break;
-					case PATPAINT:		*destbuf = *destbuf | ~srccol | threshold(*maskbuf); break;
-					case SRCAND:		*destbuf = *destbuf & *srcbuf; break;
-					case SRCCOPY:		*destbuf = srccol; break;
-					case SRCERASE:		*destbuf = ~*destbuf & srccol; break;
-					case SRCINVERT:		*destbuf = *destbuf ^ srccol; break;
-					case SRCPAINT:		*destbuf = *destbuf | srccol; break;
-					case WHITENESS:		*destbuf = 0xFFFF; break;
-
-					// Extra Operations
-					//case ADD:			*destbuf += *srcbuf; break;
-					//case SUBTRACTSRC:	*destbuf = *destbuf - *srcbuf; break;
-					//case SUBTRACTDEST:	*destbuf = *srcbuf - *destbuf; break;
-
-					// Advanced Operations (Slow/Experimental)
-					/*case MULTIPLY: {
-						//TODO: Optimise
-						color_s src, dest;
-						src.val = *srcbuf;
-						dest.val = *destbuf;
-
-						dest.r = (uint32)dest.r * (uint32)src.r >> 5;
-						dest.g = (uint32)dest.g * (uint32)src.g >> 6;
-						dest.b = (uint32)dest.b * (uint32)src.b >> 5;
-
-						*destbuf = dest.val;
-					} break;*/
-					
-					// Additive blending, limited
-					/*case ADDLIMIT: {
-						uint32 val = *destbuf + *srcbuf;
-						if (val > 0xFFFF) val = 0xFFFF;
-						*destbuf = val;
-					} break;*/
-
-					case ADD: {
-						color_s src, dest;
-						uint8 r,g,b;
-						src.val = srccol;
-						dest.val = *destbuf;
-
-						r = dest.r + src.r;
-						g = dest.g + src.g;
-						b = dest.b + src.b;
-
-						if (r > 0x1F) r = 0x1F;
-						if (g > 0x3F) g = 0x3F;
-						if (b > 0x1F) b = 0x1F;
-
-						dest.r = r; dest.g = g; dest.b = b;
-						*destbuf = dest.val;
-					} break;
-
-					case SUBTRACT: {
-						color_s src, dest;
-						int8 r,g,b;
-						src.val = srccol;
-						dest.val = *destbuf;
-
-						r = dest.r;
-						g = dest.g;
-						b = dest.b;
-
-						r -= src.r;
-						g -= src.g;
-						b -= src.b;
-
-						if (r < 0) r = 0;
-						if (g < 0) g = 0;
-						if (b < 0) b = 0;
-
-						dest.r = r; dest.g = g; dest.b = b;
-						*destbuf = dest.val;
-					} break;
-
-					// 50% Alpha Blend
-					case BLEND: {
-						//TODO: Optimise
-						color_s src, dest;
-						src.val = srccol;
-						dest.val = *destbuf;
-
-						dest.r = dest.r/2 + src.r/2;
-						dest.g = dest.g/2 + src.g/2;
-						dest.b = dest.b/2 + src.b/2;
-
-						*destbuf = dest.val;
-					} break;
-				}
+                DrawOp(drawop, destbuf, srcbuf, maskbuf, invert);
 				destbuf++; srcbuf++; maskbuf++;
 			}
 

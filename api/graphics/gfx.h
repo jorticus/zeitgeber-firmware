@@ -90,6 +90,9 @@ typedef enum {
 	BLEND,			// dest = dest*0.5 + src*0.5 (alpha blending)
 } drawop_t;
 
+
+extern drawop_t global_drawop;
+
 ///// Low Level /////
 
 #include <system.h>
