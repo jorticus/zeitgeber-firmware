@@ -11,7 +11,7 @@
 #ifndef RTC_STRINGS_H
 #define	RTC_STRINGS_H
 
-const char* days[] = {
+const char* days[7] = {
     "Sunday\0",
     "Monday\0",
     "Tuesday\0",
@@ -20,7 +20,7 @@ const char* days[] = {
     "Friday\0",
     "Saturday\0"
 };
-const char* short_days[] = {
+const char* short_days[7] = {
     "Sun\0",
     "Mon\0",
     "Tue\0",
@@ -30,7 +30,7 @@ const char* short_days[] = {
     "Sat\0"
 };
 
-const char* months[] = {
+const char* months[12] = {
     "January\0",
     "February\0",
     "March\0",
@@ -44,7 +44,7 @@ const char* months[] = {
     "November\0",
     "December\0"
 };
-const char* short_months[] = {
+const char* short_months[12] = {
     "Jan\0",
     "Feb\0",
     "Mar\0",

@@ -64,6 +64,52 @@ void rtc_init() {
 
     ClearRtcWren();
 
+    // Initialize date/time
+    rtccTime tm;
+    tm.l = 0x00000000;
+    RtccWriteTime(&tm, true);
+   /* rtccTimeDate td;
+    td.f.year = 0x13;
+    td.f.mon = 0x08;
+    td.f.mday = 0x17;
+    td.f.wday = 0x06;
+    td.f.hour = 0x16;
+    td.f.min = 0x00;
+    td.f.sec = 0x00;
+    RtccWriteTimeDate(&td, false);*/
+
+}
+
+void BcdToStr(BYTE bcd, char* s) {
+    s[0] = '0' + ((bcd & 0xF0) >> 4);
+    s[1] = '0' + (bcd & 0x0F);
+    s[2] = '\0';
+}
+
+BYTE BcdToInt(BYTE bcd) {
+    return (bcd & 0x0F) + (((bcd & 0xF0)>>4)*10);
+}
+
+void RtcTimeToStr(char* s) {
+    rtccTime tm;
+    RtccReadTime_v1(&tm);
+
+    sprintf(s, "%d:%d:%d",
+            BcdToInt(tm.f.hour),
+            BcdToInt(tm.f.min),
+            BcdToInt(tm.f.sec)
+    );
+
+    /*BcdToStr(tm.f.hour, &s[0]);
+    s[2] = ':';
+    BcdToStr(tm.f.min, &s[3]);
+    s[5] = ':';
+    BcdToStr(tm.f.sec, &s[6]);*/
+
+}
+
+void RtcDateToStr(char* s) {
+
 }
 
 void RtcSetCalibration(int8 cal) {
