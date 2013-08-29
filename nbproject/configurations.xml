@@ -46,6 +46,9 @@
         <itemPath>peripherals/spi.h</itemPath>
         <itemPath>peripherals/i2c.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f5" displayName="util" projectFiles="true">
+        <itemPath>util/vector.h</itemPath>
+      </logicalFolder>
       <itemPath>system.h</itemPath>
       <itemPath>hardware.h</itemPath>
     </logicalFolder>
@@ -91,6 +94,10 @@
         <itemPath>peripherals/i2c.c</itemPath>
         <itemPath>peripherals/spi.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="f5" displayName="util" projectFiles="true">
+        <itemPath>util/lerp.c</itemPath>
+        <itemPath>util/vector.c</itemPath>
+      </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -107,7 +114,7 @@
         <targetDevice>PIC24FJ256DA206</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PICkit2PlatformTool</platformTool>
+        <platformTool>Simulator</platformTool>
         <languageToolchain>XC16</languageToolchain>
         <languageToolchainVersion>1.11</languageToolchainVersion>
         <platform>3</platform>
@@ -231,8 +238,6 @@
         <property key="oXC16glb-macros" value=""/>
         <property key="output-file-format" value="elf"/>
       </C30Global>
-      <PICkit2PlatformTool>
-      </PICkit2PlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>

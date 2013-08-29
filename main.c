@@ -52,6 +52,7 @@
 #include "drivers/ssd1351.h"
 
 #include "api/graphics/gfx.h"
+#include "util/util.h"
 
 //#include "gui/icons/bat.h"
 
@@ -247,8 +248,6 @@ void Initialize() {
     SetFont(fonts.Stellaris);
     //DrawString("OLED Watch", 8,56, WHITE);
 
-
-
     BYTE i = 0;
     UINT v = 0;
     UINT x = 0;
@@ -257,6 +256,8 @@ void Initialize() {
             char s[10];
 
             ClearImage();
+
+            global_drawop = SRCCOPY;
 
             DrawImage(0,0,wallpaper);
             // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
@@ -325,6 +326,13 @@ void Initialize() {
 
             RtcTimeToStr(s);
             DrawString(s, 8,100,WHITE);
+
+
+            global_drawop = SUBTRACT;
+
+            uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
+            DrawRoundedBox(4,4,w,8,SHADE(220),SHADE(128));
+
 
             //_LAT(LED2) = 0;
 
