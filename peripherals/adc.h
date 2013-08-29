@@ -22,15 +22,17 @@
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
+typedef uint16 voltage_t;
+
 typedef enum { adcDone, adcConverting } adc_status_t;
 
-typedef void (*adc_conversion_cb)(uint16);
+typedef void (*adc_conversion_cb)(voltage_t);
 
 typedef struct {
     adc_conversion_cb callback;     // Callback when conversion is done
 
     // The following values are not valid if adc_status == adcConverting:
-    uint16 voltage;                 // Calibrated voltage reading
+    voltage_t voltage;                 // Calibrated voltage reading
     uint16 ach;                     // Raw channel reading
     uint16 abg;                     // Raw bandgap reading
 } adc_channel_t;
@@ -56,7 +58,7 @@ extern void adc_StartConversion(uint8 channel);
 extern volatile adc_channel_t adc_channels[ADC_CHANNELS];
 extern volatile adc_status_t adc_status;
 
-extern volatile uint16 vdd;
+extern volatile voltage_t vdd;
 
 // Poll this to tell when the channel has finished conversion
 //extern volatile adc_status_t adc_status[ADC_CHANNELS];

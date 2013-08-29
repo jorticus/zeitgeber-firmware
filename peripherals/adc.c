@@ -30,6 +30,8 @@
 
 #define mAdcEnabled (_ADC1MD==0)
 
+#define VBG_VOLTAGE 1200UL //mV - Bandgap reference voltage
+
 ////////// Global Variables ////////////////////////////////////////////////////
 
 volatile uint8 current_channel = 0;
@@ -42,7 +44,7 @@ volatile adc_status_t adc_status = adcDone;
 // Store the initial vref, then calibrate
 //uint16 vref = VREF;
 
-volatile uint16 vdd = 0; // Automatically set after any ADC conversion
+volatile voltage_t vdd = 0; // Automatically set after any ADC conversion
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
@@ -174,7 +176,7 @@ void isr _ADC1Interrupt() {
     ch->ach = ADC1BUF0;
 
     // Calibration
-    vdd = 1200UL * 1024UL / (unsigned long)ch->abg;
+    vdd = VBG_VOLTAGE * 1024UL / (unsigned long)ch->abg;
     ch->voltage = (unsigned long)vdd * (unsigned long)ch->ach / 1024;
 
     // ADC Conversion Callback
