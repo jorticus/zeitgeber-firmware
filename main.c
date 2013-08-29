@@ -29,6 +29,7 @@
  */
 
 #include <system.h>
+#include <Rtcc.h>
 #include "hardware.h"
 
 // Core
@@ -221,6 +222,8 @@ void Initialize() {
 
     _CPDIV = 0b00; //CPU prescaler
 
+    //Sleep();
+
     //_LAT(LED1) = 1;
     //_LAT(LED2) = 1;
 
@@ -231,14 +234,17 @@ void Initialize() {
 
     adc_init();
     adc_enable();
-    adc_SetBandgap(true);
+
+    rtc_init();
+
 
     
     //
     //BitBlit(&img_statusbar, NULL, 0,0, 0,0, 0,0, ADD,0);
     
-    SetFontSize(2);
-    SetFont(fonts.f5x5);
+    SetFontSize(1);
+    //SetFont(fonts.f5x5);
+    SetFont(fonts.Stellaris);
     //DrawString("OLED Watch", 8,56, WHITE);
 
 
@@ -248,39 +254,77 @@ void Initialize() {
     UINT x = 0;
     while (1) {
         if (displayOn) {
+            char s[10];
+
             ClearImage();
 
             DrawImage(0,0,wallpaper);
-             BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
+            // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
 
-            char s[10];
-            utoa(s, i, 16);
+            /*utoa(s, i, 16);
             DrawString(s, 8,70, WHITE);
             utoa(s, bitreverse[i], 16);
-            DrawString(s, 8,90, WHITE);
+            DrawString(s, 8,90, WHITE);*/
 
             i++;
 
-            BYTE chg = (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
-            DrawString(chgstat[chg], 8,8, WHITE);
+            ProcessPowerMonitor();
 
-            v = adc_Read(0);
+           
+            //DrawString(chargeStatusMessage[GetChargeStatus()], 8,8, WHITE);
+
+            /*v = adc_Read(0);
             utoa(s, v, 10);
             x = 8;
             x = DrawString("VBAT: ", x,24,WHITE);
-            x = DrawString(s,        x,24, WHITE);
+            x = DrawString(s,        x,24, WHITE);*/
 
-            v = adc_Read(AN_VCAP);
-            utoa(s, v, 10);
+            /*adc_Read(AN_VBAT);
+            */
+
+            //TODO: Reading two ADC samples next to each other produces invalid results
+            // (eg. vbat reports 3600mV instead of 4200mV)
+            //uint vbat = adc_Read(AN_VBAT) * 2;
+            //uint vcore = adc_Read(AN_VCAP);
+            //unsigned long vdd = 1200UL * 1024UL / (unsigned long)anbg;
+            //unsigned long vcore = (unsigned long)vdd * (unsigned long)ancap / 1024;
+            //unsigned long vbat = (unsigned long)vdd * (unsigned long)anbat * 2 / 1024;
+
+
+            
+            /*utoa(s, anbg, 10);
             x = 8;
-            x = DrawString("VCAP: ", x,38,WHITE);
+            x = DrawString("ANBG: ", x,24,WHITE);
+            x = DrawString(s,        x,24, WHITE);*/
+
+            utoa(s, vdd, 10);
+            x = 8;
+            x = DrawString("VDD: ", x,38,WHITE);
             x = DrawString(s,        x,38, WHITE);
+            x = DrawString("mV", x,38,WHITE);
 
-            v = adc_Read(AN_VBG);
-            utoa(s, v, 10);
+            utoa(s, battery_level, 10);
             x = 8;
-            x = DrawString("VBG:  ", x,52,WHITE);
-            x = DrawString(s,        x,52, WHITE);
+            x = DrawString("Bat: ", x,46,WHITE);
+            x = DrawString(s,        x,46, WHITE);
+            x = DrawString("%", x,46,WHITE);
+
+            utoa(s, battery_voltage, 10);
+            x = 8;
+            x = DrawString("VBAT: ", x,54,WHITE);
+            x = DrawString(s,        x,54, WHITE);
+            x = DrawString("mV", x,54,WHITE);
+
+
+            
+            //VBAT = 503:an = ???V
+            //VCAP = 541:an = 1.8V
+            //VBG = 356:an = 1.2V
+            //VREF = 1024:an = ???V
+            
+
+            RtcTimeToStr(s);
+            DrawString(s, 8,100,WHITE);
 
             //_LAT(LED2) = 0;
 

@@ -32,15 +32,17 @@
 
 ////////// Global Variables ////////////////////////////////////////////////////
 
-volatile uint8 adc_values[ADC_CHANNELS];
-volatile adc_status_t adc_status[ADC_CHANNELS];
-adc_conversion_cb adc_callbacks[ADC_CHANNELS];
+volatile uint8 current_channel = 0;
+volatile adc_channel_t adc_channels[ADC_CHANNELS];
+volatile adc_status_t adc_status = adcDone;
 //uint8 adc_channels = 0;
 
 ////////// Local Variables /////////////////////////////////////////////////////
 
 // Store the initial vref, then calibrate
-uint16 vref = VREF;
+//uint16 vref = VREF;
+
+volatile uint16 vdd = 0; // Automatically set after any ADC conversion
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
@@ -52,12 +54,13 @@ void adc_Calibrate();
 
 void adc_init() {
 
-    /*uint i;
+    uint i;
     for (i=0; i<ADC_CHANNELS; i++) {
-        adc_values[i] = 0;
-        adc_status[i] = adcDone;
-        adc_callbacks[i] = NULL;
-    }*/
+        adc_channels[i].callback = NULL;
+        adc_channels[i].voltage = 0;
+        adc_channels[i].abg = 0;
+        adc_channels[i].ach = 0;
+    }
 
     //adc_enable();
 
@@ -68,16 +71,25 @@ void adc_init() {
 
     //adc_disable();
     //AD1CON1bits.ADON = 1;
+
 }
 
 void adc_enable() {
     _ADC1MD = 0; // Enable ADC peripheral
 
     AD1CON1 = ADC_FORMAT_INTG | ADC_CLK_AUTO | ADC_AUTO_SAMPLING_OFF;
-    AD1CON2 = ADC_VREF_AVDD_AVSS | ADC_SCAN_OFF | ADC_INTR_EACH_CONV | ADC_ALT_BUF_OFF | ADC_ALT_INPUT_OFF;
-    AD1CON3 = ADC_CONV_CLK_SYSTEM | ADC_SAMPLE_TIME_31 | ADC_CONV_CLK_64Tcy;
+    AD1CON2 = ADC_VREF_AVDD_AVSS | ADC_SCAN_OFF | ADC_INTR_2_CONV | ADC_ALT_BUF_OFF | ADC_ALT_INPUT_ON;
+    AD1CON3 = ADC_CONV_CLK_SYSTEM | ADC_SAMPLE_TIME_31 | ADC_CONV_CLK_256Tcy;
 
     AD1CHS = ADC_CH0_NEG_SAMPLEB_VREFN | ADC_CH0_NEG_SAMPLEA_VREFN;
+
+    // Enable bandgap on mux B
+    _CH0SB = AN_VBG;
+    ANCFG = 0x03;
+
+    // Enable interrupts
+    _AD1IF = 0;
+    _AD1IE = 1;
 
     AD1CON1bits.ADON = 1;
 }
@@ -88,7 +100,7 @@ void adc_disable() {
 }
 
 
-void adc_CalibrateFinished(uint16 value) {
+/*void adc_CalibrateFinished(uint16 value) {
     // Use the measured bandgap value to correct vref
     //TODO
 }
@@ -103,11 +115,12 @@ void adc_Calibrate() {
 
     adc_SetCallback(AN_VBG, adc_CalibrateFinished);
     adc_StartConversion(AN_VBG);
-}
+}*/
 
 
 void adc_SetCallback(uint8 channel, adc_conversion_cb callback) {
-    adc_callbacks[channel] = callback;
+    //adc_callbacks[channel] = callback;
+    adc_channels[channel].callback = callback;
 }
 
 void adc_StartConversion(uint8 channel) {
@@ -115,10 +128,12 @@ void adc_StartConversion(uint8 channel) {
     if (!mAdcEnabled)
         adc_enable();
 
-    adc_status[channel] = adcConverting;
+    adc_status = adcConverting;
+    current_channel = channel;
     
     // Start ADC conversion on the specified channel
     _CH0SA = channel; // MUX A
+    AD1CON1bits.ASAM = 1;
     AD1CON1bits.SAMP = 1;
 }
 
@@ -127,12 +142,19 @@ uint adc_Read(uint8 channel) {
     if (!mAdcEnabled)
         adc_enable();
 
+    adc_status = adcConverting;
+    current_channel = channel;
+
+    volatile adc_channel_t* ch = &adc_channels[channel];
+    ch->callback = NULL;
+
     _CH0SA = channel; // MUX A
-    AD1CON1bits.SAMP = 1;
+    AD1CON1bits.ASAM = 1;
+    //AD1CON1bits.SAMP = 1;
 
-    while (!AD1CON1bits.DONE);
+    while (mAdcBusy);
 
-    return ADC1BUF0;
+    return adc_channels[channel].voltage;
 }
 
 
@@ -142,17 +164,26 @@ uint adc_Read(uint8 channel) {
 void isr _ADC1Interrupt() {
     _AD1IF = 0;
 
-    uint8 channel = 0; // TODO: Figure out which channel
-    uint16 value = 0;
+    // ADC alternates between mux A and mux B,
+    // and interrupt is triggered on every second sample.
+    // Thus ADC1BUF0=VBG and ADC1BUF1=channel
 
     // Update Global Variables
-    adc_values[channel] = value;
-    adc_status[channel] = adcDone;
+    volatile adc_channel_t* ch = &adc_channels[current_channel];
+    ch->abg = ADC1BUF1;
+    ch->ach = ADC1BUF0;
+
+    // Calibration
+    vdd = 1200UL * 1024UL / (unsigned long)ch->abg;
+    ch->voltage = (unsigned long)vdd * (unsigned long)ch->ach / 1024;
 
     // ADC Conversion Callback
-    adc_conversion_cb callback = adc_callbacks[channel];
-    if (callback != NULL) callback(value);
+    if (ch->callback != NULL) ch->callback(ch->voltage);
 
+    AD1CON1bits.ASAM = 0;
+    //AD1CON1bits.SAMP = 0;
+
+    adc_status = adcDone;
     
     // If all conversions have finished, disable the ADC
 #ifdef AUTO_DISABLE

@@ -10,9 +10,9 @@
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
-#define ADC_CHANNELS 8
+#define ADC_CHANNELS 30
 
-#define VREF 3300 //mV  //TODO: Calibrate
+//#define VREF 3300 //mV  //TODO: Calibrate
 
 // Additional analog channels
 #define AN_VBG2     24
@@ -25,6 +25,15 @@
 typedef enum { adcDone, adcConverting } adc_status_t;
 
 typedef void (*adc_conversion_cb)(uint16);
+
+typedef struct {
+    adc_conversion_cb callback;     // Callback when conversion is done
+
+    // The following values are not valid if adc_status == adcConverting:
+    uint16 voltage;                 // Calibrated voltage reading
+    uint16 ach;                     // Raw channel reading
+    uint16 abg;                     // Raw bandgap reading
+} adc_channel_t;
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
@@ -44,14 +53,18 @@ extern void adc_StartConversion(uint8 channel);
 ////////// Properties //////////////////////////////////////////////////////////
 
 // Stores the latest ADC conversion
-extern volatile uint8 adc_values[ADC_CHANNELS];
+extern volatile adc_channel_t adc_channels[ADC_CHANNELS];
+extern volatile adc_status_t adc_status;
+
+extern volatile uint16 vdd;
 
 // Poll this to tell when the channel has finished conversion
-extern volatile adc_status_t adc_status[ADC_CHANNELS];
+//extern volatile adc_status_t adc_status[ADC_CHANNELS];
 
 ////////// Macros //////////////////////////////////////////////////////////////
 
-#define mAdcChannelBusy(channel) (adc_status[channel]!=adcDone)
+//#define mAdcChannelBusy(channel) (adc_status[channel]!=adcDone)
+#define mAdcBusy (adc_status!=adcDone)
 #define mAdcValue(channel) (adc_values[channel])
 
 #endif	/* ADC_H */
