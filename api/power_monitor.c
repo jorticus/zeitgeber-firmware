@@ -33,9 +33,13 @@
 // Make hysteresis large enough to be unaffected by switching
 // peripherals off when entering deep sleep mode.
 
-#define BATTERY_0_VOLTAGE       2800 //mV
-#define BATTERY_100_VOLTAGE     4000 //mV
-// TODO: Tweak the above values. Could use a look-up table if this isn't sufficient?
+// Battery is 4200mV at full charge
+#define BATTERY_0_VOLTAGE       3600UL //mV
+#define BATTERY_100_VOLTAGE     4150UL //mV
+
+// Nominal VDD voltage is 3400mV
+#define VDD_WARN                3200 //mV
+#define VDD_SHUTDOWN            3100 //mV
 
 ////////// Globals /////////////////////////////////////////////////////////////
 
@@ -59,6 +63,12 @@ const char* chargeStatusMessage[] = {
     "Fault"             // 1       1       1       7
 };
 
+////////// Locals //////////////////////////////////////////////////////////////
+
+#define NUM_VBAT_SAMPLES 8
+uint16 vbat_history[NUM_VBAT_SAMPLES];
+uint8 vbat_idx = 0;
+
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializePowerMonitor() {
@@ -66,7 +76,17 @@ void InitializePowerMonitor() {
 }
 
 void cb_ConvertedVBat(uint16 voltage) {
-    battery_voltage = voltage * 2; // The battery voltage is divided by 2 before the ADC
+    vbat_history[vbat_idx++] = voltage * 2; // The battery voltage is divided by 2 before the ADC
+
+    if (vbat_idx == NUM_VBAT_SAMPLES)
+        vbat_idx = 0;
+
+    uint8 i;
+    uint16 avg = 0;
+    for (i=0; i<NUM_VBAT_SAMPLES; i++) {
+        avg += vbat_history[i];
+    }
+    battery_voltage = avg / NUM_VBAT_SAMPLES;
 
     //TODO: Average the voltage
 
@@ -77,8 +97,18 @@ void cb_ConvertedVBat(uint16 voltage) {
     else if (battery_voltage > BATTERY_100_VOLTAGE)
         battery_level = 100;
     else {
-       battery_level = (battery_voltage - BATTERY_0_VOLTAGE) / (BATTERY_100_VOLTAGE - BATTERY_0_VOLTAGE);
+       battery_level = (unsigned long)((unsigned long)battery_voltage - BATTERY_0_VOLTAGE) * 100UL / (unsigned long)(BATTERY_100_VOLTAGE - BATTERY_0_VOLTAGE);
     }
+
+    // Check VDD
+    /*if (vdd < VDD_WARN) {
+        // TODO: Display warning for empty battery
+    }
+    if (vdd < VDD_SHUTDOWN) {
+        // Put the system into a low-power sleep mode permenantly
+        // until the USB is connected.
+        // This assumes that it will indeed charge when USB is connected
+    }*/
 }
 
 void ProcessPowerMonitor() {
