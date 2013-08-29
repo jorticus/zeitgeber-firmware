@@ -19,6 +19,7 @@
 #include <system.h>
 #include "hardware.h"
 #include "power_monitor.h"
+#include "peripherals/adc.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
@@ -33,18 +34,19 @@
 // peripherals off when entering deep sleep mode.
 
 #define BATTERY_0_VOLTAGE       2800 //mV
-#define BATTERY_100_VOLTAGE     3800 //mV
+#define BATTERY_100_VOLTAGE     4000 //mV
 // TODO: Tweak the above values. Could use a look-up table if this isn't sufficient?
 
 ////////// Globals /////////////////////////////////////////////////////////////
 
+power_status_t power_status = pwUnknown;
 charge_status_t charge_status = chgFault;
 //battery_status_t battery_status = batFlat;
 bool battery_good = TRUE;
 uint battery_voltage = 0;
 uint battery_level = 0;
 
-const char* chgstat[] = {
+const char* chargeStatusMessage[] = {
                         // VBUS    STAT1   STAT2   Index
     "Battery",        // 0       0       0       0          ???
     "Battery",         // 0       0       1       1
@@ -63,9 +65,35 @@ void InitializePowerMonitor() {
     // Battery voltage on AN_VBAT
 }
 
-//TODO: Check STAT1/STAT2 inputs and VBAT, update status accordingly
+void cb_ConvertedVBat(uint16 voltage) {
+    battery_voltage = voltage * 2; // The battery voltage is divided by 2 before the ADC
+
+    //TODO: Average the voltage
+
+    // Calculate the battery level
+    //TODO: Could add a more advanced algorithm
+    if (battery_voltage < BATTERY_0_VOLTAGE)
+        battery_level = 0;
+    else if (battery_voltage > BATTERY_100_VOLTAGE)
+        battery_level = 100;
+    else {
+       battery_level = (battery_voltage - BATTERY_0_VOLTAGE) / (BATTERY_100_VOLTAGE - BATTERY_0_VOLTAGE);
+    }
+}
+
 void ProcessPowerMonitor() {
-	uint level;
+    // Determine the current status of the power chip
+    BYTE status = (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
+
+    if (status < 0b011) status = 0b011;
+    power_status = (power_status_t)status;
+
+    // Read battery voltage (and VDD)
+    adc_SetCallback(AN_VBAT, cb_ConvertedVBat);
+    adc_StartConversion(AN_VBAT);
+
+
+	/*uint level;
 
     // Convert the two STAT pins into a byte, then typecast directly to the charge_status enum
 #ifdef _MSC_VER
@@ -94,4 +122,9 @@ void ProcessPowerMonitor() {
     level = battery_voltage - BATTERY_0_VOLTAGE;
     level = level / (BATTERY_100_VOLTAGE - BATTERY_0_VOLTAGE);
     battery_level = level; // Atomic write
+     */
+}
+
+uint8 GetChargeStatus() {
+    return (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
 }
