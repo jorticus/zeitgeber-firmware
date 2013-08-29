@@ -95,7 +95,6 @@
         <itemPath>peripherals/spi.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f5" displayName="util" projectFiles="true">
-        <itemPath>util/lerp.c</itemPath>
         <itemPath>util/vector.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>

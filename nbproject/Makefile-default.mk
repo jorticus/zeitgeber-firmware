@@ -45,11 +45,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/util/lerp.o ${OBJECTDIR}/util/vector.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/applications/main/appmain.o.d ${OBJECTDIR}/api/graphics/font.o.d ${OBJECTDIR}/api/graphics/gfx.o.d ${OBJECTDIR}/api/bluetooth.o.d ${OBJECTDIR}/api/oled.o.d ${OBJECTDIR}/api/power_monitor.o.d ${OBJECTDIR}/api/sensors.o.d ${OBJECTDIR}/api/usb.o.d ${OBJECTDIR}/api/app.o.d ${OBJECTDIR}/api/clock.o.d ${OBJECTDIR}/api/compass.o.d ${OBJECTDIR}/core/scheduler.o.d ${OBJECTDIR}/core/cpu.o.d ${OBJECTDIR}/core/systick.o.d ${OBJECTDIR}/core/traps.o.d ${OBJECTDIR}/core/os.o.d ${OBJECTDIR}/drivers/HMC5883.o.d ${OBJECTDIR}/drivers/MMA7455.o.d ${OBJECTDIR}/drivers/ssd1351.o.d ${OBJECTDIR}/peripherals/gpio.o.d ${OBJECTDIR}/peripherals/adc.o.d ${OBJECTDIR}/peripherals/pwm.o.d ${OBJECTDIR}/peripherals/rtc.o.d ${OBJECTDIR}/peripherals/ssd1351p.o.d ${OBJECTDIR}/peripherals/i2c.o.d ${OBJECTDIR}/peripherals/spi.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/util/lerp.o.d ${OBJECTDIR}/util/vector.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/util/vector.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/applications/main/appmain.o.d ${OBJECTDIR}/api/graphics/font.o.d ${OBJECTDIR}/api/graphics/gfx.o.d ${OBJECTDIR}/api/bluetooth.o.d ${OBJECTDIR}/api/oled.o.d ${OBJECTDIR}/api/power_monitor.o.d ${OBJECTDIR}/api/sensors.o.d ${OBJECTDIR}/api/usb.o.d ${OBJECTDIR}/api/app.o.d ${OBJECTDIR}/api/clock.o.d ${OBJECTDIR}/api/compass.o.d ${OBJECTDIR}/core/scheduler.o.d ${OBJECTDIR}/core/cpu.o.d ${OBJECTDIR}/core/systick.o.d ${OBJECTDIR}/core/traps.o.d ${OBJECTDIR}/core/os.o.d ${OBJECTDIR}/drivers/HMC5883.o.d ${OBJECTDIR}/drivers/MMA7455.o.d ${OBJECTDIR}/drivers/ssd1351.o.d ${OBJECTDIR}/peripherals/gpio.o.d ${OBJECTDIR}/peripherals/adc.o.d ${OBJECTDIR}/peripherals/pwm.o.d ${OBJECTDIR}/peripherals/rtc.o.d ${OBJECTDIR}/peripherals/ssd1351p.o.d ${OBJECTDIR}/peripherals/i2c.o.d ${OBJECTDIR}/peripherals/spi.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/util/vector.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/util/lerp.o ${OBJECTDIR}/util/vector.o
+OBJECTFILES=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/util/vector.o
 
 
 CFLAGS=
@@ -235,12 +235,6 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/util/lerp.o: util/lerp.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/util 
-	@${RM} ${OBJECTDIR}/util/lerp.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  util/lerp.c  -o ${OBJECTDIR}/util/lerp.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/util/lerp.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/util/lerp.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/util/vector.o: util/vector.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/util 
 	@${RM} ${OBJECTDIR}/util/vector.o.d 
@@ -409,12 +403,6 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/main.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/util/lerp.o: util/lerp.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/util 
-	@${RM} ${OBJECTDIR}/util/lerp.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  util/lerp.c  -o ${OBJECTDIR}/util/lerp.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/util/lerp.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/util/lerp.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/util/vector.o: util/vector.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/util 

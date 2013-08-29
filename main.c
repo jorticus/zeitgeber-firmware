@@ -258,6 +258,7 @@ void Initialize() {
             ClearImage();
 
             global_drawop = SRCCOPY;
+            SetFontSize(1);
 
             DrawImage(0,0,wallpaper);
             // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
@@ -304,11 +305,7 @@ void Initialize() {
             x = DrawString(s,        x,38, WHITE);
             x = DrawString("mV", x,38,WHITE);
 
-            utoa(s, battery_level, 10);
-            x = 8;
-            x = DrawString("Bat: ", x,46,WHITE);
-            x = DrawString(s,        x,46, WHITE);
-            x = DrawString("%", x,46,WHITE);
+
 
             utoa(s, battery_voltage, 10);
             x = 8;
@@ -324,15 +321,23 @@ void Initialize() {
             //VREF = 1024:an = ???V
             
 
-            RtcTimeToStr(s);
-            DrawString(s, 8,100,WHITE);
-
-
             global_drawop = SUBTRACT;
 
             uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
-            DrawRoundedBox(4,4,w,8,SHADE(220),SHADE(128));
+            DrawRoundedBox(4,4,w,10,SHADE(220),SHADE(128));
 
+            global_drawop = ADD;
+
+            utoa(s, battery_level, 10);
+            x = 6;
+            x = DrawString(s,   x,5,SILVER);
+            x = DrawString("%", x,5,SILVER);
+
+
+            SetFontSize(2);
+
+            RtcTimeToStr(s);
+            DrawString(s, 8,100,WHITE);
 
             //_LAT(LED2) = 0;
 
