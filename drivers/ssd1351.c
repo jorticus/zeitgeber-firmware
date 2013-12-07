@@ -184,13 +184,13 @@ void ssd1351_PowerOn() {
     // Clear Screen
     ssd1351_ClearScreen();
 
-    // Turn on VCC
-    _LAT(OL_POWER) = 1;
-    
-    ssd1351_DisplayOn();
+    //ssd1351_DisplayOn();
 }
 
 void ssd1351_DisplayOn() {
+    // Turn on VCC
+    _LAT(OL_POWER) = 1;
+
     ssd1351_command(CMD_DISPLAY_ON);
 
     UINT i,j;

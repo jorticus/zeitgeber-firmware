@@ -28,11 +28,13 @@
  * ERRATA (xxxDAxxx) http://ww1.microchip.com/downloads/en/DeviceDoc/80000505g.pdf
  */
 
+#include <stdlib.h>
 #include <system.h>
 #include <Rtcc.h>
 #include "hardware.h"
 
 // Core
+#include "core/systick.h"
 #include "core/scheduler.h"
 #include "core/os.h"
 
@@ -74,6 +76,9 @@
 
 //#include "tools/wolf.h"
 //const image_t img = {wolf_bytes, WOLF_WIDTH,  WOLF_HEIGHT};
+
+#define RCON_RESET (_RCON_POR_MASK | _RCON_BOR_MASK | _RCON_WDTO_MASK | _RCON_SWR_MASK | _RCON_EXTR_MASK | _RCON_CM_MASK | _RCON_IOPUWR_MASK | _RCON_TRAPR_MASK)
+#define UNEXPECTED_RESET (_RCON_POR_MASK| _RCON_BOR_MASK | _RCON_WDTO_MASK | _RCON_CM_MASK | _RCON_IOPUWR_MASK | _RCON_TRAPR_MASK)
 
 
 // 0x0000, 0xFBFF, 0xFFFF, 0xF2DF
@@ -164,6 +169,7 @@ void InitializeIO() {
     _TRIS(USB_DMINUS) = INPUT;
     _TRIS(USB_VBUS) = INPUT;
     //_CNPUE(USB_DPLUS_CN) = 1; // Required when USB is enabled
+    _CNPUE(USB_DPLUS_CN) = 0;
 
     /// Peripheral Pin Select ///
     // BT_MISO : SDI
@@ -186,6 +192,26 @@ void InitializeIO() {
 
 BOOL displayOn = TRUE;
 
+void WatchSleep() {
+    ssd1351_DisplayOff();
+    _LAT(BT_RESET) = 1;     // Turn off Bluetooth
+    _LAT(VMOTOR) = 0;
+    _LAT(PEIZO) = 0;
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+    _LAT(OL_POWER) = 0;     // Turn off OLED supply
+    _LAT(OL_RESET) = 1;  
+
+    PMD1 = 0xFFFF;
+    PMD2 = 0xFFFF;
+    PMD3 = 0xFFFF;
+    PMD4 = 0xFFFF;
+    PMD5 = 0xFFFF;
+    PMD6 = 0xFFFF;
+
+    Sleep();
+}
+
 void CheckButtons() {
     UINT32 i;
 #ifdef HID_BOOTLOADER
@@ -202,10 +228,12 @@ void CheckButtons() {
         displayOn = !displayOn;
         if (displayOn)
             ssd1351_DisplayOn();
-        else
+        else {
             ssd1351_DisplayOff();
+            WatchSleep();
+        }
 
-        for (i=0; i<100000; i++);
+        //for (i=0; i<100000; i++);
     }
 }
 
@@ -213,8 +241,14 @@ extern const char* chgstat[];
 
 extern const uint8 bitreverse[256];
 #include "api/graphics/font.h"
+#include "core/systick.h"
 void Initialize() {
     InitializeIO();
+
+    UINT32 i;
+    UINT8 x = 8;
+    UINT8 y = 8;
+    char s[10];
 
     //NOTE: VBUS doesn't do what I want it to do.
     // Since it's used to charge the li-ion, the charger chip keeps voltage on VBUS for a few seconds.
@@ -225,12 +259,64 @@ void Initialize() {
 
     //Sleep();
 
-    //_LAT(LED1) = 1;
-    //_LAT(LED2) = 1;
 
-    _LAT(LED1) = InitializeOled();
-    _LAT(LED2) = 0;
+    //for (i=0; i<100000; i++);
 
+    _LAT(LED1) = 1;
+    _LAT(LED2) = 1;
+
+    /*while (1) {
+        UINT32 i;
+        for (i=0; i<100000; i++);
+        _TOGGLE(LED2);
+
+        CheckButtons();
+     }*/
+
+    //_LAT(PW_CE) = 1;
+
+    InitializeOled();
+    ssd1351_DisplayOn();
+
+    ClearImage();
+
+    DrawString("OLED Watch v1.0", 8, y, WHITE); y += 10;
+    //DrawString("Booting...", 8, y, WHITE); y += 10;
+    UpdateDisplay();
+
+    // Check the reset status
+    // Software resets are the only type of reset that should occur normally
+    if (RCON & UNEXPECTED_RESET) {
+        //TODO: Draw an error icon or something
+
+        if (RCONbits.BOR)
+            DrawString("RST: Brown-out", 8,y,WHITE);
+        else if (RCONbits.CM)
+            DrawString("RST: Conf Mismatch", 8,y,WHITE);
+        else if (RCONbits.IOPUWR)
+            DrawString("RST: Invalid Opcode", 8,y,WHITE);
+        else if (RCONbits.EXTR)
+            DrawString("RST: MCLR", 8,y,WHITE);
+        else if (RCONbits.POR)
+            DrawString("RST: Power-on", 8,y,WHITE);
+        else if (RCONbits.WDTO)
+            DrawString("RST: Watchdog Timeout", 8,y,WHITE);
+        else if (RCONbits.TRAPR)
+            DrawString("RST: Trap Error", 8,y,WHITE);
+        //else if (RCONbits.SWR)
+        //    DrawString("RST: Software", 8,y,WHITE);
+        else {
+            utoa(s, RCON & RCON_RESET, 16);
+            x = 8;
+            x = DrawString("RST: Unknown - ", x,y,WHITE);
+            DrawString(s, x,y,WHITE);
+        }
+        y += 10;
+
+        UpdateDisplay();
+        for (i=0; i<3000000; i++);
+    }
+    RCON &= ~RCON_RESET;
 
 
     adc_init();
@@ -238,7 +324,9 @@ void Initialize() {
 
     rtc_init();
 
+    //systick_init();
 
+    _LAT(LED2) = 0;
     
     //
     //BitBlit(&img_statusbar, NULL, 0,0, 0,0, 0,0, ADD,0);
@@ -248,12 +336,12 @@ void Initialize() {
     SetFont(fonts.Stellaris);
     //DrawString("OLED Watch", 8,56, WHITE);
 
-    BYTE i = 0;
+    //BYTE i = 0;
     UINT v = 0;
-    UINT x = 0;
+    //UINT x = 0;
     while (1) {
         if (displayOn) {
-            char s[10];
+            
 
             ClearImage();
 
@@ -263,10 +351,10 @@ void Initialize() {
             DrawImage(0,0,wallpaper);
             // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
 
-            /*utoa(s, i, 16);
-            DrawString(s, 8,70, WHITE);
-            utoa(s, bitreverse[i], 16);
-            DrawString(s, 8,90, WHITE);*/
+            //utoa(s, i, 16);
+            //DrawString(s, 8,70, WHITE);
+            //utoa(s, bitreverse[i], 16);
+            //DrawString(s, 8,90, WHITE);
 
             i++;
 
@@ -275,14 +363,12 @@ void Initialize() {
            
             //DrawString(chargeStatusMessage[GetChargeStatus()], 8,8, WHITE);
 
-            /*v = adc_Read(0);
-            utoa(s, v, 10);
-            x = 8;
-            x = DrawString("VBAT: ", x,24,WHITE);
-            x = DrawString(s,        x,24, WHITE);*/
+            //v = adc_Read(0);
+            //utoa(s, v, 10);
+            //x = 8;
+            //x = DrawString("VBAT: ", x,24,WHITE);
+            //x = DrawString(s,        x,24, WHITE);
 
-            /*adc_Read(AN_VBAT);
-            */
 
             //TODO: Reading two ADC samples next to each other produces invalid results
             // (eg. vbat reports 3600mV instead of 4200mV)
@@ -294,10 +380,10 @@ void Initialize() {
 
 
             
-            /*utoa(s, anbg, 10);
-            x = 8;
-            x = DrawString("ANBG: ", x,24,WHITE);
-            x = DrawString(s,        x,24, WHITE);*/
+//            utoa(s, systick, 10);
+//            x = 8;
+//            x = DrawString("systick: ", x,24,WHITE);
+//            x = DrawString(s,        x,24, WHITE);
 
             utoa(s, vdd, 10);
             x = 8;
@@ -321,35 +407,35 @@ void Initialize() {
             //VREF = 1024:an = ???V
             
 
-            global_drawop = SUBTRACT;
+//            global_drawop = SUBTRACT;
+//
+//            uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
+//            DrawRoundedBox(4,4,w,10,SHADE(220),SHADE(128));
+//
+//            global_drawop = ADD;
+//
+//            utoa(s, battery_level, 10);
+//            x = 6;
+//            x = DrawString(s,   x,5,SILVER);
+//            x = DrawString("%", x,5,SILVER);
+//
+//
+//            SetFontSize(2);
 
-            uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
-            DrawRoundedBox(4,4,w,10,SHADE(220),SHADE(128));
+            //RtcTimeToStr(s);
+            //DrawString(s, 8,100,WHITE);
 
-            global_drawop = ADD;
-
-            utoa(s, battery_level, 10);
-            x = 6;
-            x = DrawString(s,   x,5,SILVER);
-            x = DrawString("%", x,5,SILVER);
-
-
-            SetFontSize(2);
-
-            RtcTimeToStr(s);
-            DrawString(s, 8,100,WHITE);
-
-            //_LAT(LED2) = 0;
+            _LAT(LED1) = 0;
 
             UpdateDisplay();
 
-            //_LAT(LED2) = 1;
+            _LAT(LED1) = 1;
         }
 
         CheckButtons();
     }
 
-    while(1) {
+    /*while(1) {
         UINT32 i;
         for (i=0; i<100000; i++);
         //_TOGGLE(LED1);
@@ -368,7 +454,7 @@ void Initialize() {
         // isCharging = (VBUS && !STAT1)
 
         CheckButtons();
-    }
+    }*/
 
     // Core
 
