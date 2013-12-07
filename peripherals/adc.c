@@ -126,7 +126,7 @@ void adc_SetCallback(uint8 channel, adc_conversion_cb callback) {
 }
 
 void adc_StartConversion(uint8 channel) {
-
+    //TODO: What if we are already converting??
     if (!mAdcEnabled)
         adc_enable();
 
@@ -152,7 +152,7 @@ uint adc_Read(uint8 channel) {
 
     _CH0SA = channel; // MUX A
     AD1CON1bits.ASAM = 1;
-    //AD1CON1bits.SAMP = 1;
+    AD1CON1bits.SAMP = 1;
 
     while (mAdcBusy);
 

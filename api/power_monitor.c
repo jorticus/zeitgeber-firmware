@@ -75,7 +75,7 @@ void InitializePowerMonitor() {
     // Battery voltage on AN_VBAT
 }
 
-void cb_ConvertedVBat(uint16 voltage) {
+void cb_ConvertedVBat(voltage_t voltage) {
     vbat_history[vbat_idx++] = voltage * 2; // The battery voltage is divided by 2 before the ADC
 
     if (vbat_idx == NUM_VBAT_SAMPLES)
@@ -121,7 +121,6 @@ void ProcessPowerMonitor() {
     // Read battery voltage (and VDD)
     adc_SetCallback(AN_VBAT, cb_ConvertedVBat);
     adc_StartConversion(AN_VBAT);
-
 
 	/*uint level;
 
