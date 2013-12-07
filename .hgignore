@@ -1,0 +1,15 @@
+syntax: glob
+Bootloader.X/build
+dist
+build
+ZeitgeberEmulator/bin
+ZeitgeberEmulator/obj
+Debug
+disassembly
+ipch
+blend modes
+*.exe
+resources
+screenshots
+doc
+Bootloader Windows
