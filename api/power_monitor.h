@@ -12,24 +12,34 @@
 
 ////////// Properties //////////////////////////////////////////////////////////
 
+// Status of the BQ25010 charging chip
 typedef enum {
-    pwUnknown = 0,
-    pwBattery = 0b011,
-    pwPrecharge = 0b100,
-    pwCharging = 0b010,
-    pwCharged = 0b110,
-    pwFault = 0b111
+    chgUnknown = 0,
+    chgBattery = 0b011,
+    chgPrecharge = 0b100,
+    chgCharging = 0b010,
+    chgCharged = 0b110,
+    chgFault = 0b111
+} charge_status_t;
+extern charge_status_t charge_status;
+
+// System power stauts
+typedef enum {
+    pwBattery,
+    pwCharged,
+    pwCharging,
 } power_status_t;
 extern power_status_t power_status;
 
-// Charging status
-typedef enum { chgFault, chgDone, chgFastCharge, chgPrecharge } charge_status_t;
-//extern charge_status_t charge_status;
-
 // Battery status (if batFlat and not charging, you should turn everything off to conserve power)
-//typedef enum { batGood, batFlat } battery_status_t;
-//extern battery_status_t battery_status;
-//extern bool battery_good;
+typedef enum {
+    batFull,
+    batNormal,
+    batLow,
+    batFlat,
+    batNotConnected
+} battery_status_t;
+extern battery_status_t battery_status;
 
 // Battery voltage, in millivolts
 extern uint battery_voltage;
@@ -37,7 +47,8 @@ extern uint battery_voltage;
 // Battery level, in percent (0-100)
 extern uint battery_level;
 
-//extern const char* chargeStatusMessage[];
+extern const char* power_status_message[];
+extern const char* battery_status_message[];
 
 ////////// Methods /////////////////////////////////////////////////////////////
 

@@ -334,7 +334,7 @@ void Initialize() {
 
     rtc_init();
 
-    //systick_init();
+    systick_init();
 
     _LAT(LED2) = 0;
     
@@ -361,39 +361,17 @@ void Initialize() {
             DrawImage(0,0,wallpaper);
             // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
 
-            //utoa(s, i, 16);
-            //DrawString(s, 8,70, WHITE);
-            //utoa(s, bitreverse[i], 16);
-            //DrawString(s, 8,90, WHITE);
-
             i++;
 
             ProcessPowerMonitor();
 
-           
-            //DrawString(chargeStatusMessage[GetChargeStatus()], 8,8, WHITE);
-
-            //v = adc_Read(0);
-            //utoa(s, v, 10);
-            //x = 8;
-            //x = DrawString("VBAT: ", x,24,WHITE);
-            //x = DrawString(s,        x,24, WHITE);
-
-
             //TODO: Reading two ADC samples next to each other produces invalid results
             // (eg. vbat reports 3600mV instead of 4200mV)
-            //uint vbat = adc_Read(AN_VBAT) * 2;
-            //uint vcore = adc_Read(AN_VCAP);
-            //unsigned long vdd = 1200UL * 1024UL / (unsigned long)anbg;
-            //unsigned long vcore = (unsigned long)vdd * (unsigned long)ancap / 1024;
-            //unsigned long vbat = (unsigned long)vdd * (unsigned long)anbat * 2 / 1024;
-
-
             
-//            utoa(s, systick, 10);
-//            x = 8;
-//            x = DrawString("systick: ", x,24,WHITE);
-//            x = DrawString(s,        x,24, WHITE);
+            utoa(s, systick, 10);
+            x = 8;
+            x = DrawString("systick: ", x,24,WHITE);
+            x = DrawString(s,        x,24, WHITE);
 
             utoa(s, vdd, 10);
             x = 8;
@@ -405,10 +383,17 @@ void Initialize() {
 
             utoa(s, battery_voltage, 10);
             x = 8;
-            x = DrawString("VBAT: ", x,54,WHITE);
-            x = DrawString(s,        x,54, WHITE);
-            x = DrawString("mV", x,54,WHITE);
+            x = DrawString("VBAT: ", x,52,WHITE);
+            x = DrawString(s,        x,52, WHITE);
+            x = DrawString("mV", x,52,WHITE);
 
+
+            x = 8;
+            x = DrawString(power_status_message[power_status], x,66, WHITE);
+            x = DrawString(", ", x,66, WHITE);
+            x = DrawString(battery_status_message[battery_status], x,66, WHITE);
+            //utoa(s, charge_status, 10);
+            //DrawString(s,        x,66, WHITE);
 
             
             //VBAT = 503:an = ???V
@@ -417,23 +402,23 @@ void Initialize() {
             //VREF = 1024:an = ???V
             
 
-//            global_drawop = SUBTRACT;
-//
-//            uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
-//            DrawRoundedBox(4,4,w,10,SHADE(220),SHADE(128));
-//
-//            global_drawop = ADD;
-//
-//            utoa(s, battery_level, 10);
-//            x = 6;
-//            x = DrawString(s,   x,5,SILVER);
-//            x = DrawString("%", x,5,SILVER);
-//
-//
-//            SetFontSize(2);
+            global_drawop = SUBTRACT;
 
-            //RtcTimeToStr(s);
-            //DrawString(s, 8,100,WHITE);
+            uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
+            DrawRoundedBox(4,4,w,10,SHADE(220),SHADE(128));
+
+            global_drawop = ADD;
+
+            utoa(s, battery_level, 10);
+            x = 6;
+            x = DrawString(s,   x,5,SILVER);
+            x = DrawString("%", x,5,SILVER);
+
+
+            SetFontSize(2);
+
+            RtcTimeToStr(s);
+            DrawString(s, 8,100,WHITE);
 
             _LAT(LED1) = 0;
 

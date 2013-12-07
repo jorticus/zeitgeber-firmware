@@ -37,23 +37,27 @@
 #define BATTERY_0_VOLTAGE       3600UL //mV
 #define BATTERY_100_VOLTAGE     4150UL //mV
 
+#define BATTERY_LOW             3750UL //mV (arbitrarily chosen)
+//#define BATTERY_NOT_CONNECTED   500UL  //mV currently not possible due to the hardware
+
 // Nominal VDD voltage is 3400mV
 #define VDD_WARN                3200 //mV
 #define VDD_SHUTDOWN            3100 //mV
 
 ////////// Globals /////////////////////////////////////////////////////////////
 
-power_status_t power_status = pwUnknown;
+power_status_t power_status = pwBattery;
 charge_status_t charge_status = chgFault;
-//battery_status_t battery_status = batFlat;
+battery_status_t battery_status = batNotConnected;
+
 bool battery_good = TRUE;
 uint battery_voltage = 0;
 uint battery_level = 0;
 
-const char* chargeStatusMessage[] = {
+/*const char* chargeStatusMessage[] = {
                         // VBUS    STAT1   STAT2   Index
-    "Battery",        // 0       0       0       0          ???
-    "Battery",         // 0       0       1       1
+    "Battery",          // 0       0       0       0          ???
+    "Battery",          // 0       0       1       1
     "Battery",          // 0       1       0       2
 
     "Battery",          // 0       1       1       3
@@ -61,6 +65,20 @@ const char* chargeStatusMessage[] = {
     "Charging",         // 1       0       1       5
     "Charged",          // 1       1       0       6
     "Fault"             // 1       1       1       7
+};*/
+const char* power_status_message[] = {
+    "Battery",
+    "Fully Charged",
+    "Charging",
+    "Flat",
+    "No Battery"
+};
+const char* battery_status_message[] = {
+    "Full",
+    "Normal",
+    "Low",
+    "Flat",
+    "Not Connected"
 };
 
 ////////// Locals //////////////////////////////////////////////////////////////
@@ -88,35 +106,38 @@ void cb_ConvertedVBat(voltage_t voltage) {
     }
     battery_voltage = avg / NUM_VBAT_SAMPLES;
 
-    //TODO: Average the voltage
-
     // Calculate the battery level
     //TODO: Could add a more advanced algorithm
-    if (battery_voltage < BATTERY_0_VOLTAGE)
+    if (battery_voltage < BATTERY_0_VOLTAGE) {
         battery_level = 0;
-    else if (battery_voltage > BATTERY_100_VOLTAGE)
+        battery_status = batFlat;
+    } else if (battery_voltage > BATTERY_100_VOLTAGE) {
         battery_level = 100;
-    else {
+        battery_status = batFull;
+    } else {
        battery_level = (unsigned long)((unsigned long)battery_voltage - BATTERY_0_VOLTAGE) * 100UL / (unsigned long)(BATTERY_100_VOLTAGE - BATTERY_0_VOLTAGE);
+       if (battery_voltage < BATTERY_LOW)
+           battery_status = batLow;
+       else
+           battery_status = batNormal;
     }
-
-    // Check VDD
-    /*if (vdd < VDD_WARN) {
-        // TODO: Display warning for empty battery
-    }
-    if (vdd < VDD_SHUTDOWN) {
-        // Put the system into a low-power sleep mode permenantly
-        // until the USB is connected.
-        // This assumes that it will indeed charge when USB is connected
-    }*/
 }
 
 void ProcessPowerMonitor() {
-    // Determine the current status of the power chip
-    BYTE status = (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
 
-    if (status < 0b011) status = 0b011;
-    power_status = (power_status_t)status;
+    // Determine current power state
+    if (_PORT(USB_VBUS)) {
+        if (_PORT(PW_STAT1) == 0)
+            power_status = pwCharging;
+        else {
+            if (_PORT(PW_STAT2) == 0)
+                power_status = pwCharged;
+            else
+                power_status = pwBattery; // Actually Fault
+        }
+    } else {
+        power_status = pwBattery;
+    }
 
     // Read battery voltage (and VDD)
     adc_SetCallback(AN_VBAT, cb_ConvertedVBat);
