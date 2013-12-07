@@ -464,7 +464,7 @@ void BlinkUSBStatus(void)
     #define mLED_Only_1_On()        {mLED_1_On();mLED_2_Off();}
     #define mLED_Only_2_On()        {mLED_1_Off();mLED_2_On();}*/
 
-   // _LAT(LED1) = _PORT(USB_VBUS);
+    //_LAT(LED1) = _PORT(USB_VBUS);
 
     if (USBDeviceState == CONFIGURED_STATE) {
         if (isProgramming) {

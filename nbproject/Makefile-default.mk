@@ -45,11 +45,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/util/vector.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/applications/main/appmain.o.d ${OBJECTDIR}/api/graphics/font.o.d ${OBJECTDIR}/api/graphics/gfx.o.d ${OBJECTDIR}/api/bluetooth.o.d ${OBJECTDIR}/api/oled.o.d ${OBJECTDIR}/api/power_monitor.o.d ${OBJECTDIR}/api/sensors.o.d ${OBJECTDIR}/api/usb.o.d ${OBJECTDIR}/api/app.o.d ${OBJECTDIR}/api/clock.o.d ${OBJECTDIR}/api/compass.o.d ${OBJECTDIR}/core/scheduler.o.d ${OBJECTDIR}/core/cpu.o.d ${OBJECTDIR}/core/systick.o.d ${OBJECTDIR}/core/traps.o.d ${OBJECTDIR}/core/os.o.d ${OBJECTDIR}/drivers/HMC5883.o.d ${OBJECTDIR}/drivers/MMA7455.o.d ${OBJECTDIR}/drivers/ssd1351.o.d ${OBJECTDIR}/peripherals/gpio.o.d ${OBJECTDIR}/peripherals/adc.o.d ${OBJECTDIR}/peripherals/pwm.o.d ${OBJECTDIR}/peripherals/rtc.o.d ${OBJECTDIR}/peripherals/ssd1351p.o.d ${OBJECTDIR}/peripherals/i2c.o.d ${OBJECTDIR}/peripherals/spi.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/util/vector.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/util/vector.o ${OBJECTDIR}/main.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/applications/main/appmain.o.d ${OBJECTDIR}/api/graphics/font.o.d ${OBJECTDIR}/api/graphics/gfx.o.d ${OBJECTDIR}/api/bluetooth.o.d ${OBJECTDIR}/api/oled.o.d ${OBJECTDIR}/api/power_monitor.o.d ${OBJECTDIR}/api/sensors.o.d ${OBJECTDIR}/api/usb.o.d ${OBJECTDIR}/api/app.o.d ${OBJECTDIR}/api/clock.o.d ${OBJECTDIR}/api/compass.o.d ${OBJECTDIR}/core/scheduler.o.d ${OBJECTDIR}/core/cpu.o.d ${OBJECTDIR}/core/systick.o.d ${OBJECTDIR}/core/traps.o.d ${OBJECTDIR}/core/os.o.d ${OBJECTDIR}/drivers/HMC5883.o.d ${OBJECTDIR}/drivers/MMA7455.o.d ${OBJECTDIR}/drivers/ssd1351.o.d ${OBJECTDIR}/peripherals/gpio.o.d ${OBJECTDIR}/peripherals/adc.o.d ${OBJECTDIR}/peripherals/pwm.o.d ${OBJECTDIR}/peripherals/rtc.o.d ${OBJECTDIR}/peripherals/ssd1351p.o.d ${OBJECTDIR}/peripherals/i2c.o.d ${OBJECTDIR}/peripherals/spi.o.d ${OBJECTDIR}/util/vector.o.d ${OBJECTDIR}/main.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/util/vector.o
+OBJECTFILES=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/util/vector.o ${OBJECTDIR}/main.o
 
 
 CFLAGS=
@@ -65,11 +65,23 @@ LDLIBSOPTIONS=
 # fixDeps replaces a bunch of sed/cat/printf statements that slow down the build
 FIXDEPS=fixDeps
 
+# The following macros may be used in the pre and post step lines
+Device=PIC24FJ256DA206
+ProjectDir="C:\Users\Jared\Documents\Projects\PIC\MPLABX\Zeitgeber.X"
+ConfName=default
+ImagePath="dist\default\${IMAGE_TYPE}\Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}"
+ImageDir="dist\default\${IMAGE_TYPE}"
+ImageName="Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}"
+
 .build-conf:  ${BUILD_SUBPROJECTS}
 	${MAKE} ${MAKE_OPTIONS} -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+	@echo "--------------------------------------"
+	@echo "User defined post-build step: [${ProjectDir}\picloader program ${ImagePath} --no-verify --reset]"
+	@${ProjectDir}\picloader program ${ImagePath} --no-verify --reset
+	@echo "--------------------------------------"
 
 MP_PROCESSOR_OPTION=24FJ256DA206
-MP_LINKER_FILE_OPTION=,--script=p24FJ256DA206.gld
+MP_LINKER_FILE_OPTION=,--script="app_hid_boot_p24FJ256DA206.gld"
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
@@ -229,17 +241,17 @@ ${OBJECTDIR}/peripherals/spi.o: peripherals/spi.c  nbproject/Makefile-${CND_CONF
 	${MP_CC} $(MP_EXTRA_CC_PRE)  peripherals/spi.c  -o ${OBJECTDIR}/peripherals/spi.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/peripherals/spi.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/peripherals/spi.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/main.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/util/vector.o: util/vector.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/util 
 	@${RM} ${OBJECTDIR}/util/vector.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  util/vector.c  -o ${OBJECTDIR}/util/vector.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/util/vector.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/util/vector.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/main.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 else
 ${OBJECTDIR}/applications/main/appmain.o: applications/main/appmain.c  nbproject/Makefile-${CND_CONF}.mk
@@ -398,17 +410,17 @@ ${OBJECTDIR}/peripherals/spi.o: peripherals/spi.c  nbproject/Makefile-${CND_CONF
 	${MP_CC} $(MP_EXTRA_CC_PRE)  peripherals/spi.c  -o ${OBJECTDIR}/peripherals/spi.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/peripherals/spi.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/peripherals/spi.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/main.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/util/vector.o: util/vector.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/util 
 	@${RM} ${OBJECTDIR}/util/vector.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  util/vector.c  -o ${OBJECTDIR}/util/vector.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/util/vector.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/util/vector.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/main.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 
@@ -427,12 +439,12 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: link
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
+dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    app_hid_boot_p24FJ256DA206.gld
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
 	${MP_CC} $(MP_EXTRA_LD_PRE)  -o dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -D__DEBUG   -omf=elf -Wl,--defsym=__MPLAB_BUILD=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,--report-mem$(MP_EXTRA_LD_POST) 
 	
 else
-dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
+dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   app_hid_boot_p24FJ256DA206.gld
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
 	${MP_CC} $(MP_EXTRA_LD_PRE)  -o dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -omf=elf -Wl,--defsym=__MPLAB_BUILD=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,--report-mem$(MP_EXTRA_LD_POST) 
 	${MP_CC_DIR}\\xc16-bin2hex dist/${CND_CONF}/${IMAGE_TYPE}/Zeitgeber.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} -a  -omf=elf 

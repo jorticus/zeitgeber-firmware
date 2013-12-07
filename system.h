@@ -8,7 +8,7 @@
 #ifndef SYSTEM_H
 #define	SYSTEM_H
 
-//#define HID_BOOTLOADER
+#define HID_BOOTLOADER
 
 #ifdef WIN32
 
