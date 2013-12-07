@@ -290,18 +290,24 @@ void Initialize() {
         //TODO: Draw an error icon or something
 
         if (RCONbits.BOR)
+            // Likely cause: low battery voltage.
             DrawString("RST: Brown-out", 8,y,WHITE);
         else if (RCONbits.CM)
             DrawString("RST: Conf Mismatch", 8,y,WHITE);
         else if (RCONbits.IOPUWR)
+            // Likely cause: pointer to function pointed to an invalid memory region, so PC encountered an invalid opcode
             DrawString("RST: Invalid Opcode", 8,y,WHITE);
         else if (RCONbits.EXTR)
+            // Manual MCLR reset
             DrawString("RST: MCLR", 8,y,WHITE);
         else if (RCONbits.POR)
+            // This will only happen if powering-up from a flat battery.
             DrawString("RST: Power-on", 8,y,WHITE);
         else if (RCONbits.WDTO)
+            // This will happen if the code gets stuck in a loop somewhere
             DrawString("RST: Watchdog Timeout", 8,y,WHITE);
         else if (RCONbits.TRAPR)
+            // This will happen if a trap interrupt is triggered
             DrawString("RST: Trap Error", 8,y,WHITE);
         //else if (RCONbits.SWR)
         //    DrawString("RST: Software", 8,y,WHITE);
@@ -315,6 +321,10 @@ void Initialize() {
 
         UpdateDisplay();
         for (i=0; i<3000000; i++);
+
+        // Optionally reset back into the bootloader,
+        // to allow any problems to be fixed
+
     }
     RCON &= ~RCON_RESET;
 
