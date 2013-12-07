@@ -5,6 +5,7 @@
  * Created on 5 July 2013, 3:07 PM
  */
 
+#include <stdio.h>
 #include <system.h>
 #include <Rtcc.h>
 #include "rtc.h"

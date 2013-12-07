@@ -11,5 +11,13 @@
 #define	CPU_H
 
 
+typedef enum { 
+    cpuNormal,      // Running foreground tasks
+    cpuBackground,  // Running background tasks
+    cpuIdle,        // Idle
+    cpuSleep        // Sleeping
+} cpu_state_t;
+extern cpu_state_t cpu_state;
+
 #endif	/* CPU_H */
 
