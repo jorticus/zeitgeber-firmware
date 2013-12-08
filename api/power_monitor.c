@@ -84,9 +84,10 @@ const char* battery_status_message[] = {
 
 ////////// Locals //////////////////////////////////////////////////////////////
 
-#define NUM_VBAT_SAMPLES 8
+#define NUM_VBAT_SAMPLES 16
 uint16 vbat_history[NUM_VBAT_SAMPLES];
 uint8 vbat_idx = 0;
+uint8 vbat_count = NUM_VBAT_SAMPLES-1;
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
@@ -101,11 +102,19 @@ void cb_ConvertedVBat(voltage_t voltage) {
         vbat_idx = 0;
 
     uint8 i;
-    uint16 avg = 0;
-    for (i=0; i<NUM_VBAT_SAMPLES; i++) {
-        avg += vbat_history[i];
+    uint32 avg = 0;
+    if (vbat_count == 0) {
+        for (i=0; i<NUM_VBAT_SAMPLES; i++) {
+            avg += vbat_history[i];
+        }
+        battery_voltage = avg / NUM_VBAT_SAMPLES;
+    } else {
+        vbat_count--;
+        for (i=0; i<vbat_idx; i++) {
+            avg += vbat_history[i];
+        }
+        battery_voltage = avg / vbat_idx;
     }
-    battery_voltage = avg / NUM_VBAT_SAMPLES;
 
     // Calculate the battery level
     //TODO: Could add a more advanced algorithm
