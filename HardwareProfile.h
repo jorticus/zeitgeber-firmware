@@ -53,7 +53,7 @@
 
 //#define USE_USB_BUS_SENSE_IO
 //#define tris_usb_bus_sense  TRISFbits.TRISF7    // Input
-#define USB_BUS_SENSE       _PORT(USB_VBUS)
+#define USB_BUS_SENSE       USB_VBUS_SENSE // hardware.h
 
 //Uncomment this to make the output HEX of this project
 //   to be able to be bootloaded using the HID bootloader

@@ -12,6 +12,6 @@
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-bool InitializeUsb() {
+/*bool InitializeUsb() {
     return FALSE;
-}
+}*/

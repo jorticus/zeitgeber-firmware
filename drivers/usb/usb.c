@@ -11,7 +11,7 @@
 #include "hardware.h"
 #include "drivers/usb/usb.h"
 
-//#include "usb_config.h"
+#include "usb_config.h"
 #include "./USB/usb.h"
 #include "./USB/usb_function_hid.h"
 

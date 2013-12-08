@@ -127,10 +127,10 @@ void cb_ConvertedVBat(voltage_t voltage) {
 void ProcessPowerMonitor() {
 
     // For debugging
-    bq25010_status = (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
+    bq25010_status = (USB_VBUS_SENSE << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
 
     // Determine current power state
-    if (_PORT(USB_VBUS)) {
+    if (USB_VBUS_SENSE) {
         if (_PORT(PW_STAT1) == 0)
             power_status = pwCharging;
         else {
@@ -180,5 +180,5 @@ void ProcessPowerMonitor() {
 }
 
 uint8 GetChargeStatus() {
-    return (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
+    return (USB_VBUS_SENSE << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
 }

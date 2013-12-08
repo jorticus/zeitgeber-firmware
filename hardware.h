@@ -123,6 +123,9 @@ extern uint16 hw_dummy;
 #define USB_VBUS(R)     R(F,7)
 #define USB_DPLUS_CN(CN)    CN(83) // Pull-up required for USB enumeration?
 
+//#define USB_VBUS_SENSE _PORT(USB_VBUS)
+#define USB_VBUS_SENSE _SESVD
+
 /// OLED ///
 #define OL_E(R)        R(E,0)
 #define OL_RW(R)       R(E,1)

@@ -83,8 +83,8 @@
 //overhead somewhat, but when both buffers are used simultaneously in the
 //firmware, can offer better sustained bandwidth, especially for OUT endpoints.
 //------------------------------------------------------
-#define USB_PING_PONG_MODE USB_PING_PONG__NO_PING_PONG    //Not recommended
-//#define USB_PING_PONG_MODE USB_PING_PONG__FULL_PING_PONG    //A good all around setting
+//#define USB_PING_PONG_MODE USB_PING_PONG__NO_PING_PONG    //Not recommended
+#define USB_PING_PONG_MODE USB_PING_PONG__FULL_PING_PONG    //A good all around setting
 //#define USB_PING_PONG_MODE USB_PING_PONG__EP0_OUT_ONLY    //Another good setting
 //#define USB_PING_PONG_MODE USB_PING_PONG__ALL_BUT_EP0	    //Not recommended
 //------------------------------------------------------------------------------

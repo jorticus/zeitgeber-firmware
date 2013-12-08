@@ -197,7 +197,7 @@ void InitializeIO() {
 
 void InitializeOsc() {
 
-    //_CPDIV = 0b00; //CPU prescaler
+    _CPDIV = 0b00; //CPU prescaler
 
  	//On the PIC24FJ64GB004 Family of USB microcontrollers, the PLL will not power up and be enabled
 	//by default, even if a PLL enabled oscillator configuration is selected (such as HS+PLL).
@@ -250,7 +250,7 @@ void CheckButtons() {
     UINT32 i;
 #ifdef HID_BOOTLOADER
      // Execute bootloader if USB cable is plugged in and a button is pressed
-    if (_PORT(USB_VBUS) && (_PORT(BTN1) || _PORT(BTN4))) {
+    if (USB_VBUS_SENSE && (_PORT(BTN1) || _PORT(BTN4))) {
         _LAT(LED1) = 0; _LAT(LED2) = 0;
         for (i=0; i<100000; i++);
         while ( _PORT(BTN1) || _PORT(BTN4) );
@@ -388,7 +388,7 @@ void Initialize() {
     //UINT x = 0;
     while (1) {
         if (displayOn) {
-            
+            _TRIS(USB_VBUS) = INPUT;
 
             ClearImage();
 
@@ -467,6 +467,7 @@ void Initialize() {
                 DrawString(power_status_message[power_status], 6,5, WHITE);
             }
 
+            //DrawString((_SESVD) ? "1" : "0", 8,80, WHITE);
 
 //            global_drawop = SUBTRACT;
 //

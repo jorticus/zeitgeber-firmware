@@ -8,6 +8,6 @@
 #ifndef USB_H
 #define	USB_H
 
-extern bool InitializeUsb();
+//extern bool InitializeUsb();
 
 #endif	/* USB_H */
