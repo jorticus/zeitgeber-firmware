@@ -23,8 +23,9 @@ drawop_t global_drawop = SRCCOPY;
 //extern const font_t* active_font;
 //extern unsigned int font_size;
 
-// Uncomment to rotate the screen 90 deg clockwise
-#define ROTATE180
+// Uncomment to flip the screen vertically
+#define FLIP_DISPLAY
+
 #pragma code
 
 
@@ -161,7 +162,11 @@ void ClearImage() {
 }
 
 INLINE uint byte_index(uint8 x, uint8 y) {
+#ifdef FLIP_DISPLAY
+    return (DISPLAY_WIDTH * DISPLAY_HEIGHT) - (x + (y * DISPLAY_WIDTH)) - 1;
+#else
     return (x + (y * DISPLAY_WIDTH));
+#endif
 }
 
 /*INLINE int bit_index(uint8 x) {
