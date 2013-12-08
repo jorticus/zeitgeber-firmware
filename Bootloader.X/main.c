@@ -291,6 +291,9 @@ int main(void)
     InitializeIO();
 
     // Start main application if any of the buttons are pressed
+    // TODO: Also make it start if USB is not plugged in.
+    //   currently just checking _PORT(USB_VBUS) doesn't work, I think because
+    //   it takes a while to rise to a logic high.
     if (_PORT(BTN1) || _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4)) {
         RunUserFirmware();
     }
@@ -477,6 +480,10 @@ void BlinkUSBStatus(void)
 
     } else {
         _LAT(LED2) = 0;
+    }
+
+    if(USBDeviceState == DETACHED_STATE) {
+        RunUserFirmware();
     }
 
     //TODO: Could RunUserFirmware(); when USB becomes detached.

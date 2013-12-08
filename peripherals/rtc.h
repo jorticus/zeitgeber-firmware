@@ -32,5 +32,7 @@ extern const char* ampm[];          // am, pm
 
 extern const int days_in_month[];
 
+extern void RtcTimeToStr(char* s);
+
 #endif	/* RTC_H */
 
