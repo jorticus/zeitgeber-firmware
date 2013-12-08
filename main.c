@@ -358,7 +358,7 @@ void Initialize() {
             global_drawop = SRCCOPY;
             SetFontSize(1);
 
-            DrawImage(0,0,wallpaper);
+            //DrawImage(0,0,wallpaper);
             // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
 
             i++;
@@ -400,19 +400,40 @@ void Initialize() {
             //VCAP = 541:an = 1.8V
             //VBG = 356:an = 1.2V
             //VREF = 1024:an = ???V
-            
 
-            global_drawop = SUBTRACT;
+            // Draw the battery bar
+            uint8 w = mLerp(0,100, 0,DISPLAY_WIDTH, battery_level);
+            color_t c = WHITE;
+            switch (power_status) {
+                case pwBattery: {
+                    switch (battery_status) {
+                        case batFull: c = GREEN; break;
+                        case batNormal: c = NAVY; break;
+                        case batLow: c = RED; break;
+                        // No need to put batFlat or batNotConnected
+                        default: break;
+                    }
+                    break;
+                }
+                case pwCharged: c = GREEN; break;
+                case pwCharging: c = ORANGE; break;
+            }
+            DrawBox(0,0, w,3, c,c);
 
-            uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
-            DrawRoundedBox(4,4,w,10,SHADE(220),SHADE(128));
+            // Draw the battery status
+            if (power_status == pwBattery) {
+                utoa(s, battery_level, 10);
+                x = DrawString(s,   6,5,WHITE);
+                x = DrawString("%", x,5,WHITE);
+            } else {
+                DrawString(power_status_message[power_status], 6,5, WHITE);
+            }
 
-            global_drawop = ADD;
 
-            utoa(s, battery_level, 10);
-            x = 6;
-            x = DrawString(s,   x,5,SILVER);
-            x = DrawString("%", x,5,SILVER);
+//            global_drawop = SUBTRACT;
+//
+//            uint8 w = mLerp(0,100, 4,DISPLAY_WIDTH-8, battery_level);
+//            DrawRoundedBox(4,4,w,10,SHADE(220),SHADE(128));
 
 
             SetFontSize(2);
