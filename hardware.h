@@ -153,7 +153,7 @@ extern uint16 hw_dummy;
 /// Misc GPIO ///
 #define VMOTOR(R)      R(E,7)
 #define PEIZO(R)       R(D,10)
-#define VBUS_SENSE(R)  R(F,7)
+//#define VBUS_SENSE(R)  R(F,7)
 
 /// Sensors ///
 #define SDA(R)         R(F,4)   // SDA2

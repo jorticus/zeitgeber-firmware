@@ -32,6 +32,11 @@
         <itemPath>core/os.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="drivers" projectFiles="true">
+        <logicalFolder name="f1" displayName="usb" projectFiles="true">
+          <itemPath>drivers/usb/usb.h</itemPath>
+          <itemPath>HardwareProfile.h</itemPath>
+          <itemPath>usb_config.h</itemPath>
+        </logicalFolder>
         <itemPath>drivers/HMC5883.h</itemPath>
         <itemPath>drivers/MMA7455.h</itemPath>
         <itemPath>drivers/ssd1351.h</itemPath>
@@ -82,6 +87,12 @@
         <itemPath>core/os.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="drivers" projectFiles="true">
+        <logicalFolder name="f1" displayName="usb" projectFiles="true">
+          <itemPath>drivers/usb/usb_descriptors.c</itemPath>
+          <itemPath>drivers/usb/usb_device.c</itemPath>
+          <itemPath>drivers/usb/usb_function_hid.c</itemPath>
+          <itemPath>drivers/usb/usb.c</itemPath>
+        </logicalFolder>
         <itemPath>drivers/HMC5883.c</itemPath>
         <itemPath>drivers/MMA7455.c</itemPath>
         <itemPath>drivers/ssd1351.c</itemPath>
@@ -152,7 +163,8 @@
         <property key="enable-short-double" value="false"/>
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
-        <property key="extra-include-directories" value="."/>
+        <property key="extra-include-directories"
+                  value=".;C:\Microchip\Microchip\Include"/>
         <property key="isolate-each-function" value="false"/>
         <property key="keep-inline" value="false"/>
         <property key="oXC16gcc-align-arr" value="false"/>
@@ -239,6 +251,35 @@
         <property key="output-file-format" value="elf"/>
       </C30Global>
       <Simulator>
+        <property key="animationupdates.realtimewatchupdates" value="false"/>
+        <property key="animationupdates.steptime" value=""/>
+        <property key="animationupdates.updatetime" value=""/>
+        <property key="breakoptions.coreerrors" value="Ignore"/>
+        <property key="breakoptions.corewarnings" value="Ignore"/>
+        <property key="breakoptions.peripheralerrors" value="Ignore"/>
+        <property key="breakoptions.peripheralwarnings" value="Ignore"/>
+        <property key="breakoptions.stimulusmessages.notes" value="Ignore"/>
+        <property key="breakoptions.stimulusmessags.errors" value="Ignore"/>
+        <property key="breakoptions.stimulusmessags.warnings" value="Ignore"/>
+        <property key="breakoptions.wdtwarnings" value="Ignore"/>
+        <property key="codecoverage.enabled" value="Disable"/>
+        <property key="codecoverage.enableoutputtofile" value="false"/>
+        <property key="codecoverage.outputfile" value=""/>
+        <property key="oscillator.auxfrequency" value="120"/>
+        <property key="oscillator.auxfrequencyunit" value="Mega"/>
+        <property key="oscillator.frequency" value="1"/>
+        <property key="oscillator.frequencyunit" value="Mega"/>
+        <property key="performancedata.show" value="false"/>
+        <property key="periphADC1.altscl" value="false"/>
+        <property key="periphADC2.altscl" value="false"/>
+        <property key="tracecontrol.select" value="0"/>
+        <property key="tracecontrol.timestamp" value="2"/>
+        <property key="tracecontrol.tracebufmax" value="54600"/>
+        <property key="tracecontrol.tracefile" value="C:\Users\Jared\mpdeftrace.log"/>
+        <property key="tracecontrol.traceresetonrun" value="false"/>
+        <property key="uart1io.output" value="window"/>
+        <property key="uart1io.outputfile" value=""/>
+        <property key="uart1io.uartioenabled" value="false"/>
       </Simulator>
     </conf>
   </confs>

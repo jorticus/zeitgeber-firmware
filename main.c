@@ -43,6 +43,7 @@
 #include "peripherals/pwm.h"
 #include "peripherals/gpio.h"
 #include "peripherals/rtc.h"
+#include "drivers/usb/usb.h"
 
 // API
 #include "api/power_monitor.h"
@@ -96,6 +97,11 @@ void InitializeIO() {
     // Initialize all the IO pins immediately into a valid state
 
     /// Analog ///
+    ANSB = 0x0000;
+    ANSC = 0x0000;
+    ANSD = 0x0000;
+    ANSF = 0x0000;
+    ANSG = 0x0000;
 //    _ANS(AN_VBAT) = ANALOG;
 //    _ANS(AN_LIGHT) = ANALOG;
     _TRIS(ANR_VBAT) = INPUT;
@@ -168,7 +174,6 @@ void InitializeIO() {
     _TRIS(USB_DPLUS) = INPUT;
     _TRIS(USB_DMINUS) = INPUT;
     _TRIS(USB_VBUS) = INPUT;
-    //_CNPUE(USB_DPLUS_CN) = 1; // Required when USB is enabled
     _CNPUE(USB_DPLUS_CN) = 0;
 
     /// Peripheral Pin Select ///
@@ -188,6 +193,23 @@ void InitializeIO() {
     PMD4 = 0xFFFF;
     PMD5 = 0xFFFF;
     PMD6 = 0xFFFF;
+}
+
+void InitializeOsc() {
+
+    //_CPDIV = 0b00; //CPU prescaler
+
+ 	//On the PIC24FJ64GB004 Family of USB microcontrollers, the PLL will not power up and be enabled
+	//by default, even if a PLL enabled oscillator configuration is selected (such as HS+PLL).
+	//This allows the device to power up at a lower initial operating frequency, which can be
+	//advantageous when powered from a source which is not gauranteed to be adequate for 32MHz
+	//operation.  On these devices, user firmware needs to manually set the CLKDIV<PLLEN> bit to
+	//power up the PLL.
+    {
+        unsigned int pll_startup_counter = 600;
+        CLKDIVbits.PLLEN = 1;
+        while(pll_startup_counter--);
+    }
 }
 
 BOOL displayOn = TRUE;
@@ -261,6 +283,7 @@ extern const uint8 bitreverse[256];
 #include "core/systick.h"
 void Initialize() {
     InitializeIO();
+    InitializeOsc();
 
     UINT32 i;
     UINT8 x = 8;
@@ -272,19 +295,16 @@ void Initialize() {
     // PW_STAT1 goes LOW when the USB is connected, but it probably can't be used as the VBUS status signal.
     // Maybe a pull down resistor on VBUS would help?
 
-    _CPDIV = 0b00; //CPU prescaler
-
-    //Sleep();
-
-
     //for (i=0; i<100000; i++);
 
     _LAT(LED1) = 1;
     _LAT(LED2) = 1;
 
+    InitializeUSB();
+
     /*while (1) {
         UINT32 i;
-        for (i=0; i<100000; i++);
+       // for (i=0; i<100000; i++);
         _TOGGLE(LED2);
 
         CheckButtons();
@@ -364,7 +384,7 @@ void Initialize() {
     //DrawString("OLED Watch", 8,56, WHITE);
 
     //BYTE i = 0;
-    UINT v = 0;
+    //UINT v = 0;
     //UINT x = 0;
     while (1) {
         if (displayOn) {
