@@ -41,6 +41,9 @@ typedef enum {
 } battery_status_t;
 extern battery_status_t battery_status;
 
+// For debugging
+extern uint8 bq25010_status;
+
 // Battery voltage, in millivolts
 extern uint battery_voltage;
 

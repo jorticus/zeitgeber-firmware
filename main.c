@@ -212,6 +212,18 @@ void WatchSleep() {
     Sleep();
 }
 
+void DisplayOff() {
+    ssd1351_DisplayOff();
+    _LAT(OL_POWER) = 0;     // Turn off OLED supply
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+}
+
+void DisplayOn() {
+    _LAT(OL_POWER) = 1;     // Turn on OLED supply
+    ssd1351_DisplayOn();
+}
+
 void CheckButtons() {
     UINT32 i;
 #ifdef HID_BOOTLOADER
@@ -227,9 +239,9 @@ void CheckButtons() {
     if (_PORT(BTN2)) {
         displayOn = !displayOn;
         if (displayOn)
-            ssd1351_DisplayOn();
+            DisplayOn();
         else {
-            ssd1351_DisplayOff();
+            DisplayOff();
         }
 
         for (i=0; i<100000; i++);
@@ -397,8 +409,9 @@ void Initialize() {
             x = DrawString(power_status_message[power_status], x,66, WHITE);
             x = DrawString(", ", x,66, WHITE);
             x = DrawString(battery_status_message[battery_status], x,66, WHITE);
-            //utoa(s, charge_status, 10);
-            //DrawString(s,        x,66, WHITE);
+            x = DrawString(", ", x,66, WHITE);
+            utoa(s, bq25010_status, 10);
+            DrawString(s,        x,66, WHITE);
 
             
             //VBAT = 503:an = ???V

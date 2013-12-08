@@ -49,6 +49,7 @@
 power_status_t power_status = pwBattery;
 charge_status_t charge_status = chgFault;
 battery_status_t battery_status = batNotConnected;
+uint8 bq25010_status = 0;
 
 bool battery_good = TRUE;
 uint battery_voltage = 0;
@@ -124,6 +125,9 @@ void cb_ConvertedVBat(voltage_t voltage) {
 }
 
 void ProcessPowerMonitor() {
+
+    // For debugging
+    bq25010_status = (_PORT(USB_VBUS) << 2) | (_PORT(PW_STAT1) << 1) | (_PORT(PW_STAT2));
 
     // Determine current power state
     if (_PORT(USB_VBUS)) {
