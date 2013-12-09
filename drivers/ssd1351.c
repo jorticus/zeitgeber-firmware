@@ -168,7 +168,7 @@ void ssd1351_PowerOn() {
 
     // Contrast/gamma display settings
     ssd1351_sendv(CMD_SET_CONTRAST,             3, 0xC8, 0x80, 0xC8);   // R,G,B contrast values
-    //ssd1351_sendv(CMD_SET_CONTRAST,             3, 0xA0, 0x50, 0xC8);   // R,G,B contrast values
+    //ssd1351_sendv(CMD_SET_CONTRAST,             3, 0x80, 0xFF, 0xB0);   // R,G,B contrast values
     ssd1351_sendv(CMD_MASTER_CONTRAST,          1, 0x0F);            // Full master contrast
     ssd1351_sendbuf(CMD_GRAYSCALE_LUT,          (uint8*)gamma_lut, sizeof(gamma_lut));
 
@@ -219,8 +219,11 @@ void ssd1351_DisplayOff() {
 }
 
 void ssd1351_SetContrast(uint8 contrast) {
-    if (contrast > 0x0F) contrast = 0x0F;
-    ssd1351_sendv(CMD_MASTER_CONTRAST, 1, contrast);
+    ssd1351_sendv(CMD_MASTER_CONTRAST, 1, contrast & 0x0F);
+}
+
+void ssd1351_SetColourBalance(uint8 r, uint8 g, uint8 b) {
+    ssd1351_sendv(CMD_SET_CONTRAST, 3, r, g, b);
 }
 
 void ssd1351_ClearScreen() {

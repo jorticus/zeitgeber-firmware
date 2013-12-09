@@ -32,6 +32,9 @@ extern void ssd1351_DisplayOff();
 // Controls screen brightness (0-15)
 extern void ssd1351_SetContrast(uint8 contrast);
 
+// Controls the colour balance (0-255)
+extern void ssd1351_SetColourBalance(uint8 r, uint8 g, uint8 b);
+
 // Clear the screen pixels
 extern void ssd1351_ClearScreen();
 
