@@ -44,11 +44,14 @@ typedef UINT32 uint32;
 typedef INT8 int8;
 typedef INT16 int16;
 typedef INT32 int32;
+typedef UINT8 byte;
 
 typedef enum { false, true } bool;
 
 #define PROGMEM //__prog__
 #define INLINE __inline__
+
+#define Reset() asm("reset")
 
 #endif
 

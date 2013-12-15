@@ -37,6 +37,7 @@
 #include "core/systick.h"
 #include "core/scheduler.h"
 #include "core/os.h"
+#include "core/comms.h"
 
 // Peripherals
 #include "peripherals/adc.h"
@@ -65,8 +66,8 @@
 //#include "tools/fluffy.h"
 //const image_t img = {fluffy_bytes, FLUFFY_WIDTH,  FLUFFY_HEIGHT};
 
-#include "gui/Wallpapers/wallpaper.h"
-#define wallpaper img_wallpaper
+#include "gui/Wallpapers/wallpaper7.h"
+#define wallpaper img_wallpaper7
 
 #include <gui/statusbar.h>
 
@@ -254,7 +255,7 @@ void CheckButtons() {
         _LAT(LED1) = 0; _LAT(LED2) = 0;
         for (i=0; i<100000; i++);
         while ( _PORT(BTN1) || _PORT(BTN4) );
-        asm("reset");
+        Reset();
     }
 #endif
 
@@ -387,6 +388,8 @@ void Initialize() {
     //UINT v = 0;
     //UINT x = 0;
     while (1) {
+        ProcessComms();
+
         if (displayOn) {
             _TRIS(USB_VBUS) = INPUT;
 
@@ -395,7 +398,7 @@ void Initialize() {
             global_drawop = SRCCOPY;
             SetFontSize(1);
 
-            //DrawImage(0,0,wallpaper);
+            DrawImage(0,0,wallpaper);
             // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
 
             i++;
