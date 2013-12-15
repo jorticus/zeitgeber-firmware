@@ -37,7 +37,6 @@
 #include "core/systick.h"
 #include "core/scheduler.h"
 #include "core/os.h"
-#include "core/comms.h"
 
 // Peripherals
 #include "peripherals/adc.h"
@@ -47,8 +46,11 @@
 #include "drivers/usb/usb.h"
 
 // API
-#include "api/power_monitor.h"
 #include "api/oled.h"
+
+// Background tasks
+#include "background/comms.h"
+#include "background/power_monitor.h"
 
 // User-mode applications
 #include "api/app.h"

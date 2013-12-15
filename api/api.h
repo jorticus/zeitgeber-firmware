@@ -14,7 +14,6 @@
 #include "api/oled.h"
 #include "api/usb.h"
 #include "api/bluetooth.h"
-#include "api/power_monitor.h"
 
 #endif	/* API_H */
 

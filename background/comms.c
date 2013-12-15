@@ -10,13 +10,13 @@
 #include <system.h>
 #include "hardware.h"
 #include "drivers/usb/usb.h"
-#include "core/comms.h"
+#include "background/comms.h"
 
 #include "usb_config.h"
 #include "./USB/usb.h"
 #include "./USB/usb_function_hid.h"
 
-#include "api/power_monitor.h"
+#include "background/power_monitor.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 

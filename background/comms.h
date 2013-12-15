@@ -30,10 +30,7 @@ extern void ProcessComms();
 #define CMD_QUERY_SENSORS       0x30    // Return a list of available sensors
 #define CMD_GET_SENSOR_DATA     0x31    // Retrieve processed data for the given sensor
 
-
-//#include "peripherals/adc.h"
-#include "api/power_monitor.h"
-
+#include "background/power_monitor.h"
 
 typedef struct {
     byte command;

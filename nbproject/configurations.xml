@@ -17,7 +17,6 @@
         </logicalFolder>
         <itemPath>api/bluetooth.h</itemPath>
         <itemPath>api/oled.h</itemPath>
-        <itemPath>api/power_monitor.h</itemPath>
         <itemPath>api/sensors.h</itemPath>
         <itemPath>api/usb.h</itemPath>
         <itemPath>api/api.h</itemPath>
@@ -25,12 +24,15 @@
         <itemPath>api/clock.h</itemPath>
         <itemPath>api/compass.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f6" displayName="background" projectFiles="true">
+        <itemPath>background/comms.h</itemPath>
+        <itemPath>background/power_monitor.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="core" projectFiles="true">
         <itemPath>core/scheduler.h</itemPath>
         <itemPath>core/cpu.h</itemPath>
         <itemPath>core/systick.h</itemPath>
         <itemPath>core/os.h</itemPath>
-        <itemPath>core/comms.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="drivers" projectFiles="true">
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
@@ -73,12 +75,15 @@
         </logicalFolder>
         <itemPath>api/bluetooth.c</itemPath>
         <itemPath>api/oled.c</itemPath>
-        <itemPath>api/power_monitor.c</itemPath>
         <itemPath>api/sensors.c</itemPath>
         <itemPath>api/usb.c</itemPath>
         <itemPath>api/app.c</itemPath>
         <itemPath>api/clock.c</itemPath>
         <itemPath>api/compass.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f6" displayName="background" projectFiles="true">
+        <itemPath>background/comms.c</itemPath>
+        <itemPath>background/power_monitor.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="core" projectFiles="true">
         <itemPath>core/scheduler.c</itemPath>
@@ -86,7 +91,6 @@
         <itemPath>core/systick.c</itemPath>
         <itemPath>core/traps.c</itemPath>
         <itemPath>core/os.c</itemPath>
-        <itemPath>core/comms.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="drivers" projectFiles="true">
         <logicalFolder name="f1" displayName="usb" projectFiles="true">

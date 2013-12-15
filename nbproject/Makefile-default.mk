@@ -45,11 +45,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/core/comms.o ${OBJECTDIR}/drivers/usb/usb_descriptors.o ${OBJECTDIR}/drivers/usb/usb_device.o ${OBJECTDIR}/drivers/usb/usb_function_hid.o ${OBJECTDIR}/drivers/usb/usb.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/util/vector.o ${OBJECTDIR}/main.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/applications/main/appmain.o.d ${OBJECTDIR}/api/graphics/font.o.d ${OBJECTDIR}/api/graphics/gfx.o.d ${OBJECTDIR}/api/bluetooth.o.d ${OBJECTDIR}/api/oled.o.d ${OBJECTDIR}/api/power_monitor.o.d ${OBJECTDIR}/api/sensors.o.d ${OBJECTDIR}/api/usb.o.d ${OBJECTDIR}/api/app.o.d ${OBJECTDIR}/api/clock.o.d ${OBJECTDIR}/api/compass.o.d ${OBJECTDIR}/core/scheduler.o.d ${OBJECTDIR}/core/cpu.o.d ${OBJECTDIR}/core/systick.o.d ${OBJECTDIR}/core/traps.o.d ${OBJECTDIR}/core/os.o.d ${OBJECTDIR}/core/comms.o.d ${OBJECTDIR}/drivers/usb/usb_descriptors.o.d ${OBJECTDIR}/drivers/usb/usb_device.o.d ${OBJECTDIR}/drivers/usb/usb_function_hid.o.d ${OBJECTDIR}/drivers/usb/usb.o.d ${OBJECTDIR}/drivers/HMC5883.o.d ${OBJECTDIR}/drivers/MMA7455.o.d ${OBJECTDIR}/drivers/ssd1351.o.d ${OBJECTDIR}/peripherals/gpio.o.d ${OBJECTDIR}/peripherals/adc.o.d ${OBJECTDIR}/peripherals/pwm.o.d ${OBJECTDIR}/peripherals/rtc.o.d ${OBJECTDIR}/peripherals/ssd1351p.o.d ${OBJECTDIR}/peripherals/i2c.o.d ${OBJECTDIR}/peripherals/spi.o.d ${OBJECTDIR}/util/vector.o.d ${OBJECTDIR}/main.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/usb/usb_descriptors.o ${OBJECTDIR}/drivers/usb/usb_device.o ${OBJECTDIR}/drivers/usb/usb_function_hid.o ${OBJECTDIR}/drivers/usb/usb.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/util/vector.o ${OBJECTDIR}/main.o ${OBJECTDIR}/background/comms.o ${OBJECTDIR}/background/power_monitor.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/applications/main/appmain.o.d ${OBJECTDIR}/api/graphics/font.o.d ${OBJECTDIR}/api/graphics/gfx.o.d ${OBJECTDIR}/api/bluetooth.o.d ${OBJECTDIR}/api/oled.o.d ${OBJECTDIR}/api/sensors.o.d ${OBJECTDIR}/api/usb.o.d ${OBJECTDIR}/api/app.o.d ${OBJECTDIR}/api/clock.o.d ${OBJECTDIR}/api/compass.o.d ${OBJECTDIR}/core/scheduler.o.d ${OBJECTDIR}/core/cpu.o.d ${OBJECTDIR}/core/systick.o.d ${OBJECTDIR}/core/traps.o.d ${OBJECTDIR}/core/os.o.d ${OBJECTDIR}/drivers/usb/usb_descriptors.o.d ${OBJECTDIR}/drivers/usb/usb_device.o.d ${OBJECTDIR}/drivers/usb/usb_function_hid.o.d ${OBJECTDIR}/drivers/usb/usb.o.d ${OBJECTDIR}/drivers/HMC5883.o.d ${OBJECTDIR}/drivers/MMA7455.o.d ${OBJECTDIR}/drivers/ssd1351.o.d ${OBJECTDIR}/peripherals/gpio.o.d ${OBJECTDIR}/peripherals/adc.o.d ${OBJECTDIR}/peripherals/pwm.o.d ${OBJECTDIR}/peripherals/rtc.o.d ${OBJECTDIR}/peripherals/ssd1351p.o.d ${OBJECTDIR}/peripherals/i2c.o.d ${OBJECTDIR}/peripherals/spi.o.d ${OBJECTDIR}/util/vector.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/background/comms.o.d ${OBJECTDIR}/background/power_monitor.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/power_monitor.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/core/comms.o ${OBJECTDIR}/drivers/usb/usb_descriptors.o ${OBJECTDIR}/drivers/usb/usb_device.o ${OBJECTDIR}/drivers/usb/usb_function_hid.o ${OBJECTDIR}/drivers/usb/usb.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/util/vector.o ${OBJECTDIR}/main.o
+OBJECTFILES=${OBJECTDIR}/applications/main/appmain.o ${OBJECTDIR}/api/graphics/font.o ${OBJECTDIR}/api/graphics/gfx.o ${OBJECTDIR}/api/bluetooth.o ${OBJECTDIR}/api/oled.o ${OBJECTDIR}/api/sensors.o ${OBJECTDIR}/api/usb.o ${OBJECTDIR}/api/app.o ${OBJECTDIR}/api/clock.o ${OBJECTDIR}/api/compass.o ${OBJECTDIR}/core/scheduler.o ${OBJECTDIR}/core/cpu.o ${OBJECTDIR}/core/systick.o ${OBJECTDIR}/core/traps.o ${OBJECTDIR}/core/os.o ${OBJECTDIR}/drivers/usb/usb_descriptors.o ${OBJECTDIR}/drivers/usb/usb_device.o ${OBJECTDIR}/drivers/usb/usb_function_hid.o ${OBJECTDIR}/drivers/usb/usb.o ${OBJECTDIR}/drivers/HMC5883.o ${OBJECTDIR}/drivers/MMA7455.o ${OBJECTDIR}/drivers/ssd1351.o ${OBJECTDIR}/peripherals/gpio.o ${OBJECTDIR}/peripherals/adc.o ${OBJECTDIR}/peripherals/pwm.o ${OBJECTDIR}/peripherals/rtc.o ${OBJECTDIR}/peripherals/ssd1351p.o ${OBJECTDIR}/peripherals/i2c.o ${OBJECTDIR}/peripherals/spi.o ${OBJECTDIR}/util/vector.o ${OBJECTDIR}/main.o ${OBJECTDIR}/background/comms.o ${OBJECTDIR}/background/power_monitor.o
 
 
 CFLAGS=
@@ -115,12 +115,6 @@ ${OBJECTDIR}/api/oled.o: api/oled.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE)  api/oled.c  -o ${OBJECTDIR}/api/oled.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/api/oled.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/api/oled.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/api/power_monitor.o: api/power_monitor.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/api 
-	@${RM} ${OBJECTDIR}/api/power_monitor.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  api/power_monitor.c  -o ${OBJECTDIR}/api/power_monitor.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/api/power_monitor.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/api/power_monitor.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/api/sensors.o: api/sensors.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/api 
 	@${RM} ${OBJECTDIR}/api/sensors.o.d 
@@ -180,12 +174,6 @@ ${OBJECTDIR}/core/os.o: core/os.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/core/os.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  core/os.c  -o ${OBJECTDIR}/core/os.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/core/os.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/core/os.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/core/comms.o: core/comms.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/core 
-	@${RM} ${OBJECTDIR}/core/comms.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  core/comms.c  -o ${OBJECTDIR}/core/comms.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/core/comms.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/core/comms.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/drivers/usb/usb_descriptors.o: drivers/usb/usb_descriptors.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/drivers/usb 
@@ -283,6 +271,18 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
+${OBJECTDIR}/background/comms.o: background/comms.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/background 
+	@${RM} ${OBJECTDIR}/background/comms.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  background/comms.c  -o ${OBJECTDIR}/background/comms.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/background/comms.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/background/comms.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/background/power_monitor.o: background/power_monitor.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/background 
+	@${RM} ${OBJECTDIR}/background/power_monitor.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  background/power_monitor.c  -o ${OBJECTDIR}/background/power_monitor.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/background/power_monitor.o.d"        -g -D__DEBUG   -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/background/power_monitor.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
 else
 ${OBJECTDIR}/applications/main/appmain.o: applications/main/appmain.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/applications/main 
@@ -313,12 +313,6 @@ ${OBJECTDIR}/api/oled.o: api/oled.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/api/oled.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  api/oled.c  -o ${OBJECTDIR}/api/oled.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/api/oled.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/api/oled.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/api/power_monitor.o: api/power_monitor.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/api 
-	@${RM} ${OBJECTDIR}/api/power_monitor.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  api/power_monitor.c  -o ${OBJECTDIR}/api/power_monitor.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/api/power_monitor.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/api/power_monitor.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/api/sensors.o: api/sensors.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/api 
@@ -379,12 +373,6 @@ ${OBJECTDIR}/core/os.o: core/os.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/core/os.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  core/os.c  -o ${OBJECTDIR}/core/os.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/core/os.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/core/os.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/core/comms.o: core/comms.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/core 
-	@${RM} ${OBJECTDIR}/core/comms.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  core/comms.c  -o ${OBJECTDIR}/core/comms.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/core/comms.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/core/comms.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/drivers/usb/usb_descriptors.o: drivers/usb/usb_descriptors.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/drivers/usb 
@@ -481,6 +469,18 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/main.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/background/comms.o: background/comms.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/background 
+	@${RM} ${OBJECTDIR}/background/comms.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  background/comms.c  -o ${OBJECTDIR}/background/comms.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/background/comms.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/background/comms.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/background/power_monitor.o: background/power_monitor.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/background 
+	@${RM} ${OBJECTDIR}/background/power_monitor.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  background/power_monitor.c  -o ${OBJECTDIR}/background/power_monitor.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/background/power_monitor.o.d"        -g -omf=elf -mlarge-code -mlarge-data -mlarge-scalar -menable-large-arrays -O0 -I"." -I"C:/Microchip/Microchip/Include" -mcci -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/background/power_monitor.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 
