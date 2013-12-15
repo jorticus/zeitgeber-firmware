@@ -46,7 +46,10 @@ typedef INT16 int16;
 typedef INT32 int32;
 typedef UINT8 byte;
 
-typedef enum { false, true } bool;
+//typedef enum { false, true } bool;
+#define bool UINT8
+#define true 1
+#define false 0
 
 #define PROGMEM //__prog__
 #define INLINE __inline__
@@ -55,6 +58,8 @@ typedef enum { false, true } bool;
 
 #endif
 
+#define RCON_RESET (_RCON_POR_MASK | _RCON_BOR_MASK | _RCON_WDTO_MASK | _RCON_SWR_MASK | _RCON_EXTR_MASK | _RCON_CM_MASK | _RCON_IOPUWR_MASK | _RCON_TRAPR_MASK)
+#define UNEXPECTED_RESET (_RCON_POR_MASK| _RCON_BOR_MASK | _RCON_WDTO_MASK | _RCON_CM_MASK | _RCON_IOPUWR_MASK | _RCON_TRAPR_MASK)
 
 
 // Generic function pointer

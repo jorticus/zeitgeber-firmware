@@ -8,13 +8,19 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
-#include <system.h>
-#include <core/systick.h>
+#include "system.h"
+#include "core/systick.h"
 #include "api/graphics/gfx.h"
 #include "core/scheduler.h"
 #include "os.h"
+#include "hardware.h"
 
-////////// Variables ///////////////////////////////////////////////////////////
+#include "drivers/ssd1351.h"
+#include "background/comms.h"
+#include "background/power_monitor.h"
+
+
+////////// GUI Resources ///////////////////////////////////////////////////////
 
 //#include <gui/Wallpapers/wallpaper1.h>
 /*#include <gui/Wallpapers/wallpaper2.h>
@@ -58,19 +64,39 @@ const image_t imgBat = {bat_bytes, BAT_WIDTH, BAT_HEIGHT};
 #include <gui/icons/comment.h>
 #include <gui/icons/computer.h>*/
 
+////////// Variables ///////////////////////////////////////////////////////////
+
+bool displayOn = false;
 
 application_t* foreground_app = NULL;
 
 static task_t* draw_task;
+static task_t* comms_task;
+//static task_t* power_task;
+static task_t* core_task;
 
+////////// Prototypes //////////////////////////////////////////////////////////
+
+void ProcessCore();
 void Draw();
+void DisplayBootScreen();
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeOS() {
+    core_task = RegisterTask("Core", ProcessCore, PROCESS_CORE_INTERVAL);
+
     // This task performs all drawing to the OLED
     draw_task = RegisterTask("Draw", Draw, DRAW_INTERVAL);
 	draw_task->state = tsRun;
+
+    // Register background tasks
+    comms_task = RegisterTask("Comms", ProcessComms, PROCESS_COMMS_INTERVAL);
+    
+
+    ssd1351_DisplayOn();
+
+    DisplayBootScreen();
 }
 
 void SetForegroundApp(application_t* app) {
@@ -83,6 +109,100 @@ void SetForegroundApp(application_t* app) {
 	app->task->state = tsRun;
 
     //TODO: Maybe some sort of transition between screens?
+}
+
+void CheckButtons() {
+    UINT32 i;
+#ifdef HID_BOOTLOADER
+     // Execute bootloader if USB cable is plugged in and a button is pressed
+    if (USB_VBUS_SENSE && (_PORT(BTN1) || _PORT(BTN4))) {
+        _LAT(LED1) = 0; _LAT(LED2) = 0;
+        for (i=0; i<100000; i++);
+        while ( _PORT(BTN1) || _PORT(BTN4) );
+        Reset();
+    }
+#endif
+
+    if (_PORT(BTN2)) {
+        displayOn = !displayOn;
+        if (displayOn)
+            ssd1351_DisplayOn();
+        else {
+            ssd1351_DisplayOff();
+        }
+
+        for (i=0; i<100000; i++);
+    }
+
+    /*if (_PORT(BTN3)) {
+        ssd1351_DisplayOff();
+        WatchSleep();
+    }*/
+    // Can't use sleep yet until we can wake up from it.
+}
+
+void ProcessCore() {
+    ProcessComms();
+    ProcessPowerMonitor();
+    CheckButtons();
+}
+
+void DisplayBootScreen() {
+    byte y = 8;
+    char s[10];
+    byte x;
+    uint32 i;
+
+    ClearImage();
+
+    DrawString("OLED Watch v1.0", 8, y, WHITE); y += 10;
+    //DrawString("Booting...", 8, y, WHITE); y += 10;
+    UpdateDisplay();
+
+    // Check the reset status
+    // Software resets are the only type of reset that should occur normally
+    if (RCON & UNEXPECTED_RESET) {
+        //TODO: Draw an error icon or something
+
+        if (RCONbits.BOR)
+            // Likely cause: low battery voltage.
+            DrawString("RST: Brown-out", 8,y,WHITE);
+        else if (RCONbits.CM)
+            DrawString("RST: Conf Mismatch", 8,y,WHITE);
+        else if (RCONbits.IOPUWR)
+            // Likely cause: pointer to function pointed to an invalid memory region, so PC encountered an invalid opcode
+            DrawString("RST: Invalid Opcode", 8,y,WHITE);
+        else if (RCONbits.EXTR)
+            // Manual MCLR reset
+            DrawString("RST: MCLR", 8,y,WHITE);
+        else if (RCONbits.POR)
+            // This will only happen if powering-up from a flat battery.
+            DrawString("RST: Power-on", 8,y,WHITE);
+        else if (RCONbits.WDTO)
+            // This will happen if the code gets stuck in a loop somewhere
+            DrawString("RST: Watchdog Timeout", 8,y,WHITE);
+        else if (RCONbits.TRAPR)
+            // This will happen if a trap interrupt is triggered
+            DrawString("RST: Trap Error", 8,y,WHITE);
+        //else if (RCONbits.SWR)
+        //    DrawString("RST: Software", 8,y,WHITE);
+        else {
+            utoa(s, RCON & RCON_RESET, 16);
+            x = 8;
+            x = DrawString("RST: Unknown - ", x,y,WHITE);
+            DrawString(s, x,y,WHITE);
+        }
+        y += 10;
+
+        UpdateDisplay();
+
+        // Optionally reset back into the bootloader,
+        // to allow any problems to be fixed
+
+    }
+    RCON &= ~RCON_RESET;
+    
+    for (i=0; i<3000000; i++);
 }
 
 // Called periodically
@@ -128,4 +248,40 @@ void Draw() {
 
 	// Finally update the display
 	UpdateDisplay();*/
+
+    ClearImage();
+
+    SetFontSize(1);
+    SetFont(fonts.Stellaris);
+
+    // Draw foreground app
+    if (foreground_app != NULL)
+        foreground_app->draw();
+
+    _LAT(LED1) = 0;
+    UpdateDisplay();
+    _LAT(LED1) = 1;
 }
+
+
+
+void WatchSleep() {
+    ssd1351_DisplayOff();
+    _LAT(BT_RESET) = 1;     // Turn off Bluetooth
+    _LAT(VMOTOR) = 0;
+    _LAT(PEIZO) = 0;
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+    _LAT(OL_POWER) = 0;     // Turn off OLED supply
+    _LAT(OL_RESET) = 1;
+
+    PMD1 = 0xFFFF;
+    PMD2 = 0xFFFF;
+    PMD3 = 0xFFFF;
+    PMD4 = 0xFFFF;
+    PMD5 = 0xFFFF;
+    PMD6 = 0xFFFF;
+
+    Sleep();
+}
+

@@ -19,5 +19,10 @@ typedef enum {
 } cpu_state_t;
 extern cpu_state_t cpu_state;
 
+extern void InitializeIO();
+extern void InitializeOsc();
+
+extern void WatchSleep();
+
 #endif	/* CPU_H */
 

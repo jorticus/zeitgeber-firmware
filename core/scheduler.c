@@ -49,6 +49,11 @@ void ProcessTasks() {
 
     for (i=0; i<num_tasks; i++) {
         task_t* task = &tasks[i];
+        task->proc();
+    }
+
+    /*for (i=0; i<num_tasks; i++) {
+        task_t* task = &tasks[i];
 
 		//TODO: Handle roll-over
 		// eg. what happens when task->next_run = 65534, and the systick never goes over it...
@@ -63,7 +68,7 @@ void ProcessTasks() {
            // if (task->next_run < next_task)
             //    next_task = task->next_run;
         }
-    }
+    }*/
 
     // Put the system in sleep mode if no tasks are scheduled for a while
     /*if (next_task > SLEEP_THRESHOLD) {
