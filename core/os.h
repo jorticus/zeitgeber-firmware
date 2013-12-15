@@ -13,15 +13,16 @@
 #include "api/app.h"
 
 #define DRAW_INTERVAL (1000/30) // 30Hz refresh rate for OLED
-#define PROCESS_COMMS_INTERVAL 1
 #define PROCESS_CORE_INTERVAL 1
 #define APP_INTERVAL (1000/100)
 
 void InitializeOS();
 
-
 // Set the specified app to be the foreground process
 void SetForegroundApp(application_t* app);
+
+void ScreenOff();
+void ScreenOn();
 
 #endif	/* OS_H */
 

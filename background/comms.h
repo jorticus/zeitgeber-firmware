@@ -8,8 +8,6 @@
 #ifndef COMMS_H
 #define	COMMS_H
 
-extern void ProcessComms();
-
 #define CMD_PING                0x01
 #define CMD_RESET               0x02
 #define CMD_SET_LED             0x03
@@ -50,6 +48,10 @@ typedef struct {
     uint systick;
     //TODO: add more fields
 } cpu_info_t;
+
+void InitializeComms();
+
+extern bool usb_connected;
 
 #endif	/* COMMS_H */
 

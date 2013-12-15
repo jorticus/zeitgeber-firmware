@@ -70,32 +70,27 @@ bool displayOn = false;
 
 application_t* foreground_app = NULL;
 
-static task_t* draw_task;
-static task_t* comms_task;
-//static task_t* power_task;
 static task_t* core_task;
+static task_t* draw_task;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void ProcessCore();
 void Draw();
 void DisplayBootScreen();
+void CheckButtons();
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeOS() {
+    // High priority tasks that must be run all the time
     core_task = RegisterTask("Core", ProcessCore, PROCESS_CORE_INTERVAL);
+    core_task->state = tsRun;
 
-    // This task performs all drawing to the OLED
+    // Drawing, only needs to be run when screen is on
     draw_task = RegisterTask("Draw", Draw, DRAW_INTERVAL);
-	draw_task->state = tsRun;
-
-    // Register background tasks
-    comms_task = RegisterTask("Comms", ProcessComms, PROCESS_COMMS_INTERVAL);
     
-
-    ssd1351_DisplayOn();
-
+    ScreenOn();
     DisplayBootScreen();
 }
 
@@ -109,6 +104,11 @@ void SetForegroundApp(application_t* app) {
 	app->task->state = tsRun;
 
     //TODO: Maybe some sort of transition between screens?
+}
+
+void ProcessCore() {
+    ProcessPowerMonitor();
+    CheckButtons();
 }
 
 void CheckButtons() {
@@ -126,9 +126,9 @@ void CheckButtons() {
     if (_PORT(BTN2)) {
         displayOn = !displayOn;
         if (displayOn)
-            ssd1351_DisplayOn();
+            ScreenOn();
         else {
-            ssd1351_DisplayOff();
+            ScreenOff();
         }
 
         for (i=0; i<100000; i++);
@@ -139,12 +139,6 @@ void CheckButtons() {
         WatchSleep();
     }*/
     // Can't use sleep yet until we can wake up from it.
-}
-
-void ProcessCore() {
-    ProcessComms();
-    ProcessPowerMonitor();
-    CheckButtons();
 }
 
 void DisplayBootScreen() {
@@ -285,3 +279,17 @@ void WatchSleep() {
     Sleep();
 }
 
+void ScreenOff() {
+    // Disable drawing
+    draw_task->state = tsStop;
+
+    ssd1351_DisplayOff();
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+}
+
+void ScreenOn() {
+    ssd1351_DisplayOn();
+
+    draw_task->state = tsRun;
+}

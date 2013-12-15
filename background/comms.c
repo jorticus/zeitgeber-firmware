@@ -11,6 +11,7 @@
 #include "hardware.h"
 #include "drivers/usb/usb.h"
 #include "background/comms.h"
+#include "core/scheduler.h"
 
 #include "usb_config.h"
 #include "./USB/usb.h"
@@ -20,6 +21,10 @@
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
+// Run this as fast as possible, since usually it's only
+// checking if data is received and nothing else.
+#define PROCESS_COMMS_INTERVAL 0 //ms
+
 ////////// Variables ///////////////////////////////////////////////////////////
 
 //unsigned char rx_usb_buffer[64];
@@ -27,18 +32,39 @@
 
 //USB_HANDLE USBOutHandle = 0; //USB handle.  Must be initialized to 0 at startup.
 //USB_HANDLE USBInHandle = 0; //USB handle.  Must be initialized to 0 at startup.
+bool usb_connected = false;
 
 unsigned char tx_buffer[PACKET_SIZE];
+
+static task_t* comms_task;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void comms_ReceivedPacket(unsigned char* packet);
 void comms_SendPacket(unsigned char* buffer);
+void comms_sleep();
+void comms_wake();
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeComms() {
+    InitializeUSB(&comms_sleep, &comms_wake);
+    
+    // Communications, only needs to be run when USB is connected
+    comms_task = RegisterTask("Comms", ProcessComms, PROCESS_COMMS_INTERVAL);
+    comms_task->state = tsRun;
 
+    usb_connected = false;
+}
+
+void comms_sleep() {
+    comms_task->state = tsStop;
+    usb_connected = false;
+}
+
+void comms_wake() {
+    comms_task->state = tsRun;
+    usb_connected = true;
 }
 
 void ProcessComms() {
@@ -59,6 +85,9 @@ void comms_set_led(byte led, byte value) {
 // Called when a packet is received
 void comms_ReceivedPacket(unsigned char* packet) {
     // packet is 64 bytes
+
+    //NOTE: If transferring multiple packets,
+    // it might pay to temporarily reduce the task interval.
 
     switch (packet[0]) {
         case CMD_PING:

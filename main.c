@@ -89,7 +89,7 @@ void Initialize() {
     InitializeIO();
     InitializeOsc();
 
-    //_LAT(LED1) = 1;
+    _LAT(LED1) = 1;
     //_LAT(LED2) = 1;
 
     // Peripherals
@@ -100,16 +100,15 @@ void Initialize() {
     rtc_init();
     systick_init();
 
-    InitializeUSB();
+    InitializeComms();
     InitializeOled();
+    InitializeOS();
 
-    //_LAT(LED1) = 0;
+    _LAT(LED1) = 0;
 }
 
 int main() {
     Initialize();
-
-    InitializeOS();
 
     RegisterUserApplication(&apptest);
 

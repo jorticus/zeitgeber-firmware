@@ -49,7 +49,8 @@ void ProcessTasks() {
 
     for (i=0; i<num_tasks; i++) {
         task_t* task = &tasks[i];
-        task->proc();
+        if (task->state == tsRun)
+            task->proc();
     }
 
     /*for (i=0; i<num_tasks; i++) {
