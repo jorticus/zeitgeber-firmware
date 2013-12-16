@@ -6,8 +6,18 @@
  */
 
 #include <timer.h>
-#include <system.h>
+#include "system.h"
+#include "hardware.h"
 #include "systick.h"
+
+#define SYSTICK_PERIOD 1 //ms
+#define SYSTICK_PRESCALER 8     // 1, 8, 64, 256
+
+// Calculations
+#define SYSTICK_PR (POSC/2 / SYSTICK_PRESCALER * SYSTICK_PERIOD / 1000)
+#define SYSTICK_PS_VAL(val) T1_PS_1_##val   // lookup the relevant T1_PS_1_x define
+#define SYSTICK_PS(val) SYSTICK_PS_VAL(val) // required for the macro to work
+
 
 volatile uint systick = 1;
 
@@ -22,22 +32,20 @@ void systick_init() {
     _T1MD = 0; // Enable T1 peripheral
 
     T1CON = T1_OFF & T1_IDLE_CON & T1_GATE_OFF &
-            T1_PS_1_8 & T1_SYNC_EXT_OFF & T1_SOURCE_INT;
+            SYSTICK_PS(SYSTICK_PRESCALER) & T1_SYNC_EXT_OFF & T1_SOURCE_INT;
 
     TMR1 = 0x0000;
-    PR1 = 0xFFFF;
+    PR1 = SYSTICK_PR;
 
     _T1IF = 0;
     //_T1IP = 7;
     _T1IE = 1;
 
     T1CONbits.TON = 1;
-
-    //TODO: Can't get timers to work.
 }
 
 void isr _T1Interrupt() {
     _T1IF = 0;
-    systick++;
+    systick++; // atomic operation since systick is a uint16
 }
 
