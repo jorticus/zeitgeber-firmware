@@ -19,7 +19,7 @@
 ////////// Methods /////////////////////////////////////////////////////////////
 
 bool InitializeOled() {
-
+    ClrWdt();
     //TODO: Test display for communication by attempting to communicate
 
     // Fully power on the display

@@ -89,6 +89,9 @@ void Initialize() {
     InitializeIO();
     InitializeOsc();
 
+    // Enable watchdog
+    RCONbits.SWDTEN = 1;
+
     _LAT(LED1) = 1;
     //_LAT(LED2) = 1;
 
@@ -115,6 +118,7 @@ int main() {
     SetForegroundApp(&apptest);
 
     while(1) {
+        ClrWdt();
         ProcessTasks();
     }
     

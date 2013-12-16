@@ -138,11 +138,11 @@ void ssd1351_PowerOn() {
     UINT32 i;
     
     _LAT(OL_RESET) = 1;
-    for (i=0; i<10000; i++);
+    for (i=0; i<10000; i++) { ClrWdt(); }
     _LAT(OL_RESET) = 0;
-    for (i=0; i<100000; i++);
+    for (i=0; i<100000; i++) { ClrWdt(); }
     _LAT(OL_RESET) = 1;
-    for (i=0; i<100000; i++);
+    for (i=0; i<100000; i++) { ClrWdt(); }
 
 
     // Unlock locked commands
@@ -185,6 +185,7 @@ void ssd1351_PowerOn() {
     ssd1351_ClearScreen();
 
     //ssd1351_DisplayOn();
+    ClrWdt();
 }
 
 void ssd1351_DisplayOn() {
@@ -195,6 +196,7 @@ void ssd1351_DisplayOn() {
 
     UINT i,j;
     for (i=0; i<0x0F; i++) {
+        ClrWdt();
         ssd1351_sendv(CMD_MASTER_CONTRAST, 1, i);
         for (j=0; j<40000; j++);
     }
@@ -211,11 +213,13 @@ void ssd1351_PowerOff() {
 void ssd1351_DisplayOff() {
     UINT i,j;
     for (i=0; i<0x0F; i++) {
+        ClrWdt();
         ssd1351_sendv(CMD_MASTER_CONTRAST, 1, 0x0F - i);
         for (j=0; j<40000; j++);
     }
 
     ssd1351_command(CMD_DISPLAY_OFF);
+    //_LAT(OL_POWER) = 0; //TODO: Measure power savings from adding this
 }
 
 void ssd1351_SetContrast(uint8 contrast) {

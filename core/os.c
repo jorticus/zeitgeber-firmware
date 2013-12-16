@@ -83,13 +83,15 @@ void CheckButtons();
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeOS() {
+    ClrWdt();
+
     // High priority tasks that must be run all the time
     core_task = RegisterTask("Core", ProcessCore, PROCESS_CORE_INTERVAL);
     core_task->state = tsRun;
 
     // Drawing, only needs to be run when screen is on
     draw_task = RegisterTask("Draw", Draw, DRAW_INTERVAL);
-    
+
     ScreenOn();
     DisplayBootScreen();
 }
@@ -147,10 +149,14 @@ void DisplayBootScreen() {
     byte x;
     uint32 i;
 
+    ClrWdt();
     ClearImage();
 
+    ClrWdt();
     DrawString("OLED Watch v1.0", 8, y, WHITE); y += 10;
     //DrawString("Booting...", 8, y, WHITE); y += 10;
+
+    ClrWdt();
     UpdateDisplay();
 
     // Check the reset status
@@ -196,7 +202,7 @@ void DisplayBootScreen() {
     }
     RCON &= ~RCON_RESET;
     
-    for (i=0; i<3000000; i++);
+    for (i=0; i<3000000; i++) { ClrWdt(); }
 }
 
 // Called periodically

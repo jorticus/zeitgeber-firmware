@@ -40,6 +40,7 @@ static task_t* comms_task;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
+void ProcessComms();
 void comms_ReceivedPacket(unsigned char* packet);
 void comms_SendPacket(unsigned char* buffer);
 void comms_sleep();
@@ -48,6 +49,7 @@ void comms_wake();
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeComms() {
+    ClrWdt();
     InitializeUSB(&comms_sleep, &comms_wake);
     
     // Communications, only needs to be run when USB is connected
