@@ -90,7 +90,7 @@ void Initialize() {
     InitializeOsc();
 
     // Enable watchdog
-    RCONbits.SWDTEN = 1;
+    //RCONbits.SWDTEN = 1;
 
     _LAT(LED1) = 1;
     //_LAT(LED2) = 1;
