@@ -14,7 +14,7 @@
 ////////// Methods /////////////////////////////////////////////////////////////
 
 //TODO: Use fast integer math instead.
-int16 vec3magnitude(vector3_t* vec) {
+int16 vec3magnitude(vector3i_t* vec) {
     /*return sqrt(
         vec->x * vec->x +
         vec->y * vec->y +

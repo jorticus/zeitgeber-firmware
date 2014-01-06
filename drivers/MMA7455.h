@@ -31,7 +31,7 @@ typedef enum {
 
 
 // Current XYZ reading (updated automatically if in mmaMeasure mode)
-extern vector3_t accel_current;
+extern vector3i_t accel_current;
 
 
 
@@ -50,7 +50,7 @@ extern void accel_SetRange(accel_range_t range);
 extern void accel_Calibrate();
 
 // Perform a manual reading (you should check the DRDY bit before reading)
-extern vector3_t accel_ReadXYZ();
+extern vector3i_t accel_ReadXYZ();
 
 // Called when interrupt is executed for the specified mode
 // ie. to set up a callback for the pulse detect mode
