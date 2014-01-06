@@ -8,6 +8,8 @@
 #ifndef COMMS_H
 #define	COMMS_H
 
+#include "drivers/usb/usb.h" // PACKET_SIZE
+
 #define CMD_PING                0x01
 #define CMD_RESET               0x02
 #define CMD_SET_LED             0x03
@@ -17,16 +19,16 @@
 #define CMD_GET_CPU_INFO        0x11    // Osc freq, systick, utilization, time spent in sleep
 
 // Display interface
-#define CMD_QUERY_DISPLAY       0x20
-#define CMD_SET_DISPLAY_POWER   0x21
-#define CMD_DISABLE_DISPLAY     0x22
-#define CMD_ENABLE_DISPLAY      0x23
-#define CMD_UPDATE_IMAGE        0x24
-#define CMD_RETRIEVE_IMAGE      0x25
+#define CMD_QUERY_DISPLAY       0x20    // Returns parameters of the display
+#define CMD_SET_DISPLAY_POWER   0x21    // Turns the display on or off
+#define CMD_DISPLAY_OVERRIDE    0x22    // Stops the display buffer from being updated by the system
+#define CMD_UPDATE_DISPLAY_BUF  0x24    // Update the display buffer with some custom data
+#define CMD_READ_DISPLAY_BUF    0x25    // Retrieve the contents of the display buffer
 
 // Sensors
 #define CMD_QUERY_SENSORS       0x30    // Return a list of available sensors
-#define CMD_GET_SENSOR_DATA     0x31    // Retrieve processed data for the given sensor
+#define CMD_SET_SENSOR_ENABLE   0x31    // Enable/disable the specified sensor
+#define CMD_GET_SENSOR_DATA     0x32    // Retrieve processed data for the given sensor
 
 #include "background/power_monitor.h"
 
@@ -45,9 +47,42 @@ typedef struct {
 } battery_info_t;
 
 typedef struct {
-    uint systick;
+    byte command;
+    byte reserved;
+
+    uint16 systick;
     //TODO: add more fields
 } cpu_info_t;
+
+typedef struct {
+    byte command;
+    byte reserved;
+
+    // Device-dependant constants
+    uint16 width;
+    uint16 height;
+    uint16 bpp;
+
+    // Current display parameters
+    uint16 display_on;
+} display_query_t;
+
+typedef struct {
+    byte command;
+    byte reserved;
+
+    uint16 count;
+    uint8 sensors[32];
+} sensor_query_t;
+
+typedef struct {
+    byte command;
+    byte reserved;
+
+    uint16 size;        // Number of bytes returned by the sensor (0 if sensor is disabled)
+
+    byte data[PACKET_SIZE-4];     // Raw data, format depends on the sensor type
+} sensor_packet_t;
 
 
 typedef enum {

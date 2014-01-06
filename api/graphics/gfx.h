@@ -23,6 +23,9 @@ typedef union {
     uint16 val;
 } color_s;
 
+// Unused within the graphics library, but provided for use elsewhere.
+#define DISPLAY_BPP 16
+
 typedef uint16 color_t;
 
 // NOTE: Do not use the following macros for run-time color calculation, they haven't been optimised.

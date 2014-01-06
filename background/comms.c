@@ -18,6 +18,9 @@
 #include "./USB/usb_function_hid.h"
 
 #include "background/power_monitor.h"
+#include "core/systick.h"
+#include "api/graphics/gfx.h"
+#include "drivers/ssd1351.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
@@ -97,6 +100,9 @@ void comms_ReceivedPacket(unsigned char* packet) {
     // it might pay to temporarily reduce the task interval.
 
     switch (packet[0]) {
+
+        ////////// Basic System Commands //////////
+
         case CMD_PING:
             break;
 
@@ -108,17 +114,113 @@ void comms_ReceivedPacket(unsigned char* packet) {
             comms_set_led(packet[1], packet[2]);
             break;
 
+        ////////// Diagnostics //////////
+
         case CMD_GET_BATTERY_INFO:
         {
             battery_info_t* tx_packet = (battery_info_t*)tx_buffer;
+
+            // power_monitor.h
             tx_packet->level = battery_level;
             tx_packet->voltage = battery_voltage;
             tx_packet->charge_status = charge_status;
             tx_packet->power_status = power_status;
             tx_packet->battery_status = battery_status;
             tx_packet->bq25010_status = bq25010_status;
+
+            break;
         }
-        break;
+
+        case CMD_GET_CPU_INFO:
+        {
+            cpu_info_t* tx_packet = (cpu_info_t*)tx_buffer;
+
+            // systick.h
+            tx_packet->systick = systick;
+
+            break;
+        }
+
+        ////////// Display Interface //////////
+
+        case CMD_QUERY_DISPLAY:
+        {
+            display_query_t* tx_packet = (display_query_t*)tx_buffer;
+
+            // gfx.h
+            tx_packet->width = DISPLAY_WIDTH;
+            tx_packet->height = DISPLAY_HEIGHT;
+            tx_packet->bpp = DISPLAY_BPP;
+
+            tx_packet->display_on = display_power;
+
+            break;
+        }
+
+        case CMD_SET_DISPLAY_POWER:
+        {
+            bool on = packet[1];
+            if (on)
+                ssd1351_DisplayOn();
+            else
+                ssd1351_DisplayOff();
+
+            break;
+        }
+
+        case CMD_DISPLAY_OVERRIDE:
+        {
+            bool override = packet[1];
+            // TODO
+            break;
+        }
+
+        case CMD_UPDATE_DISPLAY_BUF:
+        {
+            //TODO: Will require multiple RX packets
+            break;
+        }
+
+        case CMD_READ_DISPLAY_BUF:
+        {
+            //TODO: Will require multiple TX packets
+            break;
+        }
+
+        ////////// Sensors //////////
+
+        case CMD_QUERY_SENSORS:
+        {
+            sensor_query_t* tx_packet = (sensor_query_t*)tx_buffer;
+
+            tx_packet->count = 0;
+            //TODO: Dynamically populate with known system sensors
+            
+            break;
+        }
+
+        case CMD_SET_SENSOR_ENABLE:
+        {
+            uint16 index = packet[1];
+
+            // TODO: Enable/disable the specified sensor/
+            // may already be enabled by the system,
+            // and may be re-enabled by the system as required.
+
+            break;
+        }
+
+        case CMD_GET_SENSOR_DATA:
+        {
+            uint16 index = packet[1];
+
+            // TODO: Return the data for the specified sensor index.
+            // Won't return the data until the sensor has been updated,
+            // will return 0 if the sensor is currently disabled.
+            break;
+        }
+
+
 
         default:
             return; // Don't send any response

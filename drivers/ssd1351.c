@@ -94,9 +94,6 @@ const uint8 gamma_lut[] = {
 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e
 };*/
 
-#define DISPLAY_WIDTH 128
-#define DISPLAY_HEIGHT 128
-
 ////////// Methods /////////////////////////////////////////////////////////////
 
 bool ssd1351_Test() {

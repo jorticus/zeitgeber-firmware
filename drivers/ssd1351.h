@@ -47,4 +47,6 @@ void ssd1351_SetCursor(uint x, uint y) ;
 // Fill the screen with a colour
 void ssd1351_FillScreen(color_t c) ;
 
+#define display_power _LAT(OL_POWER)
+
 #endif	/* SSD1351_H */
