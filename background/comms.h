@@ -49,9 +49,17 @@ typedef struct {
     //TODO: add more fields
 } cpu_info_t;
 
+
+typedef enum {
+    cmDisconnected,     // USB not connected
+    cmIdle,             // Not doing anything, use a low priority
+    cmActive            // Actively being used, use a high priority
+} comms_status_t;
+
 void InitializeComms();
 
 extern bool usb_connected;
+extern comms_status_t comms_status;
 
 #endif	/* COMMS_H */
 

@@ -23,7 +23,7 @@
 
 // Run this as fast as possible, since usually it's only
 // checking if data is received and nothing else.
-#define PROCESS_COMMS_INTERVAL 0 //ms
+#define PROCESS_COMMS_INTERVAL 10 //ms
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -33,6 +33,7 @@
 //USB_HANDLE USBOutHandle = 0; //USB handle.  Must be initialized to 0 at startup.
 //USB_HANDLE USBInHandle = 0; //USB handle.  Must be initialized to 0 at startup.
 bool usb_connected = false;
+comms_status_t comms_status = cmDisconnected;
 
 unsigned char tx_buffer[PACKET_SIZE];
 
@@ -57,20 +58,24 @@ void InitializeComms() {
     comms_task->state = tsRun;
 
     usb_connected = false;
+    comms_status = cmDisconnected;
 }
 
 void comms_sleep() {
     comms_task->state = tsStop;
     usb_connected = false;
+    comms_status = cmDisconnected;
 }
 
 void comms_wake() {
     comms_task->state = tsRun;
     usb_connected = true;
+    comms_status = cmIdle;
 }
 
 void ProcessComms() {
     USBProcess(&comms_ReceivedPacket);
+    //TODO: determine whether status is cmIdle or cmActive
 }
 
 void comms_set_led(byte led, byte value) {
