@@ -150,7 +150,7 @@
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>${ProjectDir}\picloader program ${ImagePath} --no-verify --reset</makeCustomizationPostStep>
+        <makeCustomizationPostStep>${ProjectDir}\postbuild.bat ${ImagePath}</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
