@@ -75,7 +75,7 @@ typedef union {
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
-vector3_t accel_current;
+vector3i_t accel_current;
 accel_mode_t accel_mode = accStandby;
 accel_range_t accel_range = range_2g; // TODO: what is the default
 
@@ -132,7 +132,7 @@ void accel_Calibrate() {
     // See Freescale app note AN3745
 }
 
-vector3_t accel_ReadXYZ() {
+vector3i_t accel_ReadXYZ() {
 
     // Normalize the result independant of the range setting
     //TODO: verify if this is what we want

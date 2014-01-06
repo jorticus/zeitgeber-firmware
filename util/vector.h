@@ -13,61 +13,61 @@
 ///// int16 /////
 
 typedef struct {
-    int16 X;
-    int16 Y;
+    int16 x;
+    int16 y;
 } vector2i_t;
 
 typedef struct {
-    int16 X;
-    int16 Y;
-    int16 Z;
+    int16 x;
+    int16 y;
+    int16 z;
 } vector3i_t;
 
 typedef struct {
-    int16 X;
-    int16 Y;
-    int16 Z;
-    int16 W;
+    int16 x;
+    int16 y;
+    int16 z;
+    int16 w;
 } vector4i_t;
 
 ///// uint16 /////
 
 typedef struct {
-    uint16 X;
-    uint16 Y;
+    uint16 x;
+    uint16 y;
 } vector2u_t;
 
 typedef struct {
-    uint16 X;
-    uint16 Y;
-    uint16 Z;
+    uint16 x;
+    uint16 y;
+    uint16 z;
 } vector3u_t;
 
 typedef struct {
-    uint16 X;
-    uint16 Y;
-    uint16 Z;
-    uint16 W;
+    uint16 x;
+    uint16 y;
+    uint16 z;
+    uint16 w;
 } vector4u_t;
 
 ///// int32 /////
 
 typedef struct {
-    int32 X;
-    int32 Y;
+    int32 x;
+    int32 y;
 } vector2l_t;
 
 typedef struct {
-    int32 X;
-    int32 Y;
-    int32 Z;
+    int32 x;
+    int32 y;
+    int32 z;
 } vector3l_t;
 
 typedef struct {
-    int32 X;
-    int32 Y;
-    int32 Z;
-    int32 W;
+    int32 x;
+    int32 y;
+    int32 z;
+    int32 w;
 } vector4l_t;
 
 typedef vector3i_t euler_t;
