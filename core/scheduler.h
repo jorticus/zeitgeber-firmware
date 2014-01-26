@@ -33,8 +33,6 @@ typedef struct {
 	char name[6];
 
     task_proc_t proc;
-    //task_proc_t start;
-    //task_proc_t stop;
 
     task_state_t state;
     uint priority;  // 0:lowest, 255:highest

@@ -13,6 +13,8 @@
 .text
 
 .global __T1Interrupt
+.global _KernelInitTaskStack
+.global _KernelStartTask
 
 .extern _KernelProcess
 .extern _ProcessTasks
@@ -60,14 +62,13 @@ __T1Interrupt:
     ; Store the current stack pointer for later use
     mov _current_task, w0
     mov SP, [w0]
-    ;mov SP, _task_sp
 
     call _KernelSwitchContext
 
+;_RestoreTaskContext:
     ; Restore the stack pointer for the (new) current task
     mov _current_task, w0
     mov [w0], SP
-    ;mov _task_sp, SP
 
     ;pop PSVPAG
     pop DSWPAG
@@ -91,6 +92,78 @@ __T1Interrupt:
     ; since it will return to the PC stored in the current stack.
     retfie
 
+; This function initializes the stack so on the first context switch, it will
+; context switch into the start of the task procedure.
+
+_KernelInitTaskStack: ;(task_t* task: W0, task_proc_t proc: W1)
+;    push.s ; Store w0-w3
+;    mov SP, w3
+;
+;    mov [w0], SP ; task->sp
+;    push SP
+;
+;    ; Clear registers
+;    mov #0, w2
+;    push.d w2; w0
+;    push.d w2; w2
+;    push.d w2; w4
+;    push.d w2; w6
+;    push.d w2; w8
+;    push.d w2; w10
+;    push.d w2; w12
+;    push w2; w14
+;    push w2; RCOUNT
+;
+;    push TBLPAG
+;    push CORCON
+;
+;    push DSRPAG
+;    push DSWPAG
+;    ;push PSVPAG
+;
+;    mov SP, [w0]
+;    ; Store the current stack pointer for later use
+;    ;mov _current_task, w0
+;    ;mov SP, [w0]
+;
+;    ; Push the proc address into the return address
+;    push w1     ; PC<15:0>
+;    mov #0, w1
+;    push w1     ; PC<22:16>
+;
+;    mov w3, SP
+;    pop.s
+return
+
+_KernelStartTask: ;(task_t* task: W0, task_proc_t proc: W1)
+    push w1
+    mov #0, w1
+    push w1
+    return
+
+;    mov [w0], SP
+;
+;    ;pop PSVPAG
+;    pop DSWPAG
+;    pop DSRPAG
+;
+;    ; Restore the (new) current task's registers
+;    pop CORCON
+;    pop TBLPAG
+;    pop RCOUNT
+;    pop w14
+;    pop.d w12
+;    pop.d w10
+;    pop.d w8
+;    pop.d w6
+;    pop.d w4
+;    pop.d w2
+;    pop.d w0
+;    pop SP
+;
+;    ; Continue where we left the (new) current task,
+;    ; since it will return to the PC stored in the current stack.
+;    return
 
 
 ;

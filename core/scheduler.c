@@ -18,11 +18,11 @@
 
 #define SLEEP_THRESHOLD 100 // ticks
 
-#define TASK_STACK_BASE 0//__SP_init
+//#define TASK_STACK_BASE 0//__SP_init
 #define TASK_STACK_SIZE 256
-#define KERNEL_STACK_SIZE 32
+//#define KERNEL_STACK_SIZE 32
 
-#define MAX_STACK_SIZE (TASK_STACK_SIZE*MAX_TASKS)
+//#define MAX_STACK_SIZE (TASK_STACK_SIZE*MAX_TASKS)
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -31,21 +31,32 @@ task_t tasks[MAX_TASKS] __attribute__((section(".data.tasks")));
 uint num_tasks = 0;
 uint anext_task = MAX_UINT;
 task_t* current_task;
+uint current_task_index;
 
 uint16 stack_base = 0;
 uint16 current_stack_base = 0;
 uint16 task_sp = 0;
 //uint16 kernel_sp = 0;
 
+task_t* idle_task;
+extern task_t* draw_task;
+
 ////////// Prototypes //////////////////////////////////////////////////////////
 
+void KernelIdleTask();
 void KernelProcess();
+
 extern void KernelStartContext(); // Defined in kernel.s
+extern void KernelInitTaskStack(task_t* sp, task_proc_t proc);
+extern void KernelStartTask(task_t* sp, task_proc_t proc);
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
 void InitializeKernel(void) {
     //current_stack_base = stack_base;
+
+    idle_task = RegisterTask("idle", KernelIdleTask, 0);
+   
 }
 
 task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
@@ -70,6 +81,8 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task->cpu_time = 0;
 	task->ticks = 0;
 
+    KernelInitTaskStack(task, task->proc);
+
     return task;
 }
 
@@ -92,8 +105,37 @@ void KernelStart() {
     // since we will never return from this function.
     asm("mov _stack_base, W15");
 
-    while(1) {
+    /*while(1) {
         KernelProcess();
+    }*/
+
+    //current_task = &tasks[0];
+    //current_task_index = 0;
+    //current_task = idle_task;
+    current_task = draw_task;
+
+    while(1) {
+        KernelStartTask(draw_task, draw_task->proc);
+        //KernelStartTask(draw_task->proc);
+        //draw_task->proc();
+        //KernelIdleTask();
+    }
+
+    Reset(); // Safety trap
+}
+
+void KernelTaskExit() {
+    // Called when a task returns.
+    while (1) {
+        _LAT(LED1) = 0;
+        _LAT(LED2) = 0;
+    }
+}
+
+void KernelIdleTask() {
+    // Do nothing for now...
+    while (1) {
+        
     }
 }
 
@@ -249,8 +291,23 @@ void KernelSwitchContext() {
     // Here we need to determine if any new tasks need to be run,
     // then if we need to context switch to another task.
     _T1IF = 0;
-    systick++; // atomic operation since systick is a uint16
+    //systick++; // atomic operation since systick is a uint16
+
+#if SYSTICK_PERIOD == 1
+    systick++
+#else
+    systick += SYSTICK_PERIOD;
+#endif
+
     ClrWdt();
+
+   /* current_task_index++;
+    if (current_task_index == num_tasks)
+        current_task_index = 0;
+
+    current_task = &tasks[current_task_index];*/
+
+    _TOGGLE(LED2);
 
     // Upon returning, the kernel will switch the stack to the pointer
     // in 'task_sp', then pop the task's registers back, and continue

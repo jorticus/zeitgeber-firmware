@@ -99,7 +99,7 @@ void Initialize() {
     adc_enable();
     rtc_init();
     
-    //InitializeKernel();
+    InitializeKernel();
     InitializeComms();
     InitializeOled();
     InitializeOS();
