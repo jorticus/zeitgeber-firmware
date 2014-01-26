@@ -38,7 +38,7 @@ void systick_init() {
     PR1 = SYSTICK_PR;
 
     _T1IF = 0;
-    //_T1IP = 7;
+    _T1IP = 1; // Low priority so it doesn't pre-empt other interrupts
     _T1IE = 1;
 
     T1CONbits.TON = 1;
@@ -47,5 +47,6 @@ void systick_init() {
 void isr _T1Interrupt() {
     _T1IF = 0;
     systick++; // atomic operation since systick is a uint16
+    ClrWdt();
 }
 

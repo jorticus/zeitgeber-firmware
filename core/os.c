@@ -71,7 +71,7 @@ bool displayOn = false;
 application_t* foreground_app = NULL;
 
 static task_t* core_task;
-static task_t* draw_task;
+task_t* draw_task;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 

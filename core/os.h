@@ -12,8 +12,8 @@
 
 #include "api/app.h"
 
-#define DRAW_INTERVAL (1000/30) // 30Hz refresh rate for OLED
-#define PROCESS_CORE_INTERVAL 1
+#define DRAW_INTERVAL 1000//(1000/30) // 30Hz refresh rate for OLED
+#define PROCESS_CORE_INTERVAL 50
 #define APP_INTERVAL (1000/100)
 
 void InitializeOS();

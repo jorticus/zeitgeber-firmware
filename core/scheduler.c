@@ -22,6 +22,12 @@
 
 task_t tasks[MAX_TASKS];
 uint num_tasks = 0;
+uint anext_task = MAX_UINT;
+task_t* current_task;
+
+////////// Prototypes //////////////////////////////////////////////////////////
+
+void ProcessTasks();
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
@@ -36,6 +42,8 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task->interval = interval;
 
     task->state = tsStop;
+    task->priority = tpNormal;
+
     task->next_run = 0; // should be current tick + interval
     task->cpu_time = 0;
 	task->ticks = 0;
@@ -55,10 +63,18 @@ void sch_FixRollover(uint last_tick) {
     }
 }
 
+void RunKernel() {
+    while (1) {
+        // Note that the watchdog is cleared in preempt.s
+        ProcessTasks();
+    }
+}
+
 void ProcessTasks() {
     uint i;
     static uint last_tick = 0;
     uint current_tick = 0;
+    uint next_task = MAX_UINT;
     //uint time = 0; // TODO: system tick
 //    uint next_task = 3000; //TODO: MAX_INT
 
@@ -84,7 +100,7 @@ void ProcessTasks() {
     // This mode should run when display is not drawing, and USB is not connected.
     // All tasks should be very short to run, maximising the amount of time spent in sleep mode.
     // Could potentially still do things like accel/magnetometer.
-    
+
 
     // If next task to run is more than 32ms away,
     // enter sleep mode and let the WDT wake us up
@@ -112,22 +128,44 @@ void ProcessTasks() {
         if (last_tick > current_tick) {
             sch_FixRollover(last_tick);
         }
-        
-		if (task->state == tsRun && current_tick > task->next_run) {
-            task->ticks++;
-			task->proc();
 
-            // Note: don't care about rollover here.
-            // also ignoring any time spent in proc()
-			task->next_run = current_tick + task->interval;
+        if (task->state == tsRun) {
+            if (current_tick > task->next_run) {
+                task->ticks++;
+
+                //task->running = true;
+                current_task = task;
+                task->proc();
+                
+                //task->running = false;
+
+                // Note: don't care about rollover here.
+                // also ignoring any time spent in proc()
+                //current_tick = systick;
+                task->next_run = current_tick + task->interval;
+            }
 
             // Find the amount of time to the next task
-           // if (task->next_run < next_task)
-            //    next_task = task->next_run;
+            if (task->next_run < next_task)
+                next_task = task->next_run;
         }
 
         last_tick = current_tick;
     }
+    anext_task = next_task - current_tick;
+    //TODO: Why is this always returning 0 or 65535?
+
+    /*if (next_task == MAX_UINT) {
+        // No pending tasks, enter sleep mode?
+        anext_task = MAX_UINT;
+    } else {
+        if (next_task > current_tick) {
+            next_task -= current_tick;
+            anext_task = next_task;
+        } else {
+            anext_task = 0;
+        }
+    }*/
 
     // Put the system in sleep mode if no tasks are scheduled for a while
     /*if (next_task > SLEEP_THRESHOLD) {
@@ -135,8 +173,8 @@ void ProcessTasks() {
         // NOTE that the system might wake up earlier than expected through other interrupts
         // (eg. accelerometer interrupt)
         //Sleep();
-        
-        
+
+
 
         //TODO: Sleep, Idle, or Doze?
     }*/
@@ -146,3 +184,37 @@ void ProcessTasks() {
     // Ignore sleeping tasks
 }
 
+void PreemptTask() {
+    // Called every systick (see preempt.s)
+
+    //systick++;
+
+    //ClrWdt();
+
+    uint16* stack = current_task->stack;
+    stack[0] = SR;
+    stack[1] = SR;
+
+    
+  /*      _IPL3 = 0;
+    _IPL = 0x00;
+
+    // Continue processing tasks
+    asm("goto _RunKernel");*/
+
+    /*task_proc_t test = PreemptTask;
+    test();
+
+    PreemptTask();
+
+
+    while (1) {
+        _LAT(LED1) = 0;
+        _LAT(LED2) = 1;
+    }*/
+}
+
+/*void shadow_isr _T1Interrupt() {
+    systick++;
+    ClrWdt();
+}*/

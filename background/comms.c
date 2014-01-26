@@ -53,7 +53,6 @@ void comms_wake();
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeComms() {
-    ClrWdt();
     InitializeUSB(&comms_sleep, &comms_wake);
     
     // Communications, only needs to be run when USB is connected

@@ -91,6 +91,7 @@
         <itemPath>core/systick.c</itemPath>
         <itemPath>core/traps.c</itemPath>
         <itemPath>core/os.c</itemPath>
+        <itemPath>kernel.s</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="drivers" projectFiles="true">
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
@@ -164,7 +165,7 @@
         <property key="enable-ansi-warnings" value="false"/>
         <property key="enable-fatal-warnings" value="false"/>
         <property key="enable-large-arrays" value="true"/>
-        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-procedural-abstraction" value="false"/>
         <property key="enable-short-double" value="false"/>
         <property key="enable-symbols" value="true"/>

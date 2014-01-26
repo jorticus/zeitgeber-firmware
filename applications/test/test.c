@@ -38,7 +38,8 @@ void apptest_Draw();
 application_t apptest = APPLICATION("Test", apptest_Initialize, apptest_Process, apptest_Draw);
 
 ////////// Variables ///////////////////////////////////////////////////////////
-
+extern task_t* draw_task;
+extern uint anext_task;
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
@@ -93,11 +94,16 @@ void apptest_Draw() {
     x = DrawString("systick: ", x,24,WHITE);
     x = DrawString(s,        x,24, WHITE);
 
-    utoa(s, vdd, 10);
+    utoa(s, anext_task, 10);
     x = 8;
-    x = DrawString("VDD: ", x,38,WHITE);
+    x = DrawString("next: ", x,38,WHITE);
     x = DrawString(s,        x,38, WHITE);
-    x = DrawString("mV", x,38,WHITE);
+
+//    utoa(s, vdd, 10);
+//    x = 8;
+//    x = DrawString("VDD: ", x,38,WHITE);
+//    x = DrawString(s,        x,38, WHITE);
+//    x = DrawString("mV", x,38,WHITE);
 
 
 
@@ -162,4 +168,6 @@ void apptest_Draw() {
 
     RtcTimeToStr(s);
     DrawString(s, 8,100,WHITE);
+
+    //Sleep();
 }
