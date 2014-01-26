@@ -89,9 +89,6 @@ void Initialize() {
     InitializeIO();
     InitializeOsc();
 
-    // Enable watchdog
-    RCONbits.SWDTEN = 1;
-
     _LAT(LED1) = 1;
     //_LAT(LED2) = 1;
 
@@ -101,26 +98,26 @@ void Initialize() {
     adc_init();
     adc_enable();
     rtc_init();
-    systick_init();
-
+    
+    //InitializeKernel();
     InitializeComms();
     InitializeOled();
     InitializeOS();
+
+    // Enable watchdog
+    RCONbits.SWDTEN = 1;
 
     _LAT(LED1) = 0;
 }
 
 int main() {
+    KernelSetSP(); // Sets stack_base to the current stack address
     Initialize();
 
     RegisterUserApplication(&apptest);
 
     SetForegroundApp(&apptest);
 
-    /*while(1) {
-        ProcessTasks();
-    }*/
-    RunKernel();
-    
+    KernelStart();
     return 0;
 }

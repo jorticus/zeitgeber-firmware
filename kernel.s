@@ -4,47 +4,37 @@
 ; Created: 8/01/2014
 ;
 
+#include <scheduler.h>
+
 ;--- Useful definitions ---
 .equ SP, W15
 
-;--- Code ---
+;--- Externs and Globals ---
 .text
+
 .global __T1Interrupt
-.extern _systick
-.extern _RunKernel
+
+.extern _KernelProcess
+.extern _ProcessTasks
 .extern _KernelSwitchContext
+
+.extern _systick_init
+.extern _systick
+
 .extern _PreemptTask
 .extern _current_task
-.extern _task_sr
+.extern _stack_base
+.extern _current_stack_base
+.extern _task_sp
+;.extern _kernel_sp
 
-_Kernel:
-    ; TODO: Implement the round-robin scheduler here,
-    ;  so we have full control over the stack.
 
+;--- Code ---
 
 ;Note: you should set the T1 interrupt priority to 1 so this can't
 ; interrupt other interrupts. If this were to interrupt another ISR,
 ; the interrupt could be context switched to another task, and the interrupt
 ; won't finish until we context switch back to it!
-
-
-;47:                void isr _T1Interrupt() {
-;0186AE  781F80     MOV W0, [W15++]
-;0186B0  F80032     PUSH DSRPAG
-;0186B2  202000     MOV #0x200, W0
-;0186B4  880190     MOV W0, DSRPAG
-;48:                    _T1IF = 0;
-;0186B6  A96084     BCLR IFS0, #3
-;49:                    systick++; // atomic operation since systick is a uint16
-;0186B8  8067B0     MOV 0xCF6, W0
-;0186BA  E80000     INC W0, W0
-;0186BC  8867B0     MOV W0, 0xCF6
-;50:                    ClrWdt();
-;0186BE  FE6000     CLRWDT
-;51:                }
-;0186C0  F90032     POP DSRPAG
-;0186C2  78004F     MOV [--W15], W0
-;0186C4  064000     RETFIE
 
 __T1Interrupt:
     bclr IFS0, #3
@@ -68,12 +58,16 @@ __T1Interrupt:
     ;push PSVPAG
 
     ; Store the current stack pointer for later use
-    mov SP, _task_sr
+    mov _current_task, w0
+    mov SP, [w0]
+    ;mov SP, _task_sp
 
     call _KernelSwitchContext
 
     ; Restore the stack pointer for the (new) current task
-    mov _task_sr, SP
+    mov _current_task, w0
+    mov [w0], SP
+    ;mov _task_sp, SP
 
     ;pop PSVPAG
     pop DSWPAG
@@ -261,3 +255,14 @@ __T1Interrupt:
 ;018680  F90032     POP DSRPAG
 ;018682  78004F     MOV [--W15], W0
 ;018684  064000     RETFIE
+
+
+;--- Stack Definition ---
+
+;.section app_stack, stack
+;.space (0x100)
+
+;.section app_stack, stack
+;_initial_sp_addr:
+;    ; Used to reference the base stack address
+;.space (0x100)

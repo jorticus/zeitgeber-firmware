@@ -25,9 +25,10 @@ typedef enum {
 } task_state_t;
 
 typedef struct {
+    uint16 sp;          // Stored task stack pointer for context switch (MUST BE FIRST MEMBER IN STRUCT)
+
     uint16 stack_base;  // Task stack base address
     uint16 stack_size;  // Task stack size
-    uint16 sr;          // Stored task stack pointer for context switch
     
 	char name[6];
 
@@ -59,8 +60,11 @@ typedef struct {
 
 extern void InitializeKernel();
 extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
-extern void RunKernel();
+extern void KernelStart();
 
+// Load the current stack pointer into the stack_base variable,
+// which will then be used as the base stack pointer for application tasks.
+#define KernelSetSP() asm("mov W15, _stack_base\nmov W15, _current_stack_base")
 
 #endif	/* SCHEDULER_H */
 

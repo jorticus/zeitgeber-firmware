@@ -18,8 +18,11 @@
 
 #define SLEEP_THRESHOLD 100 // ticks
 
-#define TASK_STACK_BASE 0
+#define TASK_STACK_BASE 0//__SP_init
 #define TASK_STACK_SIZE 256
+#define KERNEL_STACK_SIZE 32
+
+#define MAX_STACK_SIZE (TASK_STACK_SIZE*MAX_TASKS)
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -28,28 +31,30 @@ task_t tasks[MAX_TASKS] __attribute__((section(".data.tasks")));
 uint num_tasks = 0;
 uint anext_task = MAX_UINT;
 task_t* current_task;
-uint16 stack_base = TASK_STACK_BASE;
-uint16 task_sr = TASK_STACK_BASE;
+
+uint16 stack_base = 0;
+uint16 current_stack_base = 0;
+uint16 task_sp = 0;
+//uint16 kernel_sp = 0;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
-void ProcessTasks();
+void KernelProcess();
+extern void KernelStartContext(); // Defined in kernel.s
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
 void InitializeKernel(void) {
-    //sph = 0; // TODO: what is the initial stack address?
+    //current_stack_base = stack_base;
 }
 
 task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task_t* task = &tasks[num_tasks++];
 
-    // Set up the task stack
-    task->sr = stack_base;
-    task->stack_base = stack_base;
+    task->sp = stack_base;
+    task->stack_base = current_stack_base;
     task->stack_size = TASK_STACK_SIZE;
-    stack_base += TASK_STACK_SIZE;
-
+    current_stack_base += TASK_STACK_SIZE;
 
 	uint i=0;
 	for (i=0; i<6 && *name; i++)
@@ -80,14 +85,19 @@ void sch_FixRollover(uint last_tick) {
     }
 }
 
-void RunKernel() {
-    while (1) {
-        // Note that the watchdog is cleared in preempt.s
-        ProcessTasks();
+void KernelStart() {
+    systick_init();
+
+    // Overwrite the current stack pointer with the application stack base,
+    // since we will never return from this function.
+    asm("mov _stack_base, W15");
+
+    while(1) {
+        KernelProcess();
     }
 }
 
-void ProcessTasks() {
+void KernelProcess() {
     uint i;
     static uint last_tick = 0;
     uint current_tick = 0;
@@ -201,7 +211,7 @@ void ProcessTasks() {
     // Ignore sleeping tasks
 }
 
-void PreemptTask() {
+//void PreemptTask() {
     // Called every systick (see preempt.s)
 
     //systick++;
@@ -225,7 +235,7 @@ void PreemptTask() {
         _LAT(LED1) = 0;
         _LAT(LED2) = 1;
     }*/
-}
+//}
 
 /*void shadow_isr _T1Interrupt() {
     systick++;
@@ -234,7 +244,7 @@ void PreemptTask() {
 
 void KernelSwitchContext() {
     // The kernel will automatically push the current task's registers
-    // onto the stack, then store the stack pointer to 'task_sr'.
+    // onto the stack, then store the stack pointer to 'task_sp'.
 
     // Here we need to determine if any new tasks need to be run,
     // then if we need to context switch to another task.
@@ -243,6 +253,6 @@ void KernelSwitchContext() {
     ClrWdt();
 
     // Upon returning, the kernel will switch the stack to the pointer
-    // in 'task_sr', then pop the task's registers back, and continue
+    // in 'task_sp', then pop the task's registers back, and continue
     // where the task was left off.
 }

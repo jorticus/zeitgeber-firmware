@@ -41,7 +41,9 @@ application_t apptest = APPLICATION("Test", apptest_Initialize, apptest_Process,
 extern task_t* draw_task;
 extern uint anext_task;
 
-extern uint16 task_sr;
+extern uint16 task_sp;
+extern task_t* current_task;
+extern uint16 stack_base;
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
@@ -97,9 +99,11 @@ void apptest_Draw() {
     x = DrawString("systick: ", x,24,WHITE);
     x = DrawString(s,        x,24, WHITE);
 
-    utoa(s, task_sr, 10);
+    utoa(s, current_task->sp, 10);
+    //utoa(s, task_sp, 10);
+    //utoa(s, stack_base, 10);
     x = 8;
-    x = DrawString("SR: ", x,38,WHITE);
+    x = DrawString("SP: ", x,38,WHITE);
     x = DrawString(s,        x,38, WHITE);
 
 //    utoa(s, vdd, 10);
