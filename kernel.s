@@ -9,15 +9,96 @@
 
 ;--- Code ---
 .text
-;.global __T1Interrupt
+.global __T1Interrupt
 .extern _systick
 .extern _RunKernel
+.extern _KernelSwitchContext
 .extern _PreemptTask
 .extern _current_task
+.extern _task_sr
 
 _Kernel:
     ; TODO: Implement the round-robin scheduler here,
     ;  so we have full control over the stack.
+
+
+;Note: you should set the T1 interrupt priority to 1 so this can't
+; interrupt other interrupts. If this were to interrupt another ISR,
+; the interrupt could be context switched to another task, and the interrupt
+; won't finish until we context switch back to it!
+
+
+;47:                void isr _T1Interrupt() {
+;0186AE  781F80     MOV W0, [W15++]
+;0186B0  F80032     PUSH DSRPAG
+;0186B2  202000     MOV #0x200, W0
+;0186B4  880190     MOV W0, DSRPAG
+;48:                    _T1IF = 0;
+;0186B6  A96084     BCLR IFS0, #3
+;49:                    systick++; // atomic operation since systick is a uint16
+;0186B8  8067B0     MOV 0xCF6, W0
+;0186BA  E80000     INC W0, W0
+;0186BC  8867B0     MOV W0, 0xCF6
+;50:                    ClrWdt();
+;0186BE  FE6000     CLRWDT
+;51:                }
+;0186C0  F90032     POP DSRPAG
+;0186C2  78004F     MOV [--W15], W0
+;0186C4  064000     RETFIE
+
+__T1Interrupt:
+    bclr IFS0, #3
+
+    ; Save the current task's registers to its stack
+    push SP         ; Save the stack register used by the stack
+    push.d w0
+    push.d w2
+    push.d w4
+    push.d w6
+    push.d w8
+    push.d w10
+    push.d w12
+    push w14
+    push RCOUNT
+    push TBLPAG
+    push CORCON
+
+    push DSRPAG
+    push DSWPAG
+    ;push PSVPAG
+
+    ; Store the current stack pointer for later use
+    mov SP, _task_sr
+
+    call _KernelSwitchContext
+
+    ; Restore the stack pointer for the (new) current task
+    mov _task_sr, SP
+
+    ;pop PSVPAG
+    pop DSWPAG
+    pop DSRPAG
+
+    ; Restore the (new) current task's registers
+    pop CORCON
+    pop TBLPAG
+    pop RCOUNT
+    pop w14
+    pop.d w12
+    pop.d w10
+    pop.d w8
+    pop.d w6
+    pop.d w4
+    pop.d w2
+    pop.d w0
+    pop SP
+
+    ; Continue where we left the (new) current task,
+    ; since it will return to the PC stored in the current stack.
+    retfie
+
+
+
 ;
 ;__T1Interrupt:
 ;    ; Actions performed on interrupt:

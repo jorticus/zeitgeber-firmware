@@ -18,12 +18,18 @@
 
 #define SLEEP_THRESHOLD 100 // ticks
 
+#define TASK_STACK_BASE 0
+#define TASK_STACK_SIZE 256
+
 ////////// Variables ///////////////////////////////////////////////////////////
 
-task_t tasks[MAX_TASKS];
+task_t tasks[MAX_TASKS] __attribute__((section(".data.tasks")));
+
 uint num_tasks = 0;
 uint anext_task = MAX_UINT;
 task_t* current_task;
+uint16 stack_base = TASK_STACK_BASE;
+uint16 task_sr = TASK_STACK_BASE;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
@@ -31,8 +37,19 @@ void ProcessTasks();
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
+void InitializeKernel(void) {
+    //sph = 0; // TODO: what is the initial stack address?
+}
+
 task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task_t* task = &tasks[num_tasks++];
+
+    // Set up the task stack
+    task->sr = stack_base;
+    task->stack_base = stack_base;
+    task->stack_size = TASK_STACK_SIZE;
+    stack_base += TASK_STACK_SIZE;
+
 
 	uint i=0;
 	for (i=0; i<6 && *name; i++)
@@ -42,7 +59,7 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task->interval = interval;
 
     task->state = tsStop;
-    task->priority = tpNormal;
+    task->priority = 0;
 
     task->next_run = 0; // should be current tick + interval
     task->cpu_time = 0;
@@ -191,10 +208,6 @@ void PreemptTask() {
 
     //ClrWdt();
 
-    uint16* stack = current_task->stack;
-    stack[0] = SR;
-    stack[1] = SR;
-
     
   /*      _IPL3 = 0;
     _IPL = 0x00;
@@ -218,3 +231,18 @@ void PreemptTask() {
     systick++;
     ClrWdt();
 }*/
+
+void KernelSwitchContext() {
+    // The kernel will automatically push the current task's registers
+    // onto the stack, then store the stack pointer to 'task_sr'.
+
+    // Here we need to determine if any new tasks need to be run,
+    // then if we need to context switch to another task.
+    _T1IF = 0;
+    systick++; // atomic operation since systick is a uint16
+    ClrWdt();
+
+    // Upon returning, the kernel will switch the stack to the pointer
+    // in 'task_sr', then pop the task's registers back, and continue
+    // where the task was left off.
+}

@@ -44,9 +44,9 @@ void systick_init() {
     T1CONbits.TON = 1;
 }
 
-void isr _T1Interrupt() {
+/*void isr _T1Interrupt() {
     _T1IF = 0;
     systick++; // atomic operation since systick is a uint16
     ClrWdt();
-}
+}*/
 

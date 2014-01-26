@@ -40,6 +40,9 @@ application_t apptest = APPLICATION("Test", apptest_Initialize, apptest_Process,
 ////////// Variables ///////////////////////////////////////////////////////////
 extern task_t* draw_task;
 extern uint anext_task;
+
+extern uint16 task_sr;
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
@@ -94,9 +97,9 @@ void apptest_Draw() {
     x = DrawString("systick: ", x,24,WHITE);
     x = DrawString(s,        x,24, WHITE);
 
-    utoa(s, anext_task, 10);
+    utoa(s, task_sr, 10);
     x = 8;
-    x = DrawString("next: ", x,38,WHITE);
+    x = DrawString("SR: ", x,38,WHITE);
     x = DrawString(s,        x,38, WHITE);
 
 //    utoa(s, vdd, 10);

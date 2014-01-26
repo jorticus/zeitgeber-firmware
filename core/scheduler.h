@@ -10,6 +10,10 @@
 #ifndef SCHEDULER_H
 #define	SCHEDULER_H
 
+////////// Kernel Configuration ////////////////////////////////////////////////
+
+
+
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
 typedef void (*task_proc_t)(void);
@@ -20,14 +24,11 @@ typedef enum {
     tsRun       // Task is actively running
 } task_state_t;
 
-typedef enum {
-    tpNormal,
-    tpHigh
-} task_priority_t;
-
 typedef struct {
-    uint16 stack[18];
-
+    uint16 stack_base;  // Task stack base address
+    uint16 stack_size;  // Task stack size
+    uint16 sr;          // Stored task stack pointer for context switch
+    
 	char name[6];
 
     task_proc_t proc;
@@ -35,7 +36,7 @@ typedef struct {
     //task_proc_t stop;
 
     task_state_t state;
-    task_priority_t priority;
+    uint priority;  // 0:lowest, 255:highest
 
     uint interval;
     uint cpu_time;
@@ -50,12 +51,13 @@ typedef struct {
 
 ////////// Constants ///////////////////////////////////////////////////////////
 
-#define MAX_TASKS 20
+#define MAX_TASKS 10
 
 #define MAX_TIME_SLOTS 5  // 5 ticks before a task can be interrupted
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
+extern void InitializeKernel();
 extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
 extern void RunKernel();
 
