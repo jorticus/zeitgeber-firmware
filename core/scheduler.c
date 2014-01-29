@@ -47,7 +47,9 @@ extern task_t* core_task;
 void KernelIdleTask();
 void KernelProcess();
 
-extern void KernelStartContext(); // Defined in kernel.s
+// Defined in kernel.s
+extern void KernelSwitchContext();
+extern void KernelStartContext();
 extern void KernelInitTaskStack(task_t* sp, task_proc_t proc);
 extern void KernelStartTask(task_t* sp);
 
@@ -74,7 +76,7 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task->proc = proc;
     task->interval = interval;
 
-    task->state = tsStop;
+    task->state = tsRun;
     task->priority = 0;
 
     task->next_run = 0; // should be current tick + interval
@@ -86,7 +88,7 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     return task;
 }
 
-void sch_FixRollover(uint last_tick) {
+void fix_rollover(uint last_tick) {
     uint i;
     for (i=0; i<num_tasks; i++) {
         task_t* task = &tasks[i];
@@ -140,7 +142,7 @@ void KernelIdleTask() {
     }
 }
 
-void KernelProcess() {
+/*void KernelProcess() {
     uint i;
     static uint last_tick = 0;
     uint current_tick = 0;
@@ -196,7 +198,7 @@ void KernelProcess() {
 
         // Rollover occurred (should occur roughly every 65 seconds)
         if (last_tick > current_tick) {
-            sch_FixRollover(last_tick);
+            fix_rollover(last_tick);
         }
 
         if (task->state == tsRun) {
@@ -252,7 +254,7 @@ void KernelProcess() {
     // TODO: Figure out how to make the processor go to sleep for a preset time
     // Wake up using a timer interrupt?
     // Ignore sleeping tasks
-}
+//}
 
 //void PreemptTask() {
     // Called every systick (see preempt.s)
@@ -285,36 +287,74 @@ void KernelProcess() {
     ClrWdt();
 }*/
 
-void KernelSwitchContext() {
+void KernelSwitchTask_old() {
+    static uint last_tick = 0;
+    uint i;
+    uint current_tick = 0;
+    uint next_task = MAX_UINT;
+
+    // If any tasks need to be executed, we can switch to them here.
+    // otherwise we can context switch to the idle task.
+
+    for (i=0; i<num_tasks; i++) {
+        task_t* task = &tasks[i];
+        current_tick = systick;  // copy, since the variable is volatile
+
+        // Rollover occurred (should occur roughly every 65 seconds)
+        if (last_tick > current_tick) {
+            fix_rollover(last_tick);
+        }
+
+        if (task->state == tsRun) {
+            current_task = task;
+            return;
+            /*if (current_tick > task->next_run) {
+                task->ticks++;
+
+                // This may cause a context switch
+                current_task = task;
+
+                //task->running = false;
+
+                // Note: don't care about rollover here.
+                // also ignoring any time spent in proc()
+                //current_tick = systick;
+                task->next_run = current_tick + task->interval;
+            }
+
+            // Find the amount of time to the next task
+            if (task->next_run < next_task)
+                next_task = task->next_run;*/
+        }
+
+        last_tick = current_tick;
+    }
+   // anext_task = next_task - current_tick;
+}
+
+void KernelSwitchTask() {
+    static uint last_tick;
+    uint i;
+    
     // The kernel will automatically push the current task's registers
     // onto the stack, then store the stack pointer to 'task_sp'.
+    ClrWdt();
+    IncSystick();
+
+    // Rollover occurred (should occur roughly every 65 seconds)
+    if (last_tick > systick) {
+        fix_rollover(last_tick);
+    }
 
     // Here we need to determine if any new tasks need to be run,
     // then if we need to context switch to another task.
-    _T1IF = 0;
-    //systick++; // atomic operation since systick is a uint16
-
-#if SYSTICK_PERIOD == 1
-    systick++;
-#else
-    systick += SYSTICK_PERIOD;
-#endif
-
-    ClrWdt();
-
     current_task_index++;
     if (current_task_index == num_tasks)
         current_task_index = 0;
 
     current_task = &tasks[current_task_index];
 
-    /*if (current_task == draw_task)
-        current_task = idle_task;
-    else
-        current_task = draw_task;*/
-
-    //current_task = draw_task;
-
+    last_tick = systick;
     _TOGGLE(LED2);
 
     // Upon returning, the kernel will switch the stack to the pointer

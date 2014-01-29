@@ -10,8 +10,8 @@
 #ifndef SYSTICK_H
 #define	SYSTICK_H
 
-#define SYSTICK_PERIOD 1 //ms
-#define SYSTICK_PRESCALER 8  // 1, 8, 64, 256
+#define SYSTICK_PERIOD 100 //ms
+#define SYSTICK_PRESCALER 256  // 1, 8, 64, 256
 
 // Calculations
 #define SYSTICK_PR (POSC/2 / SYSTICK_PRESCALER * SYSTICK_PERIOD / 1000)
@@ -22,6 +22,13 @@
 extern volatile uint systick;
 
 void systick_init();
+
+#if SYSTICK_PERIOD == 1
+    #define IncSystick() systick++
+#else
+    #define IncSystick() systick += SYSTICK_PERIOD
+#endif
+
 
 #endif	/* SYSTICK_H */
 
