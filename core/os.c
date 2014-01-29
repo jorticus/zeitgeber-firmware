@@ -70,7 +70,7 @@ bool displayOn = false;
 
 application_t* foreground_app = NULL;
 
-static task_t* core_task;
+task_t* core_task;
 task_t* draw_task;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
@@ -109,8 +109,10 @@ void SetForegroundApp(application_t* app) {
 }
 
 void ProcessCore() {
-    ProcessPowerMonitor();
-    CheckButtons();
+    while (1) {
+        ProcessPowerMonitor();
+        CheckButtons();
+    }
 }
 
 void CheckButtons() {
@@ -202,7 +204,7 @@ void DisplayBootScreen() {
     }
     RCON &= ~RCON_RESET;
     
-    for (i=0; i<3000000; i++) { ClrWdt(); }
+    for (i=0; i<1000000; i++) { ClrWdt(); }
 }
 
 // Called periodically

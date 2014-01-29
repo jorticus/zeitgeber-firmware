@@ -76,8 +76,10 @@ void comms_wake() {
 }
 
 void ProcessComms() {
-    USBProcess(&comms_ReceivedPacket);
-    //TODO: determine whether status is cmIdle or cmActive
+    while (1) {
+        USBProcess(&comms_ReceivedPacket);
+        //TODO: determine whether status is cmIdle or cmActive
+    }
 }
 
 void comms_set_led(byte led, byte value) {

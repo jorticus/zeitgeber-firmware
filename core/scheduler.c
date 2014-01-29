@@ -31,7 +31,7 @@ task_t tasks[MAX_TASKS] __attribute__((section(".data.tasks")));
 uint num_tasks = 0;
 uint anext_task = MAX_UINT;
 task_t* current_task;
-uint current_task_index;
+uint current_task_index = 0;
 
 uint16 stack_base = 0;
 uint16 current_stack_base = 0;
@@ -40,6 +40,7 @@ uint16 task_sp = 0;
 
 task_t* idle_task;
 extern task_t* draw_task;
+extern task_t* core_task;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
@@ -60,6 +61,7 @@ void InitializeKernel(void) {
 task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task_t* task = &tasks[num_tasks++];
 
+    // Assign some stack space to this task
     current_stack_base += TASK_STACK_SIZE;
     task->sp = current_stack_base;
     task->stack_base = current_stack_base;
@@ -109,12 +111,15 @@ void KernelStart() {
 
     //current_task = &tasks[0];
     //current_task_index = 0;
+    current_task_index = 0;
     current_task = idle_task;
     //current_task = draw_task;
 
-    while(1) {
-        KernelStartTask(draw_task);
-        //KernelIdleTask();
+    // Context-switch into the idle task
+    KernelStartTask(idle_task);
+
+    while (1) {
+
     }
 
     Reset(); // Safety trap
@@ -290,18 +295,23 @@ void KernelSwitchContext() {
     //systick++; // atomic operation since systick is a uint16
 
 #if SYSTICK_PERIOD == 1
-    systick++
+    systick++;
 #else
     systick += SYSTICK_PERIOD;
 #endif
 
     ClrWdt();
 
-   /* current_task_index++;
+    current_task_index++;
     if (current_task_index == num_tasks)
         current_task_index = 0;
 
-    current_task = &tasks[current_task_index];*/
+    current_task = &tasks[current_task_index];
+
+    /*if (current_task == draw_task)
+        current_task = idle_task;
+    else
+        current_task = draw_task;*/
 
     //current_task = draw_task;
 

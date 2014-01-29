@@ -1,5 +1,5 @@
 ;
-; Pre-empting multi task kernel
+; ViscOS Kernel - Pre-empting multi task kernel
 ; Author: Jared Sanson
 ; Created: 8/01/2014
 ;

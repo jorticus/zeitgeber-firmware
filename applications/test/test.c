@@ -55,7 +55,9 @@ void apptest_Initialize() {
 
 // Called periodically when state==asRunning
 void apptest_Process() {
-
+    while (1) {
+     
+    }
 }
 
 // Called periodically when isForeground==true (30Hz)

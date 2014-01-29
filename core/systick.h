@@ -10,7 +10,7 @@
 #ifndef SYSTICK_H
 #define	SYSTICK_H
 
-#define SYSTICK_PERIOD 10 //ms
+#define SYSTICK_PERIOD 1 //ms
 #define SYSTICK_PRESCALER 8  // 1, 8, 64, 256
 
 // Calculations

@@ -16,6 +16,9 @@
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
+// IMPORTANT: The task_proc must NEVER return!
+//   Returning will cause bad things to happen, such as popping things off
+//   the end of the stack and returning to unknown addresses.
 typedef void (*task_proc_t)(void);
 
 typedef enum { 
