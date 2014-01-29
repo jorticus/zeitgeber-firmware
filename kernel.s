@@ -42,7 +42,6 @@ __T1Interrupt:
     bclr IFS0, #3
 
     ; Save the current task's registers to its stack
-    push SP         ; Save the stack register used by the stack
     push.d w0
     push.d w2
     push.d w4
@@ -65,11 +64,11 @@ __T1Interrupt:
 
     call _KernelSwitchContext
 
-;_RestoreTaskContext:
     ; Restore the stack pointer for the (new) current task
     mov _current_task, w0
     mov [w0], SP
 
+_RestoreTaskContext:
     ;pop PSVPAG
     pop DSWPAG
     pop DSRPAG
@@ -86,84 +85,60 @@ __T1Interrupt:
     pop.d w4
     pop.d w2
     pop.d w0
-    pop SP
+    ;pop SP
 
     ; Continue where we left the (new) current task,
     ; since it will return to the PC stored in the current stack.
-    retfie
+retfie
 
-; This function initializes the stack so on the first context switch, it will
-; context switch into the start of the task procedure.
 
 _KernelInitTaskStack: ;(task_t* task: W0, task_proc_t proc: W1)
-;    push.s ; Store w0-w3
-;    mov SP, w3
-;
-;    mov [w0], SP ; task->sp
-;    push SP
-;
-;    ; Clear registers
-;    mov #0, w2
-;    push.d w2; w0
-;    push.d w2; w2
-;    push.d w2; w4
-;    push.d w2; w6
-;    push.d w2; w8
-;    push.d w2; w10
-;    push.d w2; w12
-;    push w2; w14
-;    push w2; RCOUNT
-;
-;    push TBLPAG
-;    push CORCON
-;
-;    push DSRPAG
-;    push DSWPAG
-;    ;push PSVPAG
-;
-;    mov SP, [w0]
-;    ; Store the current stack pointer for later use
-;    ;mov _current_task, w0
-;    ;mov SP, [w0]
-;
-;    ; Push the proc address into the return address
-;    push w1     ; PC<15:0>
-;    mov #0, w1
-;    push w1     ; PC<22:16>
-;
-;    mov w3, SP
-;    pop.s
+    ; This function initializes the stack for the given task so on the first
+    ; context switch, it will start executing the task's proc.
+
+    push.s ; Store w0-w3
+    mov SP, w3 ; Save the original stack pointer
+
+    mov [w0], SP ; task->sp
+
+    ; Push the proc address into the return address
+    push w1     ; PC<15:0>
+    mov #0, w1
+    push w1     ; PC<22:16>
+
+    ; Clear registers
+    mov #0, w2
+    push.d w2; w0
+    push.d w2; w2
+    push.d w2; w4
+    push.d w2; w6
+    push.d w2; w8
+    push.d w2; w10
+    push.d w2; w12
+    push w2; w14
+    push w2; RCOUNT
+
+    push TBLPAG
+    push CORCON
+
+    push DSRPAG
+    push DSWPAG
+    ;push PSVPAG
+
+    mov SP, [w0] ; task->sp
+
+    mov w3, SP ; restore the original stack pointer
+    pop.s
 return
 
-_KernelStartTask: ;(task_t* task: W0, task_proc_t proc: W1)
-    push w1
-    mov #0, w1
-    push w1
-    return
 
-;    mov [w0], SP
-;
-;    ;pop PSVPAG
-;    pop DSWPAG
-;    pop DSRPAG
-;
-;    ; Restore the (new) current task's registers
-;    pop CORCON
-;    pop TBLPAG
-;    pop RCOUNT
-;    pop w14
-;    pop.d w12
-;    pop.d w10
-;    pop.d w8
-;    pop.d w6
-;    pop.d w4
-;    pop.d w2
-;    pop.d w0
-;    pop SP
-;
-;    ; Continue where we left the (new) current task,
-;    ; since it will return to the PC stored in the current stack.
-;    return
+_KernelStartTask: ;(task_t* task: W0)
+    ; The task stack must first be initialized with _KernelInitTaskStack before we can call this.
+
+    ; To start a task, we set the current stack pointer to the task's stack pointer,
+    ; then call the code exiting the ISR.
+    mov [w0], SP
+    goto _RestoreTaskContext
 
 
 ;
@@ -332,8 +307,8 @@ _KernelStartTask: ;(task_t* task: W0, task_proc_t proc: W1)
 
 ;--- Stack Definition ---
 
-;.section app_stack, stack
-;.space (0x100)
+.section app_stack, stack
+.space (0xB00)
 
 ;.section app_stack, stack
 ;_initial_sp_addr:

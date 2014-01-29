@@ -48,25 +48,23 @@ void KernelProcess();
 
 extern void KernelStartContext(); // Defined in kernel.s
 extern void KernelInitTaskStack(task_t* sp, task_proc_t proc);
-extern void KernelStartTask(task_t* sp, task_proc_t proc);
+extern void KernelStartTask(task_t* sp);
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
 void InitializeKernel(void) {
-    //current_stack_base = stack_base;
-
+    current_stack_base = stack_base;
     idle_task = RegisterTask("idle", KernelIdleTask, 0);
-   
 }
 
 task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
     task_t* task = &tasks[num_tasks++];
 
-    task->sp = stack_base;
+    current_stack_base += TASK_STACK_SIZE;
+    task->sp = current_stack_base;
     task->stack_base = current_stack_base;
     task->stack_size = TASK_STACK_SIZE;
-    current_stack_base += TASK_STACK_SIZE;
-
+    
 	uint i=0;
 	for (i=0; i<6 && *name; i++)
 		task->name[i] = *name++;
@@ -103,7 +101,7 @@ void KernelStart() {
 
     // Overwrite the current stack pointer with the application stack base,
     // since we will never return from this function.
-    asm("mov _stack_base, W15");
+    //asm("mov _stack_base, W15");
 
     /*while(1) {
         KernelProcess();
@@ -111,13 +109,11 @@ void KernelStart() {
 
     //current_task = &tasks[0];
     //current_task_index = 0;
-    //current_task = idle_task;
-    current_task = draw_task;
+    current_task = idle_task;
+    //current_task = draw_task;
 
     while(1) {
-        KernelStartTask(draw_task, draw_task->proc);
-        //KernelStartTask(draw_task->proc);
-        //draw_task->proc();
+        KernelStartTask(draw_task);
         //KernelIdleTask();
     }
 
@@ -306,6 +302,8 @@ void KernelSwitchContext() {
         current_task_index = 0;
 
     current_task = &tasks[current_task_index];*/
+
+    //current_task = draw_task;
 
     _TOGGLE(LED2);
 
