@@ -7,11 +7,12 @@
 
 ////////// Includes ////////////////////////////////////////////////////////////
 
+#include <timer.h>
 #include <stdlib.h>
 #include "system.h"
-#include "core/systick.h"
+#include "core/kernel.h"
 #include "core/cpu.h"
-#include "scheduler.h"
+#include "kernel.h"
 #include "hardware.h"
 
 ////////// Constants ///////////////////////////////////////////////////////////
@@ -54,6 +55,38 @@ extern void KernelInitTaskStack(task_t* sp, task_proc_t proc);
 extern void KernelStartTask(task_t* sp);
 
 ////////// Code ////////////////////////////////////////////////////////////////
+
+#if SYSTICK_PR > 0xFFFF
+#error SYSTICK too big
+#elif SYSTICK_PR == 0
+#error SYSTICK too small
+#endif
+
+
+volatile uint systick = 1;
+
+// Note: since we want to stop the systick interrupt from waking the CPU
+// out of sleep mode, we'll need to add the number of ticks spent sleeping somehow?
+// or maybe turn down the timer rate while it sleeps in case an asynchronous interrupt
+// wakes the processor (eg. accelerometer interrupt)
+
+void systick_init() {
+    // Configure a system tick timer with interrupt
+
+    _T1MD = 0; // Enable T1 peripheral
+
+    T1CON = T1_OFF & T1_IDLE_CON & T1_GATE_OFF &
+            SYSTICK_PS(SYSTICK_PRESCALER) & T1_SYNC_EXT_OFF & T1_SOURCE_INT;
+
+    TMR1 = 0x0000;
+    PR1 = SYSTICK_PR;
+
+    _T1IF = 0;
+    _T1IP = 1; // Low priority so it doesn't pre-empt other interrupts
+    _T1IE = 1;
+
+    T1CONbits.TON = 1;
+}
 
 void InitializeKernel(void) {
     current_stack_base = stack_base;
@@ -127,13 +160,6 @@ void KernelStart() {
     Reset(); // Safety trap
 }
 
-void KernelTaskExit() {
-    // Called when a task returns.
-    while (1) {
-        _LAT(LED1) = 0;
-        _LAT(LED2) = 0;
-    }
-}
 
 void KernelIdleTask() {
     // Do nothing for now...
@@ -282,64 +308,9 @@ void KernelIdleTask() {
     }*/
 //}
 
-/*void shadow_isr _T1Interrupt() {
-    systick++;
-    ClrWdt();
-}*/
-
-void KernelSwitchTask_old() {
-    static uint last_tick = 0;
-    uint i;
-    uint current_tick = 0;
-    uint next_task = MAX_UINT;
-
-    // If any tasks need to be executed, we can switch to them here.
-    // otherwise we can context switch to the idle task.
-
-    for (i=0; i<num_tasks; i++) {
-        task_t* task = &tasks[i];
-        current_tick = systick;  // copy, since the variable is volatile
-
-        // Rollover occurred (should occur roughly every 65 seconds)
-        if (last_tick > current_tick) {
-            fix_rollover(last_tick);
-        }
-
-        if (task->state == tsRun) {
-            current_task = task;
-            return;
-            /*if (current_tick > task->next_run) {
-                task->ticks++;
-
-                // This may cause a context switch
-                current_task = task;
-
-                //task->running = false;
-
-                // Note: don't care about rollover here.
-                // also ignoring any time spent in proc()
-                //current_tick = systick;
-                task->next_run = current_tick + task->interval;
-            }
-
-            // Find the amount of time to the next task
-            if (task->next_run < next_task)
-                next_task = task->next_run;*/
-        }
-
-        last_tick = current_tick;
-    }
-   // anext_task = next_task - current_tick;
-}
-
 void KernelSwitchTask() {
     static uint last_tick;
     uint i;
-    
-    // The kernel will automatically push the current task's registers
-    // onto the stack, then store the stack pointer to 'task_sp'.
-    ClrWdt();
-    IncSystick();
 
     // Rollover occurred (should occur roughly every 65 seconds)
     if (last_tick > systick) {
@@ -354,10 +325,41 @@ void KernelSwitchTask() {
 
     current_task = &tasks[current_task_index];
 
+    //TODO: Replace this simple round-robin scheduler with a better one.
+    //  It needs to be able to give every task a turn at processing,
+    //  possibly taking into account priority.
+    //  Should be able to use Delay() to signal that the task is finished
+    //  processing for now.
+
+    // Eventually could add some sort of WaitForResource() function
+    // for waiting on non-blocking operations such as ADC reads and USB comms.
+
+    // If the next task to run is quite a while away, then maybe we could
+    // disable the tick and go to sleep, using the watchdog to wake the CPU up.
+
     last_tick = systick;
     _TOGGLE(LED2);
+}
+
+void KernelInterrupt() {
+    // The kernel will automatically push the current task's registers
+    // onto the stack, then store the stack pointer to 'task_sp'.
+    ClrWdt();
+    IncSystick();
+
+    KernelSwitchTask();
 
     // Upon returning, the kernel will switch the stack to the pointer
     // in 'task_sp', then pop the task's registers back, and continue
     // where the task was left off.
+}
+
+void Delay(uint t) {
+    // Wait for t milliseconds, allowing other tasks to process.
+    // If t=0, forces the kernel to switch to the next task that's ready.
+    task_t* task = current_task;
+
+    task->next_run = systick + t;
+
+    KernelSwitchTask();
 }

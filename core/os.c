@@ -9,9 +9,8 @@
 
 #include <stdlib.h>
 #include "system.h"
-#include "core/systick.h"
+#include "core/kernel.h"
 #include "api/graphics/gfx.h"
-#include "core/scheduler.h"
 #include "os.h"
 #include "hardware.h"
 

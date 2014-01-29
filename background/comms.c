@@ -11,14 +11,13 @@
 #include "hardware.h"
 #include "drivers/usb/usb.h"
 #include "background/comms.h"
-#include "core/scheduler.h"
+#include "core/kernel.h"
 
 #include "usb_config.h"
 #include "./USB/usb.h"
 #include "./USB/usb_function_hid.h"
 
 #include "background/power_monitor.h"
-#include "core/systick.h"
 #include "api/graphics/gfx.h"
 #include "drivers/ssd1351.h"
 

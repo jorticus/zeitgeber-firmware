@@ -16,7 +16,7 @@
 #include "api/api.h"
 #include "api/graphics/gfx.h"
 #include "util/util.h"
-#include "core/systick.h"
+#include "core/kernel.h"
 #include "background/power_monitor.h"
 #include "peripherals/adc.h"
 #include "peripherals/rtc.h"

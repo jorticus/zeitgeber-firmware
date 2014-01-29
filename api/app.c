@@ -8,7 +8,7 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <system.h>
-#include "core/scheduler.h"
+#include "core/kernel.h"
 #include "core/os.h"
 #include "app.h"
 

@@ -10,7 +10,7 @@
 #ifndef APP_H
 #define	APP_H
 
-#include "core/scheduler.h"
+#include "core/kernel.h"
 
 typedef enum { 
     asIdle,         // App is not active and is not processing. Allows CPU to go into sleep state

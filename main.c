@@ -34,8 +34,7 @@
 #include "hardware.h"
 
 // Core
-#include "core/systick.h"
-#include "core/scheduler.h"
+#include "core/kernel.h"
 #include "core/os.h"
 #include "core/cpu.h"
 
@@ -61,7 +60,6 @@
 #include "api/graphics/gfx.h"
 #include "util/util.h"
 #include "api/graphics/font.h"
-#include "core/systick.h"
 
 //#include "gui/icons/bat.h"
 

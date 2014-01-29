@@ -29,10 +29,9 @@
         <itemPath>background/power_monitor.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="core" projectFiles="true">
-        <itemPath>core/scheduler.h</itemPath>
         <itemPath>core/cpu.h</itemPath>
-        <itemPath>core/systick.h</itemPath>
         <itemPath>core/os.h</itemPath>
+        <itemPath>core/kernel.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="drivers" projectFiles="true">
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
@@ -86,12 +85,11 @@
         <itemPath>background/power_monitor.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="core" projectFiles="true">
-        <itemPath>core/scheduler.c</itemPath>
         <itemPath>core/cpu.c</itemPath>
-        <itemPath>core/systick.c</itemPath>
         <itemPath>core/traps.c</itemPath>
         <itemPath>core/os.c</itemPath>
-        <itemPath>kernel.s</itemPath>
+        <itemPath>core/kernel.c</itemPath>
+        <itemPath>core/kernel_asm.s</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="drivers" projectFiles="true">
         <logicalFolder name="f1" displayName="usb" projectFiles="true">

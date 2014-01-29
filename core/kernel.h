@@ -12,6 +12,8 @@
 
 ////////// Kernel Configuration ////////////////////////////////////////////////
 
+#define SYSTICK_PERIOD 1 //ms
+#define SYSTICK_PRESCALER 8  // 1, 8, 64, 256
 
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
@@ -57,15 +59,39 @@ typedef struct {
 
 #define MAX_TIME_SLOTS 5  // 5 ticks before a task can be interrupted
 
+
+// Calculations
+#define SYSTICK_PR (POSC/2 / SYSTICK_PRESCALER * SYSTICK_PERIOD / 1000)
+#define SYSTICK_PS_VAL(val) T1_PS_1_##val   // lookup the relevant T1_PS_1_x define
+#define SYSTICK_PS(val) SYSTICK_PS_VAL(val) // required for the macro to work
+
+
 ////////// Methods /////////////////////////////////////////////////////////////
 
 extern void InitializeKernel();
-extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
 extern void KernelStart();
+
+extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
+
+extern void Delay(uint t);
+
+
 
 // Load the current stack pointer into the stack_base variable,
 // which will then be used as the base stack pointer for application tasks.
 #define KernelSetSP() asm("mov W15, _stack_base\nmov W15, _current_stack_base")
+
+#if SYSTICK_PERIOD == 1
+    #define IncSystick() systick++
+#else
+    #define IncSystick() systick += SYSTICK_PERIOD
+#endif
+
+
+////////// Properties //////////////////////////////////////////////////////////
+
+extern volatile uint systick;
+
 
 #endif	/* SCHEDULER_H */
 
