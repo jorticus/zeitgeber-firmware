@@ -54,6 +54,8 @@ extern void KernelStartContext();
 extern void KernelInitTaskStack(task_t* sp, task_proc_t proc);
 extern void KernelStartTask(task_t* sp);
 
+#define KernelSwitchToTask(task) current_task = task
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 #if SYSTICK_PR > 0xFFFF
@@ -90,7 +92,11 @@ void systick_init() {
 
 void InitializeKernel(void) {
     current_stack_base = stack_base;
+
+    // IMPORTANT: The idle task MUST be the first task registered,
+    //  and its state MUST be set to tsStop.
     idle_task = RegisterTask("idle", KernelIdleTask, 0);
+    idle_task->state = tsStop;
 }
 
 task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
@@ -136,34 +142,24 @@ void fix_rollover(uint last_tick) {
 void KernelStart() {
     systick_init();
 
-    // Overwrite the current stack pointer with the application stack base,
-    // since we will never return from this function.
-    //asm("mov _stack_base, W15");
-
-    /*while(1) {
-        KernelProcess();
-    }*/
-
-    //current_task = &tasks[0];
-    //current_task_index = 0;
+    // Initialize the kernel
     current_task_index = 0;
     current_task = idle_task;
-    //current_task = draw_task;
-
-    // Context-switch into the idle task
     KernelStartTask(idle_task);
 
-    while (1) {
-
-    }
-
+    // We shouldn't get here!!
     Reset(); // Safety trap
 }
 
 
 void KernelIdleTask() {
-    // Do nothing for now...
+    // This task runs whenever nothing else needs to run.
+
     while (1) {
+        // Go to sleep for a bit...
+        //Sleep();
+
+        // Check to see if any tasks need to run yet
         Yeild();
     }
 }
@@ -316,36 +312,40 @@ void KernelSwitchTask() {
     if (last_tick > systick) {
         fix_rollover(last_tick);
     }
-
-    // Here we need to determine if any new tasks need to be run,
-    // then if we need to context switch to another task.
-    current_task_index++;
-    if (current_task_index == num_tasks)
-        current_task_index = 0;
-
-    current_task = &tasks[current_task_index];
-
-    //TODO: Replace this simple round-robin scheduler with a better one.
-    //  It needs to be able to give every task a turn at processing,
-    //  possibly taking into account priority.
-    //  Should be able to use Delay() to signal that the task is finished
-    //  processing for now.
-
-    // Eventually could add some sort of WaitForResource() function
-    // for waiting on non-blocking operations such as ADC reads and USB comms.
-
-    // If the next task to run is quite a while away, then maybe we could
-    // disable the tick and go to sleep, using the watchdog to wake the CPU up.
-
     last_tick = systick;
-    _TOGGLE(LED2);
+
+    // Find the next task that needs to be run
+    uint start_index = current_task_index;
+    do {
+        current_task_index++;
+
+        if (current_task_index == num_tasks)
+            current_task_index = 0;
+
+        task_t* task = &tasks[current_task_index];
+
+        if (task->state == tsRun) {
+            if (systick > task->next_run) {
+                task->next_run = systick;// + 50;
+
+                _LAT(LED2) = 1;
+                KernelSwitchToTask(task);
+                return;
+            }
+        }
+
+    } while (current_task_index != start_index);
+
+    // If no tasks need to be run, go to the idle task (puts the MCU into sleep mode)
+    _LAT(LED2) = 0;
+    current_task = idle_task;
 }
 
 void KernelInterrupt() {
     // The kernel will automatically push the current task's registers
     // onto the stack, then store the stack pointer to 'task_sp'.
-    ClrWdt();
-    IncSystick();
+    //ClrWdt();
+    //IncSystick();
 
     KernelSwitchTask();
 

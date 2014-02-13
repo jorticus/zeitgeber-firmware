@@ -4,7 +4,7 @@
 ; Created: 8/01/2014
 ;
 
-#include <scheduler.h>
+#include "kernel.h"
 
 ;--- Useful definitions ---
 .equ SP, W15
@@ -17,7 +17,9 @@
 .global _KernelInitTaskStack
 .global _KernelStartTask
 
+.extern _systick
 .extern _KernelInterrupt
+.extern _KernelSwitchTask
 
 
 ;--- Code ---
@@ -30,11 +32,15 @@
 __T1Interrupt:
     bclr IFS0, #3
 
+    ; Increment kernel systick
+    clrwdt
+    inc _systick
+
+    ;btg LATE, #6  ; LED2
+
 _KernelSwitchContext:
     ; Disable interrupts to prevent bad things from happening.
-    ; Set it to a large number to make sure the Context Switching can't
-    ; be interrupted, and that the next task isn't immediately interrupted either.
-    disi #4096  ; Approx 2.4us @ 20MHz
+    disi #0x3FFF
 
     ; Save the current task's registers to its stack
     push.d w0
@@ -58,6 +64,7 @@ _KernelSwitchContext:
     mov SP, [w0]
 
     call _KernelInterrupt
+    ;call _KernelSwitchTask
 
     ; Restore the stack pointer for the (new) current task
     mov _current_task, w0
@@ -81,6 +88,8 @@ _RestoreTaskContext:
     pop.d w2
     pop.d w0
     ;pop SP
+
+    disi #0
 
     ; Continue where we left the (new) current task,
     ; since it will return to the PC stored in the current stack.

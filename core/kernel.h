@@ -78,8 +78,7 @@ extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
 // Forces a context switch to the next task
 extern void KernelSwitchContext();
 #define Yeild() KernelSwitchContext()
-
-
+//#define Yeild()
 
 // Load the current stack pointer into the stack_base variable,
 // which will then be used as the base stack pointer for application tasks.
