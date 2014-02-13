@@ -31,6 +31,11 @@ __T1Interrupt:
     bclr IFS0, #3
 
 _KernelSwitchContext:
+    ; Disable interrupts to prevent bad things from happening.
+    ; Set it to a large number to make sure the Context Switching can't
+    ; be interrupted, and that the next task isn't immediately interrupted either.
+    disi #4096  ; Approx 2.4us @ 20MHz
+
     ; Save the current task's registers to its stack
     push.d w0
     push.d w2
