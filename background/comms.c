@@ -78,6 +78,7 @@ void ProcessComms() {
     while (1) {
         USBProcess(&comms_ReceivedPacket);
         //TODO: determine whether status is cmIdle or cmActive
+        Yeild();
     }
 }
 

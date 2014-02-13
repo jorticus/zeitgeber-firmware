@@ -73,7 +73,11 @@ extern void KernelStart();
 
 extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
 
-extern void Delay(uint t);
+//extern void Delay(uint t);
+
+// Forces a context switch to the next task
+extern void KernelSwitchContext();
+#define Yeild() KernelSwitchContext()
 
 
 

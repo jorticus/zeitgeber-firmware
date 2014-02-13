@@ -164,7 +164,7 @@ void KernelStart() {
 void KernelIdleTask() {
     // Do nothing for now...
     while (1) {
-        
+        Yeild();
     }
 }
 
@@ -354,7 +354,7 @@ void KernelInterrupt() {
     // where the task was left off.
 }
 
-void Delay(uint t) {
+/*void Delay(uint t) {
     // Wait for t milliseconds, allowing other tasks to process.
     // If t=0, forces the kernel to switch to the next task that's ready.
     task_t* task = current_task;
@@ -362,4 +362,4 @@ void Delay(uint t) {
     task->next_run = systick + t;
 
     KernelSwitchTask();
-}
+}*/

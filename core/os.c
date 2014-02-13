@@ -111,6 +111,7 @@ void ProcessCore() {
     while (1) {
         ProcessPowerMonitor();
         CheckButtons();
+        Yeild();
     }
 }
 
@@ -263,6 +264,8 @@ void Draw() {
         _LAT(LED1) = 0;
         UpdateDisplay();
         _LAT(LED1) = 1;
+
+        Yeild();
     }
 }
 
