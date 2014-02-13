@@ -77,7 +77,7 @@
 //const image_t img = {wolf_bytes, WOLF_WIDTH,  WOLF_HEIGHT};
 
 #ifndef HID_BOOTLOADER
-    _CONFIG1(FWDTEN_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
+    _CONFIG1(FWDTEN_OFF & FWPSA_PR128 & WDTPS_PS32 & WINDIS_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
     _CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV8 & IESO_OFF) // For 32MHz OSC
     _CONFIG3(0xFFFF);
 #endif
@@ -87,7 +87,9 @@ void Initialize() {
     InitializeIO();
     InitializeOsc();
 
-    _LAT(LED1) = 1;
+    // 627uA in sleep
+
+    //_LAT(LED1) = 1;
     //_LAT(LED2) = 1;
 
     // Peripherals
@@ -96,14 +98,20 @@ void Initialize() {
     adc_init();
     adc_enable();
     rtc_init();
-    
+
+    // 831uA in sleep
+
     InitializeKernel();
     InitializeComms();
     InitializeOled();
     InitializeOS();
 
+    // 1100uA in sleep
+
     // Enable watchdog
     RCONbits.SWDTEN = 1;
+
+    // 1120uA in sleep
 
     _LAT(LED1) = 0;
 }

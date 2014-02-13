@@ -216,7 +216,7 @@ void ssd1351_DisplayOff() {
     }
 
     ssd1351_command(CMD_DISPLAY_OFF);
-    //_LAT(OL_POWER) = 0; //TODO: Measure power savings from adding this
+    _LAT(OL_POWER) = 0; //TODO: Measure power savings from adding this
 }
 
 void ssd1351_SetContrast(uint8 contrast) {
