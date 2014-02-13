@@ -14,6 +14,7 @@
 #include "core/cpu.h"
 #include "kernel.h"
 #include "hardware.h"
+#include "background/comms.h"
 
 ////////// Constants ///////////////////////////////////////////////////////////
 
@@ -158,10 +159,13 @@ void KernelIdleTask() {
 
     while (1) {
         // Go to sleep for a bit... (will wake up on systick)
-        Sleep();
-        //Idle();
-
-        //TODO: Use Idle mode if connected to USB, because Sleep mode will kill the connection.
+        if (usb_connected) {
+            // Use Idle mode if connected to USB, because Sleep mode will kill the connection.
+            Idle();
+        } else {
+            Sleep();
+            //Idle();
+        }
 
         // Average current (screen off):
         //  Sleep: 2.85mA

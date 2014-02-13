@@ -22,6 +22,7 @@
 #include "peripherals/rtc.h"
 
 #include "gui/Wallpapers/wallpaper7.h"
+//#include "background/comms.h"
 #define wallpaper img_wallpaper7
 
 // Sample 128x128 image
@@ -44,6 +45,8 @@ extern uint anext_task;
 extern uint16 task_sp;
 extern task_t* current_task;
 extern uint16 stack_base;
+
+extern bool usb_connected;
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
@@ -130,6 +133,11 @@ void apptest_Draw() {
     x = DrawString(", ", x,66, WHITE);
     utoa(s, bq25010_status, 10);
     DrawString(s,        x,66, WHITE);
+
+
+    if (usb_connected) {
+        DrawString("USB Connected", 8, 80, WHITE);
+    }
 
 
     //VBAT = 503:an = ???V
