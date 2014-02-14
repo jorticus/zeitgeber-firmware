@@ -82,12 +82,38 @@
     _CONFIG3(0xFFFF);
 #endif
 
+void Shutdown() {
+    // Stop execution and completely shut down the processor to save power.
+
+    //AD1CON1bits.ADON = 0;
+
+    // Disable peripherals
+    PMD1 = 0xFFFF;
+    PMD2 = 0xFFFF;
+    PMD3 = 0xFFFF;
+    PMD4 = 0xFFFF;
+    PMD5 = 0xFFFF;
+    PMD6 = 0xFFFF;
+
+    _LAT(OL_POWER) = 0;
+    _LAT(OL_RESET) = 1;
+    _LAT(BT_RESET) = 1;
+
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+
+    _LAT(VMOTOR) = 0;
+    _LAT(PEIZO) = 0;
+
+    RCONbits.SWDTEN = 0;
+
+    Sleep(); // Permanent sleep
+    while(1); // Trap
+}
 
 void Initialize() {
     InitializeIO();
     InitializeOsc();
-
-    // 627uA in sleep
 
     //_LAT(LED1) = 1;
     //_LAT(LED2) = 1;
@@ -99,19 +125,16 @@ void Initialize() {
     adc_enable();
     rtc_init();
 
-    // 831uA in sleep
-
     InitializeKernel();
     InitializeComms();
     InitializeOled();
     InitializeOS();
 
-    // 1100uA in sleep
+    ScreenOn();
+    DisplayBootScreen();
 
     // Enable watchdog
     RCONbits.SWDTEN = 1;
-
-    // 1120uA in sleep
 
     _LAT(LED1) = 0;
 }

@@ -98,11 +98,11 @@ void InitializeKernel(void) {
 
     // IMPORTANT: The idle task MUST be the first task registered,
     //  and its state MUST be set to tsStop.
-    idle_task = RegisterTask("idle", KernelIdleTask, 0);
+    idle_task = RegisterTask("idle", KernelIdleTask);
     idle_task->state = tsStop;
 }
 
-task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
+task_t* RegisterTask(char* name, task_proc_t proc) {
     task_t* task = &tasks[num_tasks++];
 
     // Assign some stack space to this task
@@ -116,7 +116,6 @@ task_t* RegisterTask(char* name, task_proc_t proc, uint interval) {
 		task->name[i] = *name++;
 
     task->proc = proc;
-    task->interval = interval;
 
     task->state = tsRun;
     task->priority = 0;
@@ -174,11 +173,15 @@ void KernelIdleTask() {
         //TODO: Baseline is 800uA-1mA, try and get it down to that level
 
         // Check to see if any tasks need to run yet
-        Yeild();
+        Delay(0);
     }
 }
 
 void KernelSwitchTask() {
+    // NOTE: Called directly from the kernel core (see kernel_asm.s)
+    // The kernel will automatically push the current task's registers
+    // onto the stack, then store the stack pointer to 'task_sp'.
+
     static uint last_tick;
     uint i;
 
@@ -213,27 +216,24 @@ void KernelSwitchTask() {
     // If no tasks need to be run, go to the idle task (puts the MCU into sleep mode)
     _LAT(LED2) = 0;
     current_task = idle_task;
-}
-
-void KernelInterrupt() {
-    // The kernel will automatically push the current task's registers
-    // onto the stack, then store the stack pointer to 'task_sp'.
-    //ClrWdt();
-    //IncSystick();
-
-    KernelSwitchTask();
 
     // Upon returning, the kernel will switch the stack to the pointer
     // in 'task_sp', then pop the task's registers back, and continue
     // where the task was left off.
 }
 
-/*void Delay(uint t) {
-    // Wait for t milliseconds, allowing other tasks to process.
-    // If t=0, forces the kernel to switch to the next task that's ready.
-    task_t* task = current_task;
+void Delay(uint millis) {
+    // Delay for the specified amount of time, allowing other tasks to execute.
+    // If t=0, it just forces a context switch
+    current_task->next_run = systick + millis;
+    KernelSwitchContext();
+}
 
-    task->next_run = systick + t;
-
-    KernelSwitchTask();
-}*/
+void WaitUntil(uint tick) {
+    // Wait until systick reaches the specified value.
+    // Useful for functions that take a long or variable amount of time to execute,
+    // but are required to execute periodically (eg. 10Hz)
+    // If tick < current systick, the task will execute in the next available slot.
+    current_task->next_run = tick;
+    KernelSwitchContext();
+}

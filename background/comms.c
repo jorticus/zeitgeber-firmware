@@ -55,7 +55,7 @@ void InitializeComms() {
     InitializeUSB(&comms_sleep, &comms_wake);
     
     // Communications, only needs to be run when USB is connected
-    comms_task = RegisterTask("Comms", ProcessComms, PROCESS_COMMS_INTERVAL);
+    comms_task = RegisterTask("Comms", ProcessComms);
     comms_task->state = tsRun;
 
     usb_connected = false;
@@ -78,7 +78,7 @@ void ProcessComms() {
     while (1) {
         USBProcess(&comms_ReceivedPacket);
         //TODO: determine whether status is cmIdle or cmActive
-        Yeild();
+        Delay(PROCESS_COMMS_INTERVAL);
     }
 }
 

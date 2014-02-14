@@ -71,14 +71,10 @@ typedef struct {
 extern void InitializeKernel();
 extern void KernelStart();
 
-extern task_t* RegisterTask(char* name, task_proc_t proc, uint interval);
+extern task_t* RegisterTask(char* name, task_proc_t proc);
 
-//extern void Delay(uint t);
-
-// Forces a context switch to the next task
-extern void KernelSwitchContext();
-#define Yeild() KernelSwitchContext()
-//#define Yeild()
+extern void Delay(uint millis);
+extern void WaitUntil(uint tick);
 
 // Load the current stack pointer into the stack_base variable,
 // which will then be used as the base stack pointer for application tasks.

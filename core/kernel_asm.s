@@ -18,7 +18,6 @@
 .global _KernelStartTask
 
 .extern _systick
-.extern _KernelInterrupt
 .extern _KernelSwitchTask
 
 
@@ -63,8 +62,7 @@ _KernelSwitchContext:
     mov _current_task, w0
     mov SP, [w0]
 
-    call _KernelInterrupt
-    ;call _KernelSwitchTask
+    call _KernelSwitchTask
 
     ; Restore the stack pointer for the (new) current task
     mov _current_task, w0

@@ -22,8 +22,11 @@
 #include "peripherals/rtc.h"
 
 #include "gui/Wallpapers/wallpaper7.h"
-//#include "background/comms.h"
 #define wallpaper img_wallpaper7
+//#include "gui/Wallpapers/gaben.h"
+//#define wallpaper img_gaben
+//#include "gui/Wallpapers/leaves.h"
+//#define wallpaper img_leaves
 
 // Sample 128x128 image
 // 5:6:5 16-bit pixel format, RGB ordering
@@ -59,7 +62,7 @@ void apptest_Initialize() {
 // Called periodically when state==asRunning
 void apptest_Process() {
     while (1) {
-        Yeild();
+        Delay(0);
     }
 }
 

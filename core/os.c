@@ -85,14 +85,11 @@ void InitializeOS() {
     ClrWdt();
 
     // High priority tasks that must be run all the time
-    core_task = RegisterTask("Core", ProcessCore, PROCESS_CORE_INTERVAL);
+    core_task = RegisterTask("Core", ProcessCore);
     core_task->state = tsRun;
 
     // Drawing, only needs to be run when screen is on
-    draw_task = RegisterTask("Draw", Draw, DRAW_INTERVAL);
-
-    ScreenOn();
-    DisplayBootScreen();
+    draw_task = RegisterTask("Draw", Draw);
 }
 
 void SetForegroundApp(application_t* app) {
@@ -111,7 +108,7 @@ void ProcessCore() {
     while (1) {
         ProcessPowerMonitor();
         CheckButtons();
-        Yeild();
+        Delay(PROCESS_CORE_INTERVAL);
     }
 }
 
@@ -210,6 +207,8 @@ void DisplayBootScreen() {
 // Called periodically
 void Draw() {
     while (1) {
+        uint next_tick = systick + DRAW_INTERVAL;
+
     /*	static int i=0;
 
         uint16 ticks;
@@ -265,7 +264,8 @@ void Draw() {
         UpdateDisplay();
         _LAT(LED1) = 1;
 
-        Yeild();
+        //Delay(DRAW_INTERVAL);
+        WaitUntil(next_tick);
     }
 }
 

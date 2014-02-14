@@ -23,6 +23,7 @@ void SetForegroundApp(application_t* app);
 
 void ScreenOff();
 void ScreenOn();
+void DisplayBootScreen();
 
 #endif	/* OS_H */
 

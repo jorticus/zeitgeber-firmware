@@ -25,7 +25,7 @@ uint app_count = 0;
 void RegisterUserApplication(application_t* app) {
 
     // Assign a scheduler task to the app
-	app->task = RegisterTask(app->name, app->process, APP_INTERVAL);
+	app->task = RegisterTask(app->name, app->process);
 
     installed_apps[app_count++] = app;
 }
