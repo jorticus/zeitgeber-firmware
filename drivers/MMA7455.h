@@ -10,16 +10,10 @@
 
 #include "util/vector.h"
 
-/*typedef enum ee {
+typedef enum {
     range_8g = 0b00,
     range_4g = 0b10,
     range_2g = 0b01
-} accel_range_t;*/
-
-typedef enum ee {
-    range_8g = 0,
-    range_4g = 2,
-    range_2g = 1
 } accel_range_t;
 
 typedef enum {
@@ -37,6 +31,9 @@ extern vector3i_t accel_current;
 
 extern bool accel_init();
 
+uint8 accel_read(uint8 reg_addr);
+
+
 // Set accelerometer operating mode
 extern void accel_SetMode(accel_mode_t mode);
 
@@ -51,6 +48,7 @@ extern void accel_Calibrate();
 
 // Perform a manual reading (you should check the DRDY bit before reading)
 extern vector3i_t accel_ReadXYZ();
+extern vector3c_t accel_ReadXYZ8();
 
 // Called when interrupt is executed for the specified mode
 // ie. to set up a callback for the pulse detect mode

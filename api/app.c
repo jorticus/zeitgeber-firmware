@@ -28,6 +28,9 @@ void RegisterUserApplication(application_t* app) {
 	app->task = RegisterTask(app->name, app->process);
 
     installed_apps[app_count++] = app;
+    
+    if (app->init != NULL)
+        app->init();
 }
 
 /*application_t NewApplication(proc_t init, proc_t process, proc_t draw) {

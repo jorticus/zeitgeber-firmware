@@ -10,8 +10,10 @@
 
 ////////// Includes ////////////////////////////////////////////////////////////
 
-#include <i2c.h>
-#include <system.h>
+#include "system.h"
+#include "peripherals/i2c.h"
+#include "core/kernel.h"
+#include "hardware.h"
 #include "MMA7455.h"
 #include "util/vector.h"
 //#include "peripherals/i2c.h"
@@ -19,7 +21,7 @@
 ////////// Defines /////////////////////////////////////////////////////////////
 
 // Default I2C device address (can be changed through I2CAD register)
-#define I2CADDR 0x1D
+#define MMA7455_I2CADDR 0x1D
 
 // Register definitions
 #define XOUTL       0x00    // 10 bits output value X LSB
@@ -53,6 +55,8 @@
 #define LT          0x1D    // Latency time value
 #define TW          0x1E    // Time window for 2nd pulse value
 
+#define WHOAMI_MAGIC_NUMBER 85
+
 
 // Mode Control Register (MCTL)
 #define MODE        0   // Mode
@@ -78,24 +82,41 @@ typedef union {
 vector3i_t accel_current;
 accel_mode_t accel_mode = accStandby;
 accel_range_t accel_range = range_2g; // TODO: what is the default
+uint8 accel_scale = 2;
 
 proc_t accel_callbacks[4];
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 bool accel_init() {
+    i2c_init();
 
     // Check WhoAmI register
-
-    return false;
+    return accel_read(WHOAMI) == WHOAMI_MAGIC_NUMBER;
 }
 
-void accel_write(uint8 reg, uint8 value) {
+uint8 accel_read(uint8 reg_addr) {
+    uint8 result;
 
+    i2c_start();
+    i2c_write((MMA7455_I2CADDR << 1) | I2C_WRITE);
+    i2c_write(reg_addr);
+    i2c_repeated_restart();
+    i2c_write((MMA7455_I2CADDR << 1) | I2C_READ);
+    result = i2c_read();
+    i2c_nack();
+    i2c_stop();
+
+    return result;
 }
 
-uint8 accel_read(uint8 reg) {
-    return 0;
+void accel_write(uint8 reg_addr, uint8 value) {
+    i2c_start();
+    i2c_write((MMA7455_I2CADDR << 1) | I2C_WRITE);
+    i2c_write(reg_addr);
+    i2c_write(value);
+    i2c_nack();
+    i2c_stop();
 }
 
 void accel_modify(uint8 reg, uint8 value, uint8 mask) {
@@ -117,9 +138,15 @@ void accel_Standby() {
 }
 
 void accel_SetRange(accel_range_t range) {
-    if (range !=accel_range) {
+    if (range != accel_range) {
         accel_range = range;
         accel_modify(MCTL, range << GLVL, 0b11 << GLVL);
+
+        switch (accel_range) {
+            case range_2g: accel_scale = 2; break;
+            case range_4g: accel_scale = 4; break;
+            case range_8g: accel_scale = 8; break;
+        }
     }
 }
 
@@ -133,22 +160,29 @@ void accel_Calibrate() {
 }
 
 vector3i_t accel_ReadXYZ() {
-
-    // Normalize the result independant of the range setting
-    //TODO: verify if this is what we want
-    int16 scale;
-    switch (accel_range) {
-        case range_2g: scale = 2; break;
-        case range_4g: scale = 4; break;
-        case range_8g: scale = 8; break;
-    }
-
     // Read low byte first to ensure high byte is latched
-    accel_current.x = (accel_read(XOUTL) | accel_read(XOUTH) << 8) * scale;
-    accel_current.y = (accel_read(YOUTL) | accel_read(YOUTH) << 8) * scale;
-    accel_current.z = (accel_read(ZOUTL) | accel_read(ZOUTH) << 8) * scale;
+    // Note: _OUTH must be read directly after _OUTL
+    // Result is 2's complement
+    accel_current.x = (accel_read(XOUTL) | (accel_read(XOUTH) << 8));// * accel_scale;
+    accel_current.y = (accel_read(YOUTL) | (accel_read(YOUTH) << 8));// * accel_scale;
+    accel_current.z = (accel_read(ZOUTL) | (accel_read(ZOUTH) << 8));// * accel_scale;
+
+    // Sign-extension
+    if (accel_current.x & 0x0200) accel_current.x |= 0xFC00;
+    if (accel_current.y & 0x0200) accel_current.y |= 0xFC00;
+    if (accel_current.z & 0x0200) accel_current.z |= 0xFC00;
 
     return accel_current;
+}
+
+vector3c_t accel_ReadXYZ8() {
+    vector3c_t vec;
+
+    vec.x = accel_read(XOUT8);// * accel_scale;
+    vec.y = accel_read(YOUT8);// * accel_scale;
+    vec.z = accel_read(ZOUT8);// * accel_scale;
+    
+    return vec;
 }
 
 uint8 accel_ReadTemperature() {

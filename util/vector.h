@@ -10,6 +10,14 @@
 #ifndef VECTOR_H
 #define	VECTOR_H
 
+///// int8 /////
+
+typedef struct {
+    int8 x;
+    int8 y;
+    int8 z;
+} vector3c_t;
+
 ///// int16 /////
 
 typedef struct {

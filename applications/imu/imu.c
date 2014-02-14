@@ -21,6 +21,8 @@
 #include "peripherals/adc.h"
 #include "peripherals/rtc.h"
 
+#include "drivers/MMA7455.h"
+
 //#include "gui/Wallpapers/wallpaper7.h"
 //#define wallpaper img_wallpaper7
 //#include "gui/Wallpapers/gaben.h"
@@ -45,11 +47,18 @@ application_t appimu = APPLICATION("IMU", appimu_Initialize, appimu_Process, app
 
 extern uint draw_ticks;
 
+extern bool i2c_aborted;
+
+#define LINE_HEIGHT 8
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
 void appimu_Initialize() {
     appimu.state = asIdle;
+
+    accel_init();
+    accel_SetMode(accMeasure);
 }
 
 // Called periodically when state==asRunning
@@ -68,10 +77,52 @@ void appimu_Draw() {
     UINT8 y = 8;
     char s[10];
 
-    utoa(s, draw_ticks, 10);
+    /*utoa(s, draw_ticks, 10);
     x = 8;
     x = DrawString("ticks: ", x,24,WHITE);
-    x = DrawString(s,        x,24, WHITE);
+    x = DrawString(s,        x,24, WHITE);*/
+
+    y = 8;
+
+    DrawString("Accelerometer", 8,1*LINE_HEIGHT, WHITE);
+
+    vector3i_t acc = accel_ReadXYZ();
+    //vector3c_t acc = accel_ReadXYZ8();
+
+    itoa(s, acc.x, 10);
+    x = 8;
+    x = DrawString("X: ", x,2*LINE_HEIGHT, RED);
+    x = DrawString(s,     x,2*LINE_HEIGHT, RED);
+
+    itoa(s, acc.y, 10);
+    x = 8;
+    x = DrawString("Y: ", x,3*LINE_HEIGHT, LIME);
+    x = DrawString(s,     x,3*LINE_HEIGHT, LIME);
+
+    itoa(s, acc.z, 10);
+    x = 8;
+    x = DrawString("Z: ", x,4*LINE_HEIGHT, BLUE);
+    x = DrawString(s,     x,4*LINE_HEIGHT, BLUE);
+
+
+    DrawString("Magnetometer", 8,6*LINE_HEIGHT, WHITE);
+
+    itoa(s, 0, 10);
+    x = 8;
+    x = DrawString("X: ", x,7*LINE_HEIGHT, RED);
+    x = DrawString(s,     x,7*LINE_HEIGHT, RED);
+
+    itoa(s, 0, 10);
+    x = 8;
+    x = DrawString("Y: ", x,8*LINE_HEIGHT, LIME);
+    x = DrawString(s,     x,8*LINE_HEIGHT, LIME);
+
+    itoa(s, 0, 10);
+    x = 8;
+    x = DrawString("Z: ", x,9*LINE_HEIGHT, BLUE);
+    x = DrawString(s,     x,9*LINE_HEIGHT, BLUE);
+
+
 
     SetFontSize(2);
 

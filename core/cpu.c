@@ -68,7 +68,7 @@ void InitializeIO() {
 
     /// Sensors ///
     _TRIS(SDA) = INPUT; // Bi-directional
-    _TRIS(SCL) = OUTPUT;
+    _TRIS(SCL) = INPUT;
     _TRIS(INTM) = INPUT;
     _TRIS(INTA) = INPUT;
 
