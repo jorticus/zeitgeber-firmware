@@ -51,6 +51,13 @@ extern bool i2c_aborted;
 
 #define LINE_HEIGHT 8
 
+#define ACCEL_LOG_SIZE 1//DISPLAY_WIDTH
+vector3c_t accel_log[ACCEL_LOG_SIZE];
+vector3c_t accel_vec;
+uint accel_log_index = 0;
+
+color_t colors[3] = {RED, LIME, BLUE};
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
@@ -59,12 +66,26 @@ void appimu_Initialize() {
 
     accel_init();
     accel_SetMode(accMeasure);
+
+    uint i;
+    for (i=0; i<ACCEL_LOG_SIZE; i++) {
+        accel_log[i].x = 0;
+        accel_log[i].y = 0;
+        accel_log[i].z = 0;
+    }
 }
 
 // Called periodically when state==asRunning
 void appimu_Process() {
     while (1) {
-        Delay(1000);
+        Delay(10);
+
+        accel_vec = accel_ReadXYZ8();
+        accel_log[accel_log_index] = accel_vec;
+
+        accel_log_index++;
+        if (accel_log_index == ACCEL_LOG_SIZE)
+            accel_log_index = 0;
     }
 }
 
@@ -86,48 +107,64 @@ void appimu_Draw() {
 
     DrawString("Accelerometer", 8,1*LINE_HEIGHT, WHITE);
 
-    vector3i_t acc = accel_ReadXYZ();
-    //vector3c_t acc = accel_ReadXYZ8();
+    //vector3i_t acc = accel_ReadXYZ();
+    vector3c_t acc = accel_vec;//accel_ReadXYZ8();
 
     itoa(s, acc.x, 10);
     x = 8;
-    x = DrawString("X: ", x,2*LINE_HEIGHT, RED);
-    x = DrawString(s,     x,2*LINE_HEIGHT, RED);
+    x = DrawString("X: ", x,2*LINE_HEIGHT, colors[0]);
+    x = DrawString(s,     x,2*LINE_HEIGHT, colors[0]);
 
     itoa(s, acc.y, 10);
     x = 8;
-    x = DrawString("Y: ", x,3*LINE_HEIGHT, LIME);
-    x = DrawString(s,     x,3*LINE_HEIGHT, LIME);
+    x = DrawString("Y: ", x,3*LINE_HEIGHT, colors[1]);
+    x = DrawString(s,     x,3*LINE_HEIGHT, colors[1]);
 
     itoa(s, acc.z, 10);
     x = 8;
-    x = DrawString("Z: ", x,4*LINE_HEIGHT, BLUE);
-    x = DrawString(s,     x,4*LINE_HEIGHT, BLUE);
+    x = DrawString("Z: ", x,4*LINE_HEIGHT, colors[2]);
+    x = DrawString(s,     x,4*LINE_HEIGHT, colors[2]);
 
 
     DrawString("Magnetometer", 8,6*LINE_HEIGHT, WHITE);
 
     itoa(s, 0, 10);
     x = 8;
-    x = DrawString("X: ", x,7*LINE_HEIGHT, RED);
-    x = DrawString(s,     x,7*LINE_HEIGHT, RED);
+    x = DrawString("X: ", x,7*LINE_HEIGHT, colors[0]);
+    x = DrawString(s,     x,7*LINE_HEIGHT, colors[0]);
 
     itoa(s, 0, 10);
     x = 8;
-    x = DrawString("Y: ", x,8*LINE_HEIGHT, LIME);
-    x = DrawString(s,     x,8*LINE_HEIGHT, LIME);
+    x = DrawString("Y: ", x,8*LINE_HEIGHT, colors[1]);
+    x = DrawString(s,     x,8*LINE_HEIGHT, colors[1]);
 
     itoa(s, 0, 10);
     x = 8;
-    x = DrawString("Z: ", x,9*LINE_HEIGHT, BLUE);
-    x = DrawString(s,     x,9*LINE_HEIGHT, BLUE);
+    x = DrawString("Z: ", x,9*LINE_HEIGHT, colors[2]);
+    x = DrawString(s,     x,9*LINE_HEIGHT, colors[2]);
+
+    #define GRAPH_Y (12*LINE_HEIGHT)
+    //global_drawop = ADD;
+    for (x=0; x<ACCEL_LOG_SIZE; x++) {
+        i = x + accel_log_index;
+        if (i >= ACCEL_LOG_SIZE) i -= ACCEL_LOG_SIZE;
+
+        uint8 *values = &accel_log[i];
+        uint j;
+
+        for (j=0; j<3; j++) {
+            y = GRAPH_Y - values[j];
+            if (y >= DISPLAY_HEIGHT-1) y = DISPLAY_HEIGHT-1;
+            SetPixel(x, y, colors[j]);
+        }
+    }
+    //global_drawop = SRCCOPY;
 
 
-
-    SetFontSize(2);
+    /*SetFontSize(2);
 
     RtcTimeToStr(s);
-    DrawString(s, 8,100,WHITE);
+    DrawString(s, 8,100,WHITE);*/
 
 
     //Sleep();

@@ -37,6 +37,8 @@ uint8 accel_read(uint8 reg_addr);
 // Set accelerometer operating mode
 extern void accel_SetMode(accel_mode_t mode);
 
+extern void accel_Restore();
+
 // Turn off accelerometer to save power. Equivalent to accel_SetMode(accStandby);
 extern void accel_Standby();
 

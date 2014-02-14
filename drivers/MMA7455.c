@@ -80,6 +80,7 @@ typedef union {
 ////////// Variables ///////////////////////////////////////////////////////////
 
 vector3i_t accel_current;
+accel_mode_t last_mode = accStandby;
 accel_mode_t accel_mode = accStandby;
 accel_range_t accel_range = range_2g; // TODO: what is the default
 uint8 accel_scale = 2;
@@ -127,14 +128,19 @@ void accel_modify(uint8 reg, uint8 value, uint8 mask) {
 }
 
 void accel_SetMode(accel_mode_t mode) {
-    if (mode != accel_mode) {
-        accel_mode = mode;
-        accel_modify(MCTL, mode << MODE, 0b11 << MODE);
-    }
+    //if (mode != accel_mode) {
+    accel_mode = mode;
+    accel_modify(MCTL, mode << MODE, 0b11 << MODE);
+    //}
 }
 
 void accel_Standby() {
+    last_mode = accel_mode;
     accel_SetMode(accStandby);
+}
+
+void accel_Restore() {
+    accel_SetMode(last_mode);
 }
 
 void accel_SetRange(accel_range_t range) {

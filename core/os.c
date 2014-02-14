@@ -17,6 +17,7 @@
 #include "drivers/ssd1351.h"
 #include "background/comms.h"
 #include "background/power_monitor.h"
+#include "drivers/MMA7455.h"
 
 
 ////////// GUI Resources ///////////////////////////////////////////////////////
@@ -267,9 +268,9 @@ void Draw() {
 
         t1 = systick;
 
-        //_LAT(LED1) = 1;
+        _LAT(LED1) = 1;
         UpdateDisplay();
-        //_LAT(LED1) = 0;
+        _LAT(LED1) = 0;
 
         t2 = systick;
         draw_ticks = (t2 >= t1) ? (t2 - t1) : 0;
@@ -305,6 +306,7 @@ void WatchSleep() {
 void ScreenOff() {
     // Disable drawing
     draw_task->state = tsStop;
+    accel_Standby();
 
     ssd1351_DisplayOff();
     _LAT(LED1) = 0;
@@ -314,5 +316,6 @@ void ScreenOff() {
 void ScreenOn() {
     ssd1351_DisplayOn();
 
+    accel_SetMode(accMeasure);
     draw_task->state = tsRun;
 }
