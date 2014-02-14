@@ -2,6 +2,10 @@
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="f1" displayName="Applications" projectFiles="true">
+      <logicalFolder name="f2" displayName="imu" projectFiles="true">
+        <itemPath>applications/imu/imu.c</itemPath>
+        <itemPath>applications/imu/imu.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="test" projectFiles="true">
         <itemPath>applications/test/test.c</itemPath>
         <itemPath>applications/test/test.h</itemPath>

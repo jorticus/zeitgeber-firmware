@@ -55,6 +55,7 @@
 // User-mode applications
 #include "api/app.h"
 #include "applications/test/test.h"
+#include "applications/imu/imu.h"
 
 #include "drivers/ssd1351.h"
 #include "api/graphics/gfx.h"
@@ -144,8 +145,10 @@ int main() {
     Initialize();
 
     RegisterUserApplication(&apptest);
+    RegisterUserApplication(&appimu);
 
-    SetForegroundApp(&apptest);
+    //SetForegroundApp(&apptest);
+    SetForegroundApp(&appimu);
 
     KernelStart();
     return 0;
