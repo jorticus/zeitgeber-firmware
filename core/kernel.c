@@ -202,7 +202,7 @@ void KernelSwitchTask() {
         task_t* task = &tasks[current_task_index];
 
         if (task->state == tsRun) {
-            if (systick > task->next_run) {
+            if (systick >= task->next_run) {
                 task->next_run = systick;// + 50;
 
                 _LAT(LED2) = 1;
