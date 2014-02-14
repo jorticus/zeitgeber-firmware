@@ -43,6 +43,8 @@ application_t appimu = APPLICATION("IMU", appimu_Initialize, appimu_Process, app
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
+extern uint draw_ticks;
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
@@ -59,18 +61,23 @@ void appimu_Process() {
 
 // Called periodically when isForeground==true (30Hz)
 void appimu_Draw() {
+
+
     UINT32 i;
     UINT8 x = 8;
     UINT8 y = 8;
     char s[10];
 
-    //DrawImage(0,0,wallpaper);
-    ClearImage();
+    utoa(s, draw_ticks, 10);
+    x = 8;
+    x = DrawString("ticks: ", x,24,WHITE);
+    x = DrawString(s,        x,24, WHITE);
 
     SetFontSize(2);
 
     RtcTimeToStr(s);
     DrawString(s, 8,100,WHITE);
+
 
     //Sleep();
 }

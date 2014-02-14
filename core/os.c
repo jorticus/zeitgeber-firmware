@@ -72,6 +72,8 @@ application_t* foreground_app = NULL;
 task_t* core_task;
 task_t* draw_task;
 
+uint draw_ticks;
+
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void ProcessCore();
@@ -207,7 +209,10 @@ void DisplayBootScreen() {
 // Called periodically
 void Draw() {
     while (1) {
+        uint t1, t2;
         uint next_tick = systick + DRAW_INTERVAL;
+        
+        //_LAT(LED1) = 1;
 
     /*	static int i=0;
 
@@ -260,9 +265,14 @@ void Draw() {
         if (foreground_app != NULL)
             foreground_app->draw();
 
-        _LAT(LED1) = 0;
-        UpdateDisplay();
+        t1 = systick;
+
         _LAT(LED1) = 1;
+        UpdateDisplay();
+        _LAT(LED1) = 0;
+
+        t2 = systick;
+        draw_ticks = (t2 >= t1) ? (t2 - t1) : 0;
 
         //Delay(DRAW_INTERVAL);
         WaitUntil(next_tick);
