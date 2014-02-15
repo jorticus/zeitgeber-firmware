@@ -109,6 +109,27 @@ void RtcTimeToStr(char* s) {
 
 }
 
+rtc_time_t RtcTime() {
+    rtc_time_t time;
+    rtccTime tm;
+
+    RtccReadTime_v1(&tm);
+
+    time.hour24 = BcdToInt(tm.f.hour);
+    time.min = BcdToInt(tm.f.min);
+    time.sec = BcdToInt(tm.f.sec);
+
+    if (time.hour24 > 12) {
+        time.hour12 = time.hour24 - 12;
+        time.pm = true;
+    } else {
+        time.hour12 = time.hour24;
+        time.pm = false;
+    }
+
+    return time;
+}
+
 void RtcDateToStr(char* s) {
 
 }

@@ -54,6 +54,7 @@
 
 // User-mode applications
 #include "api/app.h"
+#include "applications/clock/clock.h"
 #include "applications/test/test.h"
 #include "applications/imu/imu.h"
 
@@ -144,11 +145,13 @@ int main() {
     KernelSetSP(); // Sets stack_base to the current stack address
     Initialize();
 
+    RegisterUserApplication(&appclock);
     RegisterUserApplication(&apptest);
     RegisterUserApplication(&appimu);
 
     //SetForegroundApp(&apptest);
-    SetForegroundApp(&appimu);
+    //SetForegroundApp(&appimu);
+    SetForegroundApp(&appclock);
 
     KernelStart();
     return 0;

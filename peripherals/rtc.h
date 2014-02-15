@@ -16,7 +16,11 @@
 #define RTCC_OUTPUT_EN 1
 
 typedef struct {
-	char i;
+	uint8 hour12;
+    uint8 hour24;
+    uint8 min;
+    uint8 sec;
+    bool pm;
 } rtc_time_t;
 
 extern volatile rtc_time_t rtc_time;
@@ -33,6 +37,8 @@ extern const char* ampm[];          // am, pm
 extern const int days_in_month[];
 
 extern void RtcTimeToStr(char* s);
+
+rtc_time_t RtcTime();
 
 #endif	/* RTC_H */
 
