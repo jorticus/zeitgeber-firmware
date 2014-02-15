@@ -44,7 +44,7 @@ int DrawClockInt(uint8 x, uint8 y, uint8 value) {
 }
 
 int DrawClockDigit(uint8 x, uint8 y, uint8 digit) {
-    if (digit < 11) {
+    if (digit < 13) {
         const image_t* img = digits[digit];
         DrawImage(x,y, *img);
         x += img->width;

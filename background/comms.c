@@ -20,6 +20,7 @@
 #include "background/power_monitor.h"
 #include "api/graphics/gfx.h"
 #include "drivers/ssd1351.h"
+#include "peripherals/rtc.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
@@ -221,6 +222,32 @@ void comms_ReceivedPacket(unsigned char* packet) {
             break;
         }
 
+        ////////// Time & Date //////////
+
+        case CMD_GET_DATETIME:
+        {
+            datetime_packet_t* tx_packet = (datetime_packet_t*)tx_buffer;
+            rtc_time_t time = RtcTime();
+
+            tx_packet->hour = time.hour24;
+            tx_packet->minute = time.min;
+            tx_packet->second = time.sec;
+
+            tx_packet->day = 0;
+            tx_packet->month = 0;
+            tx_packet->year = 0;
+            break;
+        }
+
+        case CMD_SET_DATETIME:
+        {
+            datetime_packet_t* rx_packet = (datetime_packet_t*)packet;
+
+ 
+            //TODO: Update the RTC
+
+            break;
+        }
 
 
         default:

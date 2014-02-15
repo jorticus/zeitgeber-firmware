@@ -76,6 +76,8 @@ extern task_t* RegisterTask(char* name, task_proc_t proc);
 extern void Delay(uint millis);
 extern void WaitUntil(uint tick);
 
+#define WaitFor(condition) while (!(condition)) { Delay(0); }
+
 // Load the current stack pointer into the stack_base variable,
 // which will then be used as the base stack pointer for application tasks.
 #define KernelSetSP() asm("mov W15, _stack_base\nmov W15, _current_stack_base")

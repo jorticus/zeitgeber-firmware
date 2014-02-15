@@ -30,6 +30,10 @@
 #define CMD_SET_SENSOR_ENABLE   0x31    // Enable/disable the specified sensor
 #define CMD_GET_SENSOR_DATA     0x32    // Retrieve processed data for the given sensor
 
+// Time & Date
+#define CMD_GET_DATETIME        0x40
+#define CMD_SET_DATETIME        0x41
+
 #include "background/power_monitor.h"
 
 typedef struct {
@@ -84,6 +88,18 @@ typedef struct {
     byte data[PACKET_SIZE-4];     // Raw data, format depends on the sensor type
 } sensor_packet_t;
 
+typedef struct {
+    byte command;
+    byte reserved;
+
+    uint8 hour;
+    uint8 minute;
+    uint8 second;
+
+    uint8 day;
+    uint8 month;
+    uint8 year;
+} datetime_packet_t;
 
 typedef enum {
     cmDisconnected,     // USB not connected
