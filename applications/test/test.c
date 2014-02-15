@@ -21,8 +21,8 @@
 #include "peripherals/adc.h"
 #include "peripherals/rtc.h"
 
-#include "gui/Wallpapers/wallpaper7.h"
-#define wallpaper img_wallpaper7
+#include "gui/Wallpapers/wallpaper1.h"
+#define wallpaper img_wallpaper1
 //#include "gui/Wallpapers/gaben.h"
 //#define wallpaper img_gaben
 //#include "gui/Wallpapers/leaves.h"
@@ -94,7 +94,8 @@ void apptest_Draw() {
     //global_drawop = SRCCOPY;
     //SetFontSize(1);
 
-    DrawImage(0,0,wallpaper);
+    ClearImage();
+    //DrawImage(0,0,wallpaper);
     // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
 
 

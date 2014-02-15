@@ -24,7 +24,7 @@ drawop_t global_drawop = SRCCOPY;
 //extern unsigned int font_size;
 
 // Uncomment to flip the screen vertically
-#define FLIP_DISPLAY
+//#define FLIP_DISPLAY
 
 #pragma code
 

@@ -117,7 +117,7 @@ void ProcessCore() {
 
 void CheckButtons() {
     UINT32 i;
-#ifdef HID_BOOTLOADER
+/*#ifdef HID_BOOTLOADER
      // Execute bootloader if USB cable is plugged in and a button is pressed
     if (USB_VBUS_SENSE && (_PORT(BTN1) || _PORT(BTN4))) {
         _LAT(LED1) = 0; _LAT(LED2) = 0;
@@ -125,18 +125,25 @@ void CheckButtons() {
         while ( _PORT(BTN1) || _PORT(BTN4) );
         Reset();
     }
-#endif
+#endif*/
 
-    if (_PORT(BTN2)) {
-        displayOn = !displayOn;
-        if (displayOn)
+    // Wake up the display on any button press
+    if (!displayOn) {
+        if (_PORT(BTN1) || _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4)) {
+            displayOn = true;
             ScreenOn();
-        else {
-            ScreenOff();
+            Delay(10);
         }
-
-        for (i=0; i<100000; i++);
     }
+
+    else {
+        if (_PORT(BTN4)) {
+            displayOn = false;
+            ScreenOff();
+            Delay(10);
+        }
+    }
+
 
     /*if (_PORT(BTN3)) {
         ssd1351_DisplayOff();
