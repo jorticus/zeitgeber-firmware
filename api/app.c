@@ -14,8 +14,6 @@
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
-#define MAX_APPLICATIONS 10
-
 application_t* installed_apps[MAX_APPLICATIONS];
 uint app_count = 0;
 

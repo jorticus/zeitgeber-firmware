@@ -149,9 +149,9 @@ int main() {
     RegisterUserApplication(&apptest);
     RegisterUserApplication(&appimu);
 
+    SetForegroundApp(&appclock);
     //SetForegroundApp(&apptest);
     //SetForegroundApp(&appimu);
-    SetForegroundApp(&appclock);
 
     KernelStart();
     return 0;

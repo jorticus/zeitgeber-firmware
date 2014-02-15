@@ -12,6 +12,7 @@
 #include "core/kernel.h"
 #include "api/graphics/gfx.h"
 #include "os.h"
+#include "api/app.h"
 #include "hardware.h"
 
 #include "drivers/ssd1351.h"
@@ -66,7 +67,7 @@ const image_t imgBat = {bat_bytes, BAT_WIDTH, BAT_HEIGHT};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
-bool displayOn = false;
+bool displayOn = true;
 
 application_t* foreground_app = NULL;
 
@@ -74,6 +75,8 @@ task_t* core_task;
 task_t* draw_task;
 
 uint draw_ticks;
+
+uint current_app = 0;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
@@ -132,15 +135,34 @@ void CheckButtons() {
         if (_PORT(BTN1) || _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4)) {
             displayOn = true;
             ScreenOn();
-            Delay(10);
+            Delay(100);
         }
     }
 
     else {
+        // Screen off
         if (_PORT(BTN4)) {
             displayOn = false;
             ScreenOff();
-            Delay(10);
+            Delay(100);
+        }
+
+        // Prev app
+        if (_PORT(BTN2)) {
+            if (current_app > 0) {
+                current_app--;
+                SetForegroundApp(installed_apps[current_app]);
+                Delay(200);
+            }
+        }
+
+        // Next app
+        if (_PORT(BTN3)) {
+            if (current_app <= app_count-2) {
+                current_app++;
+                SetForegroundApp(installed_apps[current_app]);
+                Delay(200);
+            }
         }
     }
 

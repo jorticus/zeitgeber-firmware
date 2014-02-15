@@ -12,6 +12,8 @@
 
 #include "core/kernel.h"
 
+#define MAX_APPLICATIONS 10
+
 typedef enum { 
     asIdle,         // App is not active and is not processing. Allows CPU to go into sleep state
     asWaiting,      // App is waiting for an interrupt, but not currently processing anything. The app should register a callback to set the state to asRunning when the interrupt executes
@@ -39,6 +41,9 @@ void RegisterUserApplication(application_t* app);
 
 // Create a new application struct
 //application_t NewApplication(proc_t init, proc_t process, proc_t draw);
+
+extern application_t* installed_apps[MAX_APPLICATIONS];
+extern uint app_count;
 
 
 #endif	/* APP_H */
