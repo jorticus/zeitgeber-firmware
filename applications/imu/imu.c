@@ -51,12 +51,14 @@ extern bool i2c_aborted;
 
 #define LINE_HEIGHT 8
 
-#define ACCEL_LOG_SIZE 1//DISPLAY_WIDTH
+#define ACCEL_LOG_SIZE DISPLAY_WIDTH
 vector3c_t accel_log[ACCEL_LOG_SIZE];
 vector3c_t accel_vec;
 uint accel_log_index = 0;
 
 color_t colors[3] = {RED, LIME, BLUE};
+
+bool accel_initted = false;
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
@@ -79,6 +81,12 @@ void appimu_Initialize() {
 void appimu_Process() {
     while (1) {
         Delay(10);
+
+        /*if (!accel_initted) {
+            accel_init();
+            accel_SetMode(accMeasure);
+            accel_initted = true;
+        }*/
 
         accel_vec = accel_ReadXYZ8();
         accel_log[accel_log_index] = accel_vec;
@@ -126,39 +134,57 @@ void appimu_Draw() {
     x = DrawString(s,     x,4*LINE_HEIGHT, colors[2]);
 
 
-    DrawString("Magnetometer", 8,6*LINE_HEIGHT, WHITE);
+    DrawString("Magnetometer", 8,11*LINE_HEIGHT, WHITE);
 
     itoa(s, 0, 10);
     x = 8;
-    x = DrawString("X: ", x,7*LINE_HEIGHT, colors[0]);
-    x = DrawString(s,     x,7*LINE_HEIGHT, colors[0]);
+    x = DrawString("X: ", x,12*LINE_HEIGHT, colors[0]);
+    x = DrawString(s,     x,12*LINE_HEIGHT, colors[0]);
 
     itoa(s, 0, 10);
     x = 8;
-    x = DrawString("Y: ", x,8*LINE_HEIGHT, colors[1]);
-    x = DrawString(s,     x,8*LINE_HEIGHT, colors[1]);
+    x = DrawString("Y: ", x,13*LINE_HEIGHT, colors[1]);
+    x = DrawString(s,     x,13*LINE_HEIGHT, colors[1]);
 
     itoa(s, 0, 10);
     x = 8;
-    x = DrawString("Z: ", x,9*LINE_HEIGHT, colors[2]);
-    x = DrawString(s,     x,9*LINE_HEIGHT, colors[2]);
+    x = DrawString("Z: ", x,14*LINE_HEIGHT, colors[2]);
+    x = DrawString(s,     x,14*LINE_HEIGHT, colors[2]);
 
-    #define GRAPH_Y (12*LINE_HEIGHT)
-    //global_drawop = ADD;
-    for (x=0; x<ACCEL_LOG_SIZE; x++) {
-        i = x + accel_log_index;
-        if (i >= ACCEL_LOG_SIZE) i -= ACCEL_LOG_SIZE;
 
-        uint8 *values = &accel_log[i];
-        uint j;
 
-        for (j=0; j<3; j++) {
+    #define GRAPH_Y (DISPLAY_HEIGHT/2)
+
+    DrawLine(0, GRAPH_Y, DISPLAY_WIDTH, GRAPH_Y, GRAY);
+
+    global_drawop = ADD;
+
+    uint j;
+    uint8 lx, ly;
+
+    for (j=0; j<3; j++) {
+        lx = 0;
+        ly = 0;
+
+        for (x=0; x<ACCEL_LOG_SIZE; x++) {
+            i = x + accel_log_index;
+            if (i >= ACCEL_LOG_SIZE) i -= ACCEL_LOG_SIZE;
+
+            uint8 *values = &accel_log[i];
+
             y = GRAPH_Y - values[j];
             if (y >= DISPLAY_HEIGHT-1) y = DISPLAY_HEIGHT-1;
-            SetPixel(x, y, colors[j]);
+            //SetPixel(x, y, colors[j]);
+
+            if (x > 0)
+                DrawLine(lx, ly, x, y, colors[j]);
+            lx = x;
+            ly = y;
+
+
         }
     }
-    //global_drawop = SRCCOPY;
+    global_drawop = SRCCOPY;
 
 
     /*SetFontSize(2);
