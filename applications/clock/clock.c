@@ -37,6 +37,8 @@ application_t appclock = APPLICATION("Clock", appclock_Initialize, appclock_Proc
 // Called when CPU initializes 
 void appclock_Initialize() {
     appclock.state = asIdle;
+
+    
 }
 
 // Called periodically when state==asRunning
@@ -55,12 +57,22 @@ void appclock_Draw() {
     //RtcTimeToStr(s);
     //DrawString(s, 8,8,WHITE);
 
-    rtc_time_t time = RtcTime();
+    rtc_time_t time = RtcGetTime();
 
     int x = 0;
-    x = DrawClockInt(x,20, time.hour12);
+    x = DrawClockInt(x,20, time.hour12, false);
     x = DrawClockDigit(x,20, CLOCK_DIGIT_COLON);
-    x = DrawClockInt(x,20, time.min);
+    x = DrawClockInt(x,20, time.min, true);
     x = DrawClockDigit(x,20, (time.pm) ? CLOCK_DIGIT_PM : CLOCK_DIGIT_AM);
+    
+    utoa(s, time.sec, 10);
+    DrawString(s, 8,60, WHITE);
+    
+    rtc_date_t date = RtcGetDate();
+    sprintf(s, "%d/%.2d/%d", date.day, date.month, 2000+date.year);
+    DrawString(s, 8,68, WHITE);
+    
+    
+    DrawString(days[date.day_of_week], 8,76, WHITE);
 
 }

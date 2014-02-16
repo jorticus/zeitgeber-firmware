@@ -34,11 +34,12 @@ const image_t* digits[] = {
     &img_colon_s1, &img_am_s1, &img_pm_s1
 };
 
-int DrawClockInt(uint8 x, uint8 y, uint8 value) {
+int DrawClockInt(uint8 x, uint8 y, uint8 value, bool lead_zero) {
     uint8 tens = value/10;
     uint8 ones = value - (tens*10);
 
-    x = DrawClockDigit(x, y, tens);
+    if (lead_zero || tens)
+        x = DrawClockDigit(x, y, tens);
     x = DrawClockDigit(x, y, ones);
     return x;
 }

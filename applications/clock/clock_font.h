@@ -14,7 +14,7 @@
 
 extern const image_t* digits[];
 
-int DrawClockInt(uint8 x, uint8 y, uint8 value);
+int DrawClockInt(uint8 x, uint8 y, uint8 value, bool lead_zero);
 int DrawClockDigit(uint8 x, uint8 y, uint8 digit);
 
 #endif	/* CLOCK_FONT_H */
