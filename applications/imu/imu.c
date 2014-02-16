@@ -19,7 +19,6 @@
 #include "core/kernel.h"
 #include "background/power_monitor.h"
 #include "peripherals/adc.h"
-#include "peripherals/rtc.h"
 
 #include "drivers/MMA7455.h"
 

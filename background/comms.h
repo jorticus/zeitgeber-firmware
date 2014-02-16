@@ -9,6 +9,8 @@
 #define	COMMS_H
 
 #include "drivers/usb/usb.h" // PACKET_SIZE
+#include "background/power_monitor.h"
+#include "api/clock.h"
 
 #define CMD_PING                0x01
 #define CMD_RESET               0x02
@@ -34,7 +36,7 @@
 #define CMD_GET_DATETIME        0x40
 #define CMD_SET_DATETIME        0x41
 
-#include "background/power_monitor.h"
+
 
 typedef struct {
     byte command;
@@ -87,8 +89,6 @@ typedef struct {
 
     byte data[PACKET_SIZE-4];     // Raw data, format depends on the sensor type
 } sensor_packet_t;
-
-#include "peripherals/rtc.h"
 
 typedef struct {
     byte command;

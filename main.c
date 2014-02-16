@@ -42,11 +42,11 @@
 #include "peripherals/adc.h"
 #include "peripherals/pwm.h"
 #include "peripherals/gpio.h"
-#include "peripherals/rtc.h"
 #include "drivers/usb/usb.h"
 
 // API
 #include "api/oled.h"
+#include "api/clock.h"
 
 // Background tasks
 #include "background/comms.h"
@@ -125,8 +125,8 @@ void Initialize() {
     //gpio_init();
     adc_init();
     adc_enable();
-    rtc_init();
 
+    InitializeClock();
     InitializeKernel();
     InitializeComms();
     InitializeOled();
@@ -148,6 +148,8 @@ int main() {
     RegisterUserApplication(&appclock);
     RegisterUserApplication(&apptest);
     RegisterUserApplication(&appimu);
+
+    InitializeApplications();
 
     SetForegroundApp(&appclock);
     //SetForegroundApp(&apptest);

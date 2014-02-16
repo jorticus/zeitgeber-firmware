@@ -10,16 +10,18 @@
 
 ////////// Includes ////////////////////////////////////////////////////////////
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "system.h"
 #include "api/app.h"
 #include "api/api.h"
+#include "api/clock.h"
 #include "api/graphics/gfx.h"
 #include "util/util.h"
 #include "core/kernel.h"
 #include "background/power_monitor.h"
-#include "peripherals/rtc.h"
 #include "applications/clock/clock_font.h"
+
 
 
 ////////// App Definition //////////////////////////////////////////////////////
@@ -57,7 +59,7 @@ void appclock_Draw() {
     //RtcTimeToStr(s);
     //DrawString(s, 8,8,WHITE);
 
-    rtc_time_t time = RtcGetTime();
+    rtc_time_t time = ClockGetTime();
 
     int x = 0;
     x = DrawClockInt(x,20, time.hour12, false);
@@ -68,7 +70,7 @@ void appclock_Draw() {
     utoa(s, time.sec, 10);
     DrawString(s, 8,60, WHITE);
     
-    rtc_date_t date = RtcGetDate();
+    rtc_date_t date = ClockGetDate();
     sprintf(s, "%d/%.2d/%d", date.day, date.month, 2000+date.year);
     DrawString(s, 8,68, WHITE);
     

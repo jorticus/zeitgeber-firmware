@@ -14,5 +14,9 @@
 
 #define mLerp(inl, inh, outl, outh, value) ( (value - inl) * (outh - outl) / (inh - inl) + outl )
 
+void bcd2str(byte bcd, char* s);
+byte bcd2int(byte bcd);
+byte int2bcd(byte i);
+
 #endif	/* UTIL_H */
 

@@ -14,12 +14,12 @@
 #include "system.h"
 #include "api/app.h"
 #include "api/api.h"
+#include "api/clock.h"
 #include "api/graphics/gfx.h"
 #include "util/util.h"
 #include "core/kernel.h"
 #include "background/power_monitor.h"
 #include "peripherals/adc.h"
-#include "peripherals/rtc.h"
 
 #include "gui/Wallpapers/wallpaper1.h"
 #define wallpaper img_wallpaper1
@@ -186,7 +186,7 @@ void apptest_Draw() {
 
     SetFontSize(2);
 
-    RtcTimeToStr(s);
+    ClockTimeToStr(s);
     DrawString(s, 8,100,WHITE);
 
     //Sleep();

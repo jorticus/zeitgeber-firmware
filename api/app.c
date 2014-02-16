@@ -26,9 +26,16 @@ void RegisterUserApplication(application_t* app) {
 	app->task = RegisterTask(app->name, app->process);
 
     installed_apps[app_count++] = app;
-    
-    if (app->init != NULL)
-        app->init();
+}
+
+void InitializeApplications() {
+    uint i;
+    for (i=0; i<app_count; i++) {
+        application_t* app = installed_apps[i];
+
+        if (app->init != NULL)
+            app->init();
+    }
 }
 
 /*application_t NewApplication(proc_t init, proc_t process, proc_t draw) {

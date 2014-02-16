@@ -17,10 +17,10 @@
 #include "./USB/usb.h"
 #include "./USB/usb_function_hid.h"
 
+#include "api/clock.h"
 #include "background/power_monitor.h"
 #include "api/graphics/gfx.h"
 #include "drivers/ssd1351.h"
-#include "peripherals/rtc.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
@@ -227,8 +227,8 @@ void comms_ReceivedPacket(unsigned char* packet) {
         case CMD_GET_DATETIME:
         {
             datetime_packet_t* tx_packet = (datetime_packet_t*)tx_buffer;
-            rtc_time_t time = RtcGetTime();
-            rtc_date_t date = RtcGetDate();
+            rtc_time_t time = ClockGetTime();
+            rtc_date_t date = ClockGetDate();
 
             tx_packet->hour = time.hour24;
             tx_packet->minute = time.min;
@@ -245,13 +245,13 @@ void comms_ReceivedPacket(unsigned char* packet) {
         {
             datetime_packet_t* rx_packet = (datetime_packet_t*)packet;
 
-            RtcSetTime(
+            ClockSetTime(
                 rx_packet->hour,
                 rx_packet->minute,
                 rx_packet->second
             );
 
-            RtcSetDate(
+            ClockSetDate(
                 rx_packet->day_of_week,
                 rx_packet->day,
                 rx_packet->month,

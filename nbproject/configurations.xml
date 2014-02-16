@@ -33,6 +33,8 @@
         <itemPath>api/app.h</itemPath>
         <itemPath>api/clock.h</itemPath>
         <itemPath>api/compass.h</itemPath>
+        <itemPath>api/calendar.h</itemPath>
+        <itemPath>api/rtc_strings.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f6" displayName="background" projectFiles="true">
         <itemPath>background/comms.h</itemPath>
@@ -57,14 +59,13 @@
         <itemPath>peripherals/gpio.h</itemPath>
         <itemPath>peripherals/adc.h</itemPath>
         <itemPath>peripherals/pwm.h</itemPath>
-        <itemPath>peripherals/rtc.h</itemPath>
-        <itemPath>peripherals/rtc_strings.h</itemPath>
         <itemPath>peripherals/ssd1351p.h</itemPath>
         <itemPath>peripherals/spi.h</itemPath>
         <itemPath>peripherals/i2c.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.h</itemPath>
+        <itemPath>util/util.h</itemPath>
       </logicalFolder>
       <itemPath>system.h</itemPath>
       <itemPath>hardware.h</itemPath>
@@ -89,6 +90,7 @@
         <itemPath>api/app.c</itemPath>
         <itemPath>api/clock.c</itemPath>
         <itemPath>api/compass.c</itemPath>
+        <itemPath>api/calendar.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f6" displayName="background" projectFiles="true">
         <itemPath>background/comms.c</itemPath>
@@ -116,13 +118,13 @@
         <itemPath>peripherals/gpio.c</itemPath>
         <itemPath>peripherals/adc.c</itemPath>
         <itemPath>peripherals/pwm.c</itemPath>
-        <itemPath>peripherals/rtc.c</itemPath>
         <itemPath>peripherals/ssd1351p.c</itemPath>
         <itemPath>peripherals/i2c.c</itemPath>
         <itemPath>peripherals/spi.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.c</itemPath>
+        <itemPath>util/bcd.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
