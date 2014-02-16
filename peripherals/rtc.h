@@ -15,6 +15,10 @@
 // 1: Enable RTC output, 0: Disable RTC output
 #define RTCC_OUTPUT_EN 1
 
+typedef enum {
+    dwSunday=0, dwMonday, dwTuesday, dwWednesday, dwThursday, dwFriday, dwSaturday
+} rtc_dow_t;
+
 typedef struct {
 	uint8 hour12;
     uint8 hour24;
@@ -22,6 +26,13 @@ typedef struct {
     uint8 sec;
     bool pm;
 } rtc_time_t;
+
+typedef struct {
+    rtc_dow_t day_of_week;
+    uint8 day;
+    uint8 month;
+    uint8 year;
+} rtc_date_t;
 
 extern volatile rtc_time_t rtc_time;
 
@@ -38,7 +49,11 @@ extern const int days_in_month[];
 
 extern void RtcTimeToStr(char* s);
 
-rtc_time_t RtcTime();
+rtc_time_t RtcGetTime();
+rtc_date_t RtcGetDate();
+
+bool RtcSetTime(uint8 hour, uint8 minute, uint8 second);
+bool RtcSetDate(rtc_dow_t day_of_week, uint8 day, uint8 month, uint8 year);
 
 #endif	/* RTC_H */
 

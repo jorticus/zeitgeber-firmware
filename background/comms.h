@@ -88,17 +88,20 @@ typedef struct {
     byte data[PACKET_SIZE-4];     // Raw data, format depends on the sensor type
 } sensor_packet_t;
 
+#include "peripherals/rtc.h"
+
 typedef struct {
     byte command;
     byte reserved;
 
-    uint8 hour;
-    uint8 minute;
-    uint8 second;
+    uint8 hour;             // 0-24
+    uint8 minute;           // 0-59
+    uint8 second;           // 0-59
 
-    uint8 day;
-    uint8 month;
-    uint8 year;
+    uint8 day_of_week;      // 0:Sunday, 1:Monday, ..., 6:Saturday
+    uint8 day;              // 1-31* depending on month
+    uint8 month;            // 1-12
+    uint8 year;             // 0-99
 } datetime_packet_t;
 
 typedef enum {

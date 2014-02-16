@@ -81,24 +81,34 @@ void rtc_init() {
 
 }
 
-void BcdToStr(BYTE bcd, char* s) {
+void bcd2str(BYTE bcd, char* s) {
     s[0] = '0' + ((bcd & 0xF0) >> 4);
     s[1] = '0' + (bcd & 0x0F);
     s[2] = '\0';
 }
 
-BYTE BcdToInt(BYTE bcd) {
+byte bcd2int(byte bcd) {
     return (bcd & 0x0F) + (((bcd & 0xF0)>>4)*10);
+}
+
+byte int2bcd(byte i) {
+     return ((i / 10) << 4) | (i % 10);
+    /*byte result;
+    while (i >= 10) {
+        i -= 10;
+        result += 0x10;
+    }
+    return result + i;*/
 }
 
 void RtcTimeToStr(char* s) {
     rtccTime tm;
-    RtccReadTime_v1(&tm);
+    RtccReadTime(&tm);
 
     sprintf(s, "%d:%d:%d",
-            BcdToInt(tm.f.hour),
-            BcdToInt(tm.f.min),
-            BcdToInt(tm.f.sec)
+            bcd2int(tm.f.hour),
+            bcd2int(tm.f.min),
+            bcd2int(tm.f.sec)
     );
 
     /*BcdToStr(tm.f.hour, &s[0]);
@@ -109,15 +119,15 @@ void RtcTimeToStr(char* s) {
 
 }
 
-rtc_time_t RtcTime() {
+rtc_time_t RtcGetTime() {
     rtc_time_t time;
     rtccTime tm;
 
-    RtccReadTime_v1(&tm);
+    RtccReadTime(&tm);
 
-    time.hour24 = BcdToInt(tm.f.hour);
-    time.min = BcdToInt(tm.f.min);
-    time.sec = BcdToInt(tm.f.sec);
+    time.hour24 = bcd2int(tm.f.hour);
+    time.min = bcd2int(tm.f.min);
+    time.sec = bcd2int(tm.f.sec);
 
     if (time.hour24 > 12) {
         time.hour12 = time.hour24 - 12;
@@ -130,8 +140,63 @@ rtc_time_t RtcTime() {
     return time;
 }
 
-void RtcDateToStr(char* s) {
+rtc_date_t RtcGetDate() {
+    rtc_date_t date;
+    rtccDate dt;
 
+    RtccReadDate(&dt);
+    date.day_of_week = bcd2int(dt.f.wday);
+    date.day = bcd2int(dt.f.mday);
+    date.month = bcd2int(dt.f.mon);
+    date.year = bcd2int(dt.f.year);
+
+    return date;
+}
+
+void RtcSetTimesfd(rtc_time_t time) {
+    // Initialize date/time
+    rtccTime tm;
+    tm.l = 0x00000000;
+    tm.f.hour = time.hour24;
+    RtccWriteTime(&tm, false);
+   /* rtccTimeDate td;
+    td.f.year = 0x13;
+    td.f.mon = 0x08;
+    td.f.mday = 0x17;
+    td.f.wday = 0x06;
+    td.f.hour = 0x16;
+    td.f.min = 0x00;
+    td.f.sec = 0x00;
+    RtccWriteTimeDate(&td, false);*/
+}
+
+bool RtcSetTime(uint8 hour, uint8 minute, uint8 second) {
+    bool result;
+    rtccTime tm;
+    tm.l = 0x00000000;
+    tm.f.hour = int2bcd(hour);
+    tm.f.min = int2bcd(minute);
+    tm.f.sec = int2bcd(second);
+
+    SetRtcWren();
+    result = RtccWriteTime(&tm, true);
+    ClearRtcWren();
+    return result; // Returns false if values are out of range
+}
+
+bool RtcSetDate(rtc_dow_t day_of_week, uint8 day, uint8 month, uint8 year) {
+    bool result;
+    rtccDate dt;
+    dt.l = 0x00000000;
+    dt.f.wday = int2bcd(day_of_week);
+    dt.f.mday = int2bcd(day);
+    dt.f.mon = int2bcd(month);
+    dt.f.year = int2bcd(year);
+
+    SetRtcWren();
+    result = RtccWriteDate(&dt, true);
+    ClearRtcWren();
+    return result; // Returns false if values are out of range
 }
 
 void RtcSetCalibration(int8 cal) {

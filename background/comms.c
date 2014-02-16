@@ -227,15 +227,17 @@ void comms_ReceivedPacket(unsigned char* packet) {
         case CMD_GET_DATETIME:
         {
             datetime_packet_t* tx_packet = (datetime_packet_t*)tx_buffer;
-            rtc_time_t time = RtcTime();
+            rtc_time_t time = RtcGetTime();
+            rtc_date_t date = RtcGetDate();
 
             tx_packet->hour = time.hour24;
             tx_packet->minute = time.min;
             tx_packet->second = time.sec;
 
-            tx_packet->day = 0;
-            tx_packet->month = 0;
-            tx_packet->year = 0;
+            tx_packet->day_of_week = date.day_of_week;
+            tx_packet->day = date.day;
+            tx_packet->month = date.month;
+            tx_packet->year = date.year;
             break;
         }
 
@@ -243,8 +245,20 @@ void comms_ReceivedPacket(unsigned char* packet) {
         {
             datetime_packet_t* rx_packet = (datetime_packet_t*)packet;
 
- 
-            //TODO: Update the RTC
+            RtcSetTime(
+                rx_packet->hour,
+                rx_packet->minute,
+                rx_packet->second
+            );
+
+            RtcSetDate(
+                rx_packet->day_of_week,
+                rx_packet->day,
+                rx_packet->month,
+                rx_packet->year
+            );
+
+
 
             break;
         }
