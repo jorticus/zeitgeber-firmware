@@ -81,7 +81,8 @@ uint current_app = 0;
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void ProcessCore();
-void Draw();
+void DrawFrame();
+void DrawLoop();
 void DisplayBootScreen();
 void CheckButtons();
 
@@ -95,7 +96,7 @@ void InitializeOS() {
     core_task->state = tsRun;
 
     // Drawing, only needs to be run when screen is on
-    draw_task = RegisterTask("Draw", Draw);
+    draw_task = RegisterTask("Draw", DrawLoop);
 }
 
 void SetForegroundApp(application_t* app) {
@@ -236,64 +237,68 @@ void DisplayBootScreen() {
     for (i=0; i<1000000; i++) { ClrWdt(); }
 }
 
+void DrawFrame() {
+    //_LAT(LED1) = 1;
+
+/*	static int i=0;
+
+    uint16 ticks;
+    uint16 starttick = systick;
+    char s[16];
+
+    // Clear screen and draw wallpaper
+    ClearImage();
+    DrawImage(0,0,0,0, wallpapers[0]);
+
+    // Defaults
+    SetFont(fonts.Stellaris);
+    SetFontSize(1);
+
+    // Draw foreground app
+    if (foreground_app != NULL) {
+        foreground_app->draw();
+    }
+
+    // Draw status bar
+    BitBlit(&imgStatusBar, NULL, 0,0, 0,0, 0,0, ADD,0);
+    //BitBlit(&imgBattery, &imgBatteryMask, DISPLAY_WIDTH-imgBattery.width-4,1, 0,0, 0,0, MERGECOPY,0);
+    BitBlit(&imgBat, NULL, DISPLAY_WIDTH-imgBat.width-4,0, 0,0, 0,0, ADD,1);
+
+    BitBlit(&img_mail, NULL, 4,0, 0,0, 0,0, ADD,1);
+    BitBlit(&img_calendar, NULL, 24,0, 0,0, 0,0, ADD,1);
+    BitBlit(&img_comment, NULL, 24*2,0, 0,0, 0,0, ADD,1);
+    BitBlit(&img_computer, NULL, 24*3,0, 0,0, 0,0, ADD,1);
+
+    BitBlit(&imgTimeShadow, NULL, i,40, 0,0, 0,0, SUBTRACT,1);
+    BitBlit(&imgTimeShadow, &imgTimeMask, i,40, 0,0, 0,0, MERGECOPY,0);
+
+    i++;
+
+    ticks=  systick - starttick;
+
+    ultoa(ticks, s, 10);
+    DrawString("Running", 4, DISPLAY_HEIGHT-16, RED);
+
+    // Finally update the display
+    UpdateDisplay();*/
+
+    ClearImage();
+
+    SetFontSize(1);
+    SetFont(fonts.Stellaris);
+
+    // Draw foreground app
+    if (foreground_app != NULL)
+        foreground_app->draw();
+}
+
 // Called periodically
-void Draw() {
+void DrawLoop() {
     while (1) {
         uint t1, t2;
         uint next_tick = systick + DRAW_INTERVAL;
         
-        //_LAT(LED1) = 1;
-
-    /*	static int i=0;
-
-        uint16 ticks;
-        uint16 starttick = systick;
-        char s[16];
-
-        // Clear screen and draw wallpaper
-        ClearImage();
-        DrawImage(0,0,0,0, wallpapers[0]);
-
-        // Defaults
-        SetFont(fonts.Stellaris);
-        SetFontSize(1);
-
-        // Draw foreground app
-        if (foreground_app != NULL) {
-            foreground_app->draw();
-        }
-
-        // Draw status bar
-        BitBlit(&imgStatusBar, NULL, 0,0, 0,0, 0,0, ADD,0);
-        //BitBlit(&imgBattery, &imgBatteryMask, DISPLAY_WIDTH-imgBattery.width-4,1, 0,0, 0,0, MERGECOPY,0);
-        BitBlit(&imgBat, NULL, DISPLAY_WIDTH-imgBat.width-4,0, 0,0, 0,0, ADD,1);
-
-        BitBlit(&img_mail, NULL, 4,0, 0,0, 0,0, ADD,1);
-        BitBlit(&img_calendar, NULL, 24,0, 0,0, 0,0, ADD,1);
-        BitBlit(&img_comment, NULL, 24*2,0, 0,0, 0,0, ADD,1);
-        BitBlit(&img_computer, NULL, 24*3,0, 0,0, 0,0, ADD,1);
-
-        BitBlit(&imgTimeShadow, NULL, i,40, 0,0, 0,0, SUBTRACT,1);
-        BitBlit(&imgTimeShadow, &imgTimeMask, i,40, 0,0, 0,0, MERGECOPY,0);
-
-        i++;
-
-        ticks=  systick - starttick;
-
-        ultoa(ticks, s, 10);
-        DrawString("Running", 4, DISPLAY_HEIGHT-16, RED);
-
-        // Finally update the display
-        UpdateDisplay();*/
-
-        ClearImage();
-
-        SetFontSize(1);
-        SetFont(fonts.Stellaris);
-
-        // Draw foreground app
-        if (foreground_app != NULL)
-            foreground_app->draw();
+        DrawFrame();
 
         t1 = systick;
 
@@ -343,6 +348,11 @@ void ScreenOff() {
 }
 
 void ScreenOn() {
+    // Draw a frame before fading in
+    DrawFrame();
+    _LAT(OL_POWER) = 1;
+    UpdateDisplay();
+
     ssd1351_DisplayOn();
 
     accel_SetMode(accMeasure);
