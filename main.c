@@ -55,8 +55,9 @@
 // User-mode applications
 #include "api/app.h"
 #include "applications/clock/clock.h"
-#include "applications/test/test.h"
 #include "applications/imu/imu.h"
+#include "applications/test/test.h"
+#include "applications/kdiag/kdiag.h"
 
 #include "drivers/ssd1351.h"
 #include "api/graphics/gfx.h"
@@ -146,9 +147,10 @@ int main() {
     Initialize();
 
     RegisterUserApplication(&appclock);
-    RegisterUserApplication(&apptest);
     RegisterUserApplication(&appimu);
-
+    RegisterUserApplication(&apptest);
+    RegisterUserApplication(&appkdiag);
+    
     InitializeApplications();
 
     SetForegroundApp(&appclock);

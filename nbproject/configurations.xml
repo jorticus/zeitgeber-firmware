@@ -12,6 +12,10 @@
         <itemPath>applications/imu/imu.c</itemPath>
         <itemPath>applications/imu/imu.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="kdiag" projectFiles="true">
+        <itemPath>applications/kdiag/kdiag.c</itemPath>
+        <itemPath>applications/kdiag/kdiag.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="test" projectFiles="true">
         <itemPath>applications/test/test.c</itemPath>
         <itemPath>applications/test/test.h</itemPath>
