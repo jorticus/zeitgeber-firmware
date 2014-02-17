@@ -26,6 +26,8 @@
 
 //#define MAX_STACK_SIZE (TASK_STACK_SIZE*MAX_TASKS)
 
+#define CALC_CPU_TICKS 100
+
 ////////// Variables ///////////////////////////////////////////////////////////
 
 task_t tasks[MAX_TASKS] __attribute__((section(".data.tasks")));
@@ -44,6 +46,9 @@ task_t* idle_task;
 extern task_t* draw_task;
 extern task_t* core_task;
 
+uint cpu_tick_counter = 0;
+uint total_cpu_ticks = 0;
+
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void KernelIdleTask();
@@ -55,7 +60,7 @@ extern void KernelStartContext();
 extern void KernelInitTaskStack(task_t* sp, task_proc_t proc);
 extern void KernelStartTask(task_t* sp);
 
-#define KernelSwitchToTask(task) current_task = task
+#define KernelSwitchToTask(task) current_task = task; task->ticks++
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
@@ -117,13 +122,14 @@ task_t* RegisterTask(char* name, task_proc_t proc) {
     task->name[TASK_NAME_LEN] = '\0';
 
     task->proc = proc;
-
     task->state = tsRun;
-    task->priority = 0;
 
-    task->next_run = 0; // should be current tick + interval
-    task->cpu_time = 0;
-	task->ticks = 0;
+    task->ticks = 0;
+    task->next_run = 0;
+    task->cpu_ticks = 0;
+    task->cpu_usage = 0;
+
+    //task->cpu_history_idx = 0;
 
     KernelInitTaskStack(task, task->proc);
 
@@ -136,7 +142,7 @@ void fix_rollover(uint last_tick) {
         task_t* task = &tasks[i];
         if (task->next_run > last_tick)
             task->next_run -= last_tick;
-        else if (task->next_run > task->interval)
+        else if (task->next_run > 0)
             task->next_run = 0;
         // else rollover will have corrected it
     }
@@ -192,6 +198,19 @@ void KernelSwitchTask() {
     }
     last_tick = systick;
 
+    if (cpu_tick_counter == CALC_CPU_TICKS) {
+        cpu_tick_counter = 0;
+        total_cpu_ticks = 0;
+        for (i=0; i<num_tasks; i++) {
+            task_t* task = &tasks[i];
+            //task->cpu_usage = task->cpu_ticks * 1000 / CALC_CPU_TICKS;
+            task->cpu_ticks = task->ticks;
+            if (i) total_cpu_ticks += task->ticks; // Skip the idle task
+            task->ticks = 0;
+        }
+    }
+    cpu_tick_counter++;
+
     // Find the next task that needs to be run
     uint start_index = current_task_index;
     do {
@@ -216,7 +235,7 @@ void KernelSwitchTask() {
 
     // If no tasks need to be run, go to the idle task (puts the MCU into sleep mode)
     _LAT(LED2) = 0;
-    current_task = idle_task;
+    KernelSwitchToTask(idle_task);
 
     // Upon returning, the kernel will switch the stack to the pointer
     // in 'task_sp', then pop the task's registers back, and continue

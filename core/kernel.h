@@ -17,6 +17,8 @@
 
 #define TASK_NAME_LEN 6
 
+#define CPU_HISTORY_LEN 16
+
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
 // IMPORTANT: The task_proc must NEVER return!
@@ -39,18 +41,17 @@ typedef struct {
 	char name[TASK_NAME_LEN+1];
 
     task_proc_t proc;
-
     task_state_t state;
-    uint priority;  // 0:lowest, 255:highest
 
-    uint interval;
-    uint cpu_time;
     uint next_run;
-	uint ticks;
 
-    // Preemption
-    bool running;
-    bool flagged;
+    uint ticks;
+    uint last_run;
+    uint cpu_usage;
+	uint cpu_ticks;
+
+    //uint cpu_history[CPU_HISTORY_LEN];
+    //uint cpu_history_idx;
 } task_t;
 
 
@@ -93,6 +94,8 @@ extern void WaitUntil(uint tick);
 ////////// Properties //////////////////////////////////////////////////////////
 
 extern volatile uint systick;
+
+extern uint total_cpu_ticks;
 
 
 #endif	/* SCHEDULER_H */

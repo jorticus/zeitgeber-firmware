@@ -44,19 +44,41 @@ void appkdiag_Draw() {
     uint i;
     uint x=0;
     uint y=16;
+    char s[20];
     
 
-    DrawString("Kernel Diagnostics", 8,y, WHITE);
-    y += 16;
-    
-    for (i=0; i<num_tasks; i++) {
+    DrawString("Kernel Info", 8,y, WHITE);
+    y += 12;
+
+    DrawString("CPU%", 60,y, WHITE);
+    //DrawString("%CPU", 88,y, WHITE);
+    y += 8;
+
+    // NOTE: Starting at 1 to skip the Idle task
+    for (i=1; i<num_tasks; i++) {
         task_t* task = &tasks[i];
+
+        color_t color = (task->state == tsRun) ? WHITE : GRAY;
         
+        DrawString(task->name, 8,y, color);
         
-        DrawString(task->name, 8,y, (task->state == tsRun) ? WHITE : GRAY);
+        //utoa(s, task->next_run, 10);
+        utoa(s, task->cpu_ticks, 10);
+        DrawString(s, 60,y, color);
+
+        //utoa(s, task->cpu_usage, 10);
+        //DrawString(s, 88,y, color);
+
         y += 8;
     }
 
+    DrawString("Total", 8,y, WHITE);
+
+    utoa(s, total_cpu_ticks, 10);
+    DrawString(s, 60,y, WHITE);
+
+    //utoa(s, 0, 10);
+    //DrawString(s, 88,y, WHITE);
 
 
 }
