@@ -100,16 +100,46 @@ void InitializeOS() {
 }
 
 void SetForegroundApp(application_t* app) {
-    if (foreground_app != NULL)
+    if (foreground_app != NULL) {
         foreground_app->isForeground = false;
+        foreground_app->task->state = tsStop; // Disable the other app
+    }
     app->isForeground = true;
 	foreground_app = app;
 
-	//TODO: Do we set the old app to tsIdle?? Or execute some callback?
 	app->task->state = tsRun;
 
     //TODO: Maybe some sort of transition between screens?
 }
+
+void ScreenOff() {
+    // Disable drawing
+    draw_task->state = tsStop;
+
+    if (foreground_app != NULL) {
+        foreground_app->task->state = tsStop;
+    }
+
+    ssd1351_DisplayOff();
+    _LAT(LED1) = 0;
+    _LAT(LED2) = 0;
+}
+
+void ScreenOn() {
+    // Draw a frame before fading in
+    DrawFrame();
+    _LAT(OL_POWER) = 1;
+    UpdateDisplay();
+
+    ssd1351_DisplayOn();
+
+    draw_task->state = tsRun;
+
+    if (foreground_app != NULL) {
+        foreground_app->task->state = tsRun;
+    }
+}
+
 
 void ProcessCore() {
     while (1) {
@@ -335,26 +365,4 @@ void WatchSleep() {
     PMD6 = 0xFFFF;
 
     Sleep();
-}
-
-void ScreenOff() {
-    // Disable drawing
-    draw_task->state = tsStop;
-    accel_Standby();
-
-    ssd1351_DisplayOff();
-    _LAT(LED1) = 0;
-    _LAT(LED2) = 0;
-}
-
-void ScreenOn() {
-    // Draw a frame before fading in
-    DrawFrame();
-    _LAT(OL_POWER) = 1;
-    UpdateDisplay();
-
-    ssd1351_DisplayOn();
-
-    accel_SetMode(accMeasure);
-    draw_task->state = tsRun;
 }

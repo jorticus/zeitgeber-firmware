@@ -112,8 +112,9 @@ task_t* RegisterTask(char* name, task_proc_t proc) {
     task->stack_size = TASK_STACK_SIZE;
     
 	uint i=0;
-	for (i=0; i<6 && *name; i++)
+	for (i=0; i<TASK_NAME_LEN && *name; i++)
 		task->name[i] = *name++;
+    task->name[TASK_NAME_LEN] = '\0';
 
     task->proc = proc;
 

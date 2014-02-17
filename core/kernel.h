@@ -15,6 +15,7 @@
 #define SYSTICK_PERIOD 1 //ms
 #define SYSTICK_PRESCALER 8  // 1, 8, 64, 256
 
+#define TASK_NAME_LEN 6
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
@@ -35,7 +36,7 @@ typedef struct {
     uint16 stack_base;  // Task stack base address
     uint16 stack_size;  // Task stack size
     
-	char name[6];
+	char name[TASK_NAME_LEN+1];
 
     task_proc_t proc;
 

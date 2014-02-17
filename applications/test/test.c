@@ -55,7 +55,7 @@ extern bool usb_connected;
 
 // Called when CPU initializes 
 void apptest_Initialize() {
-    apptest.state = asIdle;
+
 }
 
 // Called periodically when state==asRunning

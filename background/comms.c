@@ -26,7 +26,7 @@
 
 // Run this as fast as possible, since usually it's only
 // checking if data is received and nothing else.
-#define PROCESS_COMMS_INTERVAL 10 //ms
+#define PROCESS_COMMS_INTERVAL 0
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -64,12 +64,14 @@ void InitializeComms() {
 }
 
 void comms_sleep() {
+    // Called by the USB module when the USB becomes disconnected
     comms_task->state = tsStop;
     usb_connected = false;
     comms_status = cmDisconnected;
 }
 
 void comms_wake() {
+    // Called by the USB module when the USB becomes connected
     comms_task->state = tsRun;
     usb_connected = true;
     comms_status = cmIdle;

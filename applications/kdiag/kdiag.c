@@ -29,7 +29,7 @@ extern task_t tasks[];
 
 // Called when CPU initializes 
 void appkdiag_Initialize() {
-    appkdiag.state = asIdle;
+    appkdiag.task->state = tsStop;
 }
 
 // Called periodically when state==asRunning

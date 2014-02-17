@@ -38,7 +38,6 @@ application_t appclock = APPLICATION("Clock", appclock_Initialize, appclock_Proc
 
 // Called when CPU initializes 
 void appclock_Initialize() {
-    appclock.state = asIdle;
 
     
 }
