@@ -26,7 +26,7 @@
 
 // Run this as fast as possible, since usually it's only
 // checking if data is received and nothing else.
-#define PROCESS_COMMS_INTERVAL 0
+#define PROCESS_COMMS_INTERVAL 25
 
 ////////// Variables ///////////////////////////////////////////////////////////
 

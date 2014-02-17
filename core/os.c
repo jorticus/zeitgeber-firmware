@@ -145,7 +145,11 @@ void ProcessCore() {
     while (1) {
         ProcessPowerMonitor();
         CheckButtons();
-        Delay(PROCESS_CORE_INTERVAL);
+
+        if (displayOn)
+            Delay(CORE_PROCESS_INTERVAL);
+        else
+            Delay(CORE_STANDBY_INTERVAL);
     }
 }
 
@@ -339,9 +343,9 @@ void DrawLoop() {
         t2 = systick;
         draw_ticks = (t2 >= t1) ? (t2 - t1) : 0;
 
-        //Delay(DRAW_INTERVAL);
+        Delay(DRAW_INTERVAL);
         //WaitUntil(next_tick);
-        Delay(0);
+        //Delay(0);
     }
 }
 
