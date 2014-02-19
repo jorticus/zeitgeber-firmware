@@ -59,6 +59,14 @@ const char* short_months[12] = {
     "Dec\0"
 };
 
+const char* day_suffix[] = {
+    "th",
+    "st",
+    "nd",
+    "rd",
+    "th"
+};
+
 const char* ampm[] = {"am\0", "pm\0"};
 
 #endif	/* RTC_STRINGS_H */

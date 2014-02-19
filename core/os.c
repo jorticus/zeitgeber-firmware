@@ -314,10 +314,11 @@ void DrawFrame() {
     // Draw the battery icon
     if (power_status == pwBattery) {
         char s[5];
-        sprintf(s, "%d%%", battery_level);
+        sprintf(s, "%3d%%", battery_level);
         //utoa(s, battery_level, 10);
-        int x = DISPLAY_WIDTH - StringWidth(s) - 2;
-        DrawString(s, x,10, WHITE);
+        //int x = DISPLAY_WIDTH - StringWidth(s) - 2;
+        int x = DISPLAY_WIDTH - 30;
+        DrawImString(s, x,10, WHITE);
 
     } else {
         if (usb_connected) {

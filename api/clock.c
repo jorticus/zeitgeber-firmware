@@ -90,6 +90,13 @@ void ClockTimeToStr(char* s) {
 
 }
 
+int ClockDaySuffix(int day) {
+    int i = day / 10;
+    i = day - i*10;
+    if (i > 4) i = 4;
+    return i;
+}
+
 rtc_time_t ClockGetTime() {
     rtc_time_t time;
     rtccTime tm;

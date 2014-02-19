@@ -21,6 +21,7 @@
 // Default Stellaris API font
 #include "fonts\stellaris_font.h"
 
+/*
 // Small fonts
 #include "fonts\pzim3x5_font.h" // upper-case, plain text, 3px wide
 #include "fonts\5x5_font.h" 		// upper-case, square characters
@@ -45,12 +46,13 @@
 #include "fonts\BMSPA_font.h" // upper-case, very large print
 #include "fonts\aztech_font.h" // squiggly
 #include "fonts\formplex12_font.h" // bold, blocky, '0' needs tweaking
+ */
 
 ////////// Font Table //////////////////////////////////////////////////////////
 
 const fonts_t fonts = {
     &font_Stellaris,
-    &font_PZim3x5,
+    /*&font_PZim3x5,
     &font_f5x5,
     &font_BMPlain,
     &font_m38,
@@ -65,7 +67,7 @@ const fonts_t fonts = {
     &font_ZxPix,
     &font_BMSPA,
     &font_Aztech,
-    &font_Formplex12,
+    &font_Formplex12,*/
 };
 
 
