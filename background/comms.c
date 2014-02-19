@@ -232,7 +232,7 @@ void comms_ReceivedPacket(unsigned char* packet) {
             rtc_time_t time = ClockGetTime();
             rtc_date_t date = ClockGetDate();
 
-            tx_packet->hour = time.hour24;
+            tx_packet->hour = time.hour;
             tx_packet->minute = time.min;
             tx_packet->second = time.sec;
 

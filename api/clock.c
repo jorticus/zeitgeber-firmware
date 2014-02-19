@@ -96,19 +96,22 @@ rtc_time_t ClockGetTime() {
 
     RtccReadTime(&tm);
 
-    time.hour24 = bcd2int(tm.f.hour);
+    time.hour = bcd2int(tm.f.hour);
     time.min = bcd2int(tm.f.min);
     time.sec = bcd2int(tm.f.sec);
 
-    if (time.hour24 > 12) {
-        time.hour12 = time.hour24 - 12;
-        time.pm = true;
-    } else {
-        time.hour12 = time.hour24;
-        time.pm = false;
-    }
-
     return time;
+}
+
+uint8 ClockGet12Hour(uint8 hour24) {
+    uint8 hour12 = hour24;
+
+    if (hour24 == 0)
+        return 12;
+    else if (hour24 > 12)
+        return hour24 - 12;
+    else
+        return hour24;
 }
 
 rtc_date_t ClockGetDate() {

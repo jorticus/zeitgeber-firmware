@@ -27,11 +27,9 @@ typedef enum {
 } rtc_dow_t;
 
 typedef struct {
-	uint8 hour12;
-    uint8 hour24;
+	uint8 hour;
     uint8 min;
     uint8 sec;
-    bool pm;
 } rtc_time_t;
 
 typedef struct {
@@ -50,6 +48,9 @@ void ClockTimeToStr(char* s);
 
 rtc_time_t ClockGetTime();
 rtc_date_t ClockGetDate();
+
+uint8 ClockGet12Hour(uint8 hour24);
+#define ClockIsPM(hour24) (hour24 >= 12)
 
 bool ClockSetTime(uint8 hour, uint8 minute, uint8 second);
 bool ClockSetDate(rtc_dow_t day_of_week, uint8 day, uint8 month, uint8 year);

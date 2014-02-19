@@ -59,12 +59,13 @@ void appclock_Draw() {
     //DrawString(s, 8,8,WHITE);
 
     rtc_time_t time = ClockGetTime();
+    uint8 hour12 = ClockGet12Hour(time.hour);
 
     int x = 0;
-    x = DrawClockInt(x,20, time.hour12, false);
+    x = DrawClockInt(x,20, hour12, false);
     x = DrawClockDigit(x,20, CLOCK_DIGIT_COLON);
     x = DrawClockInt(x,20, time.min, true);
-    x = DrawClockDigit(x,20, (time.pm) ? CLOCK_DIGIT_PM : CLOCK_DIGIT_AM);
+    x = DrawClockDigit(x,20, (ClockIsPM(time.hour)) ? CLOCK_DIGIT_PM : CLOCK_DIGIT_AM);
     
     utoa(s, time.sec, 10);
     DrawString(s, 8,60, WHITE);
