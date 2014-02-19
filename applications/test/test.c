@@ -21,8 +21,8 @@
 #include "background/power_monitor.h"
 #include "peripherals/adc.h"
 
-#include "gui/Wallpapers/wallpaper1.h"
-#define wallpaper img_wallpaper1
+//#include "gui/Wallpapers/wallpaper1.h"
+//#define wallpaper img_wallpaper1
 //#include "gui/Wallpapers/gaben.h"
 //#define wallpaper img_gaben
 //#include "gui/Wallpapers/leaves.h"
@@ -95,7 +95,7 @@ void apptest_Draw() {
     //SetFontSize(1);
 
     ClearImage();
-    //DrawImage(0,0,wallpaper);
+
     // BitBlit(&img_bat, NULL, i,40, 0,0, 0,0, ADD,1);
 
 
@@ -147,34 +147,6 @@ void apptest_Draw() {
     //VCAP = 541:an = 1.8V
     //VBG = 356:an = 1.2V
     //VREF = 1024:an = ???V
-
-    // Draw the battery bar
-    uint8 w = mLerp(0,100, 0,DISPLAY_WIDTH, battery_level);
-    color_t c = WHITE;
-    switch (power_status) {
-        case pwBattery: {
-            switch (battery_status) {
-                case batFull: c = GREEN; break;
-                case batNormal: c = NAVY; break;
-                case batLow: c = RED; break;
-                // No need to put batFlat or batNotConnected
-                default: break;
-            }
-            break;
-        }
-        case pwCharged: c = GREEN; break;
-        case pwCharging: c = ORANGE; break;
-    }
-    DrawBox(0,0, w,3, c,c);
-
-    // Draw the battery status
-    if (power_status == pwBattery) {
-        utoa(s, battery_level, 10);
-        x = DrawString(s,   6,5,WHITE);
-        x = DrawString("%", x,5,WHITE);
-    } else {
-        DrawString(power_status_message[power_status], 6,5, WHITE);
-    }
 
     //DrawString((_SESVD) ? "1" : "0", 8,80, WHITE);
 

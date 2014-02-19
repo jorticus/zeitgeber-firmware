@@ -19,9 +19,13 @@
 #include "background/comms.h"
 #include "background/power_monitor.h"
 #include "drivers/MMA7455.h"
+#include "util/util.h"
 
 
 ////////// GUI Resources ///////////////////////////////////////////////////////
+
+#include "gui/icons/usb.h"
+#include "gui/icons/power.h"
 
 //#include <gui/Wallpapers/wallpaper1.h>
 /*#include <gui/Wallpapers/wallpaper2.h>
@@ -274,56 +278,54 @@ void DisplayBootScreen() {
 void DrawFrame() {
     //_LAT(LED1) = 1;
 
-/*	static int i=0;
-
-    uint16 ticks;
-    uint16 starttick = systick;
-    char s[16];
-
-    // Clear screen and draw wallpaper
-    ClearImage();
-    DrawImage(0,0,0,0, wallpapers[0]);
-
-    // Defaults
-    SetFont(fonts.Stellaris);
-    SetFontSize(1);
-
-    // Draw foreground app
-    if (foreground_app != NULL) {
-        foreground_app->draw();
-    }
-
-    // Draw status bar
-    BitBlit(&imgStatusBar, NULL, 0,0, 0,0, 0,0, ADD,0);
-    //BitBlit(&imgBattery, &imgBatteryMask, DISPLAY_WIDTH-imgBattery.width-4,1, 0,0, 0,0, MERGECOPY,0);
-    BitBlit(&imgBat, NULL, DISPLAY_WIDTH-imgBat.width-4,0, 0,0, 0,0, ADD,1);
-
-    BitBlit(&img_mail, NULL, 4,0, 0,0, 0,0, ADD,1);
-    BitBlit(&img_calendar, NULL, 24,0, 0,0, 0,0, ADD,1);
-    BitBlit(&img_comment, NULL, 24*2,0, 0,0, 0,0, ADD,1);
-    BitBlit(&img_computer, NULL, 24*3,0, 0,0, 0,0, ADD,1);
-
-    BitBlit(&imgTimeShadow, NULL, i,40, 0,0, 0,0, SUBTRACT,1);
-    BitBlit(&imgTimeShadow, &imgTimeMask, i,40, 0,0, 0,0, MERGECOPY,0);
-
-    i++;
-
-    ticks=  systick - starttick;
-
-    ultoa(ticks, s, 10);
-    DrawString("Running", 4, DISPLAY_HEIGHT-16, RED);
-
-    // Finally update the display
-    UpdateDisplay();*/
-
-    ClearImage();
-
+    global_drawop = SRCCOPY;
     SetFontSize(1);
     SetFont(fonts.Stellaris);
+
+    // Draw the wallpaper
+    //DrawImage(0,0,wallpaper);
+    ClearImage();
 
     // Draw foreground app
     if (foreground_app != NULL)
         foreground_app->draw();
+
+    // Draw the battery bar
+    uint8 w = mLerp(0,100, 0,DISPLAY_WIDTH, battery_level);
+    color_t c = WHITE;
+    switch (power_status) {
+        case pwBattery: {
+            switch (battery_status) {
+                case batFull: c = SKYBLUE; break;
+                case batNormal: c = SKYBLUE; break;
+                case batLow: c = RED; break;
+                // No need to put batFlat or batNotConnected
+                default: break;
+            }
+            break;
+        }
+        case pwCharged: c = GREEN; break;
+        case pwCharging: c = ORANGE; break;
+    }
+    // Extra padding at the top of the display to compensate for the bezel
+    DrawBox(0,0, DISPLAY_WIDTH,4, BLACK,BLACK);
+    DrawBox(0,5, w,3, c,c);
+
+    // Draw the battery icon
+    if (power_status == pwBattery) {
+        char s[5];
+        sprintf(s, "%d%%", battery_level);
+        //utoa(s, battery_level, 10);
+        int x = DISPLAY_WIDTH - StringWidth(s) - 2;
+        DrawString(s, x,10, WHITE);
+
+    } else {
+        if (usb_connected) {
+            DrawImage(DISPLAY_WIDTH-USB_WIDTH-2,10, img_usb);
+        } else {
+            DrawImage(DISPLAY_WIDTH-POWER_WIDTH-2,11, img_power);
+        }
+    }
 }
 
 // Called periodically
