@@ -13,15 +13,15 @@
 
 ////////// Font Definitions ////////////////////////////////////////////////////
 
-#include "fonts/SegoeUI.h"
-//#include "fonts/TitilliumWeb.h"
+//#include "fonts/SegoeUI.h"
+#include "fonts/TitilliumWeb.h"
 
 #define FONT_BASE ' '
 
 ////////// Globals /////////////////////////////////////////////////////////////
 
-const imfont_t* active_imfont = &font_segoe_ui;
-//const imfont_t* active_imfont = &font_titillium_web;
+//const imfont_t* active_imfont = &font_segoe_ui;
+const imfont_t* active_imfont = &font_titillium_web;
 
 ////////// Functions ///////////////////////////////////////////////////////////
 
