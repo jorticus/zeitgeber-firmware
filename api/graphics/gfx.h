@@ -13,6 +13,11 @@
 ///// DISPLAY CONFIGURATION /////
 
 
+// Unused within the graphics library, but provided for use elsewhere.
+#define DISPLAY_BPP 16
+
+typedef uint16 color_t;
+
 // RGB (5:6:5) 16-bit format
 typedef union {
     struct {
@@ -20,13 +25,8 @@ typedef union {
         unsigned g: 6;
         unsigned b: 5;
     };
-    uint16 val;
+    color_t val;
 } color_s;
-
-// Unused within the graphics library, but provided for use elsewhere.
-#define DISPLAY_BPP 16
-
-typedef uint16 color_t;
 
 // NOTE: Do not use the following macros for run-time color calculation, they haven't been optimised.
 

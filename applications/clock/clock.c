@@ -17,6 +17,7 @@
 #include "api/api.h"
 #include "api/clock.h"
 #include "api/graphics/gfx.h"
+#include "api/graphics/imfont.h"
 #include "util/util.h"
 #include "core/kernel.h"
 #include "background/power_monitor.h"
@@ -61,20 +62,25 @@ void appclock_Draw() {
     rtc_time_t time = ClockGetTime();
     uint8 hour12 = ClockGet12Hour(time.hour);
 
-    int x = 0;
+    int x = 10;
     x = DrawClockInt(x,20, hour12, false);
     x = DrawClockDigit(x,20, CLOCK_DIGIT_COLON);
     x = DrawClockInt(x,20, time.min, true);
     x = DrawClockDigit(x,20, (ClockIsPM(time.hour)) ? CLOCK_DIGIT_PM : CLOCK_DIGIT_AM);
-    
-    utoa(s, time.sec, 10);
-    DrawString(s, 8,60, WHITE);
-    
+
     rtc_date_t date = ClockGetDate();
-    sprintf(s, "%d/%.2d/%d", date.day, date.month, 2000+date.year);
-    DrawString(s, 8,68, WHITE);
+    DrawImString(days[date.day_of_week], 14,45, WHITE);
     
-    
-    DrawString(days[date.day_of_week], 8,76, WHITE);
+//    utoa(s, time.sec, 10);
+//    DrawString(s, 16,60, WHITE);
+//
+//    rtc_date_t date = ClockGetDate();
+//    sprintf(s, "%d/%.2d/%d", date.day, date.month, 2000+date.year);
+//    DrawString(s, 16,68, WHITE);
+//
+//
+//    DrawString(days[date.day_of_week], 16,76, WHITE);
+
+    //DrawImString("Hello World", 16,92, WHITE);
 
 }
