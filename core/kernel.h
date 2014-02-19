@@ -12,12 +12,18 @@
 
 ////////// Kernel Configuration ////////////////////////////////////////////////
 
-#define SYSTICK_PERIOD 1 //ms
-#define SYSTICK_PRESCALER 8  // 1, 8, 64, 256
+#define SYSTICK_PERIOD 1        //ms  (Note: It is recommended you keep it at 1ms or timings will be wrong)
+#define SYSTICK_PRESCALER 8     // 1, 8, 64, 256
 
-#define TASK_NAME_LEN 6
+#define TASK_NAME_LEN 6         // Maximum chars allocated for a task's name
 
 #define CPU_HISTORY_LEN 16
+
+// Watch intermittently resetting? Try increasing the stack size, or use less functions!
+#define TASK_STACK_SIZE 300     // Size of the stack for each task
+#define MAX_TASKS 10            // Maximum number of tasks allocated
+
+#define CALC_CPU_TICKS 100      // Number of CPU ticks before CPU utilization is re-calculated.
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
@@ -56,10 +62,6 @@ typedef struct {
 
 
 ////////// Constants ///////////////////////////////////////////////////////////
-
-#define MAX_TASKS 10
-
-#define MAX_TIME_SLOTS 5  // 5 ticks before a task can be interrupted
 
 
 // Calculations

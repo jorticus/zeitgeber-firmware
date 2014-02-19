@@ -16,18 +16,6 @@
 #include "hardware.h"
 #include "background/comms.h"
 
-////////// Constants ///////////////////////////////////////////////////////////
-
-#define SLEEP_THRESHOLD 100 // ticks
-
-//#define TASK_STACK_BASE 0//__SP_init
-#define TASK_STACK_SIZE 256
-//#define KERNEL_STACK_SIZE 32
-
-//#define MAX_STACK_SIZE (TASK_STACK_SIZE*MAX_TASKS)
-
-#define CALC_CPU_TICKS 100
-
 ////////// Variables ///////////////////////////////////////////////////////////
 
 task_t tasks[MAX_TASKS] __attribute__((section(".data.tasks")));
