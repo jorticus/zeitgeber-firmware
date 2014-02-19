@@ -189,11 +189,15 @@ void ssd1351_DisplayOn() {
     // Turn on VCC
     _LAT(OL_POWER) = 1;
 
+    // IMPORTANT: Add a small delay to allow time for it to start up
+    //   Without this, VCC will sag and cause a brownout due to insufficient power supply decoupling
+    int k;
+    for (k=0; k<10000; k++);
+
     ssd1351_command(CMD_DISPLAY_ON);
 
     UINT i,j;
     for (i=0; i<0x0F; i++) {
-        ClrWdt();
         ssd1351_sendv(CMD_MASTER_CONTRAST, 1, i);
         for (j=0; j<40000; j++);
     }
@@ -210,7 +214,6 @@ void ssd1351_PowerOff() {
 void ssd1351_DisplayOff() {
     UINT i,j;
     for (i=0; i<0x0F; i++) {
-        ClrWdt();
         ssd1351_sendv(CMD_MASTER_CONTRAST, 1, 0x0F - i);
         for (j=0; j<40000; j++);
     }

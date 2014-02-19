@@ -146,4 +146,4 @@ _KernelStartTask: ;(task_t* task: W0)
 ;--- Stack Definition ---
 
 .section app_stack, stack
-.space (0xB00)
+.space (2560)
