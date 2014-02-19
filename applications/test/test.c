@@ -72,6 +72,45 @@ void apptest_Draw() {
     UINT8 y = 8;
     char s[10];
 
+    for (y=0; y<128; y++) {
+        color_s c;
+
+        // Gray
+        c.r = y >> 2;
+        c.g = y >> 1;
+        c.b = c.r;
+        for (x=0; x<32; x++) {
+            SetPixel(x,y, c.val);
+        }
+
+        // Red
+        c.r = y >> 2;
+        c.g = 0;
+        c.b = 0;
+        for (x=32; x<64; x++) {
+            SetPixel(x,y, c.val);
+        }
+
+        // Green
+        c.r = 0;
+        c.g = y >> 1;
+        c.b = 0;
+        for (x=64; x<96; x++) {
+            SetPixel(x,y, c.val);
+        }
+
+        // Blue
+        c.r = 0;
+        c.g = 0;
+        c.b = y >> 2;
+        for (x=96; x<128; x++) {
+            SetPixel(x,y, c.val);
+        }
+    }
+    return;
+
+
+
 //	static uint i = 0;
     //NOTE: Even though it is not enforced, it is recommended to only draw within the specified bounds
 

@@ -29,6 +29,7 @@
           <itemPath>api/graphics/font.h</itemPath>
           <itemPath>api/graphics/gfx.h</itemPath>
           <itemPath>api/graphics/imfont.h</itemPath>
+          <itemPath>api/graphics/oledlut.h</itemPath>
         </logicalFolder>
         <itemPath>api/bluetooth.h</itemPath>
         <itemPath>api/oled.h</itemPath>
@@ -59,6 +60,7 @@
         <itemPath>drivers/HMC5883.h</itemPath>
         <itemPath>drivers/MMA7455.h</itemPath>
         <itemPath>drivers/ssd1351.h</itemPath>
+        <itemPath>drivers/oledlut.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="peripherals" projectFiles="true">
         <itemPath>peripherals/gpio.h</itemPath>
