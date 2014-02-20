@@ -45,13 +45,30 @@ int DrawImChar(char c, uint8 x, uint8 y, color_t color) {
     uint i, j;
     for (j=0; j<height; j++) {
         for (i=0; i<width; i++) {
-            color_s c;
-            c.r = *glyph;
-            c.g = *glyph << 1;
-            c.b = *glyph;
-            glyph++;
+            if (*glyph) {
+                color_s c;
+                if (color == WHITE) {
+                    c.r = *glyph;
+                    c.g = *glyph << 1;
+                    c.b = *glyph;
+                }
+                else {
+                    color_s cin;
+                    cin.val = color;
 
-            SetPixel(x+i,y, c.val);
+                    //TODO: Optimize
+                    uint16 r = *glyph;
+                    uint16 g = *glyph << 1;
+                    uint16 b = *glyph;
+                    c.r = (r * cin.r) >> 5;
+                    c.g = (g * cin.g) >> 6;
+                    c.b = (b * cin.b) >> 5;
+
+                }
+
+                SetPixel(x+i,y, c.val);
+            }
+            glyph++;
         }
         y++;
     }

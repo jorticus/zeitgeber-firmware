@@ -29,7 +29,6 @@
           <itemPath>api/graphics/font.h</itemPath>
           <itemPath>api/graphics/gfx.h</itemPath>
           <itemPath>api/graphics/imfont.h</itemPath>
-          <itemPath>api/graphics/oledlut.h</itemPath>
         </logicalFolder>
         <itemPath>api/bluetooth.h</itemPath>
         <itemPath>api/oled.h</itemPath>

@@ -96,11 +96,11 @@ void appclock_Draw() {
 
     y = 66;
     x = 12;
-    x = DrawImString("12:00", x,y, WHITE);
+    x = DrawImString("12:00", x,y, SKYBLUE);
     x += 8;
     DrawImString("ENCE461", x,y, WHITE);
     y += 12;
-    DrawImString("Law 105", x,y, WHITE);
+    DrawImString("Law 105", x,y, GRAY);
 
     DrawBox(x-4,64, 2,24, SKYBLUE,SKYBLUE);
 
