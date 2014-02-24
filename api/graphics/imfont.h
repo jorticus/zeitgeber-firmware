@@ -17,9 +17,11 @@ typedef struct {
     uint char_height;
 } imfont_t;
 
+extern const imfont_t* active_imfont;
 
 void SetImFont(const imfont_t* font);
 
+int MeasureImString(const char* str);
 int DrawImChar(char c, uint8 x, uint8 y, color_t color);
 int DrawImString(const char* str, uint8 x, uint8 y, color_t color);
 

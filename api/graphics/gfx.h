@@ -40,6 +40,8 @@ typedef union {
 //TODO: This doesn't work for 0x888
 #define HEXCOLOR(H) (color_t)( (H&0xF00)<<4 | (H&0x0F0)<<3 | (H&0x00F)<<1)
 
+#include "api/graphics/font.h"
+#include "api/graphics/imfont.h"
 #include "colors.h"
 
 

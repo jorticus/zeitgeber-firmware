@@ -31,6 +31,16 @@ void SetImFont(const imfont_t* font) {
 
 ////////// Drawing /////////////////////////////////////////////////////////////
 
+int MeasureImString(const char* str) {
+    uint w = 0;
+    while (*str) {
+        char c = *str++;
+        c = (c < ' ') ? 0 : c - ' ';
+        w += active_imfont->widths[c];
+    }
+    return w;
+}
+
 int DrawImChar(char c, uint8 x, uint8 y, color_t color) {
     if (c < ' ')
         c = 0;
