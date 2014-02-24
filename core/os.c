@@ -117,6 +117,8 @@ void SetForegroundApp(application_t* app) {
 }
 
 void ScreenOff() {
+    accel_SetMode(accStandby);
+
     // Disable drawing
     draw_task->state = tsStop;
 
@@ -131,9 +133,9 @@ void ScreenOff() {
 
 void ScreenOn() {
     // Draw a frame before fading in
-    DrawFrame();
-    _LAT(OL_POWER) = 1;
-    UpdateDisplay();
+    //DrawFrame();
+    //_LAT(OL_POWER) = 1;
+    //UpdateDisplay();
 
     ssd1351_DisplayOn();
 
@@ -142,6 +144,8 @@ void ScreenOn() {
     if (foreground_app != NULL) {
         foreground_app->task->state = tsRun;
     }
+
+    accel_SetMode(accMeasure);
 }
 
 

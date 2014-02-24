@@ -186,8 +186,8 @@ void ssd1351_DisplayOn() {
 
     // IMPORTANT: Add a small delay to allow time for it to start up
     //   Without this, VCC will sag and cause a brownout due to insufficient power supply decoupling
-    int k;
-    for (k=0; k<10000; k++);
+    //int k;
+    //for (k=0; k<10000; k++);
 
     ssd1351_command(CMD_DISPLAY_ON);
 

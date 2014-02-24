@@ -59,13 +59,15 @@ color_t colors[3] = {RED, LIME, BLUE};
 
 bool accel_initted = false;
 
+extern bool displayOn;
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
 void appimu_Initialize() {
 
-    //accel_init();
-    //accel_SetMode(accMeasure);
+    accel_init();
+    accel_SetMode(accMeasure);
 
     uint i;
     for (i=0; i<ACCEL_LOG_SIZE; i++) {
@@ -78,22 +80,25 @@ void appimu_Initialize() {
 // Called periodically when state==asRunning
 void appimu_Process() {
     while (1) {
-        //Delay(10);
-
         /*if (!accel_initted) {
             accel_init();
             accel_SetMode(accMeasure);
             accel_initted = true;
         }*/
 
-        /*accel_vec = accel_ReadXYZ8();
-        accel_log[accel_log_index] = accel_vec;
+        if (appimu.task->state == tsRun) {
+            Delay(10);
+            
+            accel_vec = accel_ReadXYZ8();
+            accel_log[accel_log_index] = accel_vec;
 
-        accel_log_index++;
-        if (accel_log_index == ACCEL_LOG_SIZE)
-            accel_log_index = 0;*/
+            accel_log_index++;
+            if (accel_log_index == ACCEL_LOG_SIZE)
+                accel_log_index = 0;
 
-        Delay(1000);
+        } else {
+            Delay(1000);
+        }
     }
 }
 
