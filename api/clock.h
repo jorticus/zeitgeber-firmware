@@ -19,9 +19,6 @@
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
-typedef uint32 timestamp_t;
-
-
 typedef enum {
     dwSunday=0, dwMonday, dwTuesday, dwWednesday, dwThursday, dwFriday, dwSaturday
 } rtc_dow_t;
@@ -38,6 +35,19 @@ typedef struct {
     uint8 month;
     uint8 year;
 } rtc_date_t;
+
+typedef union {
+    struct {
+        unsigned sec: 6;    // 0-63
+        unsigned min: 6;    // 0-63
+        unsigned hour: 5;   // 0-31
+
+        unsigned day: 5;    // 0-31
+        unsigned month: 4;  // 0-15
+        unsigned year: 6;   // 0-63  Maximum supported year is 2063!
+    };
+    uint32 ts;
+} timestamp_t;
 
 ////////// Methods /////////////////////////////////////////////////////////////
 

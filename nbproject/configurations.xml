@@ -72,6 +72,7 @@
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.h</itemPath>
         <itemPath>util/util.h</itemPath>
+        <itemPath>util/timestamp.h</itemPath>
       </logicalFolder>
       <itemPath>system.h</itemPath>
       <itemPath>hardware.h</itemPath>
@@ -132,6 +133,7 @@
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.c</itemPath>
         <itemPath>util/bcd.c</itemPath>
+        <itemPath>util/timestamp.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
@@ -248,7 +250,7 @@
         <property key="general-code-protect" value="no_code_protect"/>
         <property key="general-write-protect" value="no_write_protect"/>
         <property key="generate-cross-reference-file" value="false"/>
-        <property key="heap-size" value=""/>
+        <property key="heap-size" value="2048"/>
         <property key="input-libraries" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value=""/>

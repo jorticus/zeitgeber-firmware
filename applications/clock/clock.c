@@ -22,6 +22,7 @@
 #include "core/kernel.h"
 #include "background/power_monitor.h"
 #include "applications/clock/clock_font.h"
+#include "api/calendar.h"
 
 
 
@@ -35,12 +36,15 @@ application_t appclock = APPLICATION("Clock", appclock_Initialize, appclock_Proc
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
+event_t* event1;
+event_t* event2;
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
 void appclock_Initialize() {
-
-    
+    event1 = NewEvent("ENCE461", "KH03");
+    event2 = NewEvent("COSC401", "KF08");
 }
 
 // Called periodically when state==asRunning
@@ -92,16 +96,14 @@ void appclock_Draw() {
 
     //// Upcoming Events ////
 
+    x = 44;
+    y = 66;
+
+    y = CalendarDrawEvent(x,y, event1);
+    y = CalendarDrawEvent(x,y, event2);
+
     //DrawBox(8,60, DISPLAY_WIDTH-16,2, SKYBLUE,SKYBLUE);
 
-    y = 66;
-    x = 12;
-    x = DrawImString("12:00", x,y, SKYBLUE);
-    x += 8;
-    DrawImString("ENCE461", x,y, WHITE);
-    y += 12;
-    DrawImString("Law 105", x,y, GRAY);
 
-    DrawBox(x-4,64, 2,24, SKYBLUE,SKYBLUE);
 
 }
