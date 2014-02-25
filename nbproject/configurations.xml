@@ -61,6 +61,17 @@
         <itemPath>drivers/ssd1351.h</itemPath>
         <itemPath>drivers/oledlut.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f7" displayName="mchp_usb" projectFiles="true">
+        <itemPath>usb/usb_device_local.h</itemPath>
+        <itemPath>usb/Compiler.h</itemPath>
+        <itemPath>usb/usb.h</itemPath>
+        <itemPath>usb/usb_ch9.h</itemPath>
+        <itemPath>usb/usb_common.h</itemPath>
+        <itemPath>usb/usb_device.h</itemPath>
+        <itemPath>usb/usb_function_hid.h</itemPath>
+        <itemPath>usb/usb_hal.h</itemPath>
+        <itemPath>usb/usb_hal_pic24.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="peripherals" projectFiles="true">
         <itemPath>peripherals/gpio.h</itemPath>
         <itemPath>peripherals/adc.h</itemPath>
@@ -145,6 +156,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>applications/clock</Elem>
+    <Elem>usb</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -192,8 +204,7 @@
         <property key="enable-short-double" value="false"/>
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
-        <property key="extra-include-directories"
-                  value=".;C:\Microchip\Microchip\Include"/>
+        <property key="extra-include-directories" value=".;usb"/>
         <property key="isolate-each-function" value="false"/>
         <property key="keep-inline" value="false"/>
         <property key="oXC16gcc-align-arr" value="false"/>
@@ -216,6 +227,7 @@
         <property key="preprocessor-macros" value=""/>
         <property key="scalar-model" value="large-scalar"/>
         <property key="use-cci" value="true"/>
+        <property key="use-iar" value="false"/>
       </C30>
       <C30-AS>
         <property key="assembler-symbols" value=""/>
@@ -237,6 +249,7 @@
         <property key="warning-level" value="emit-warnings"/>
       </C30-AS>
       <C30-LD>
+        <property key="additional-options-use-response-files" value="false"/>
         <property key="boot-eeprom" value="no_eeprom"/>
         <property key="boot-flash" value="no_flash"/>
         <property key="boot-ram" value="no_ram"/>
@@ -278,11 +291,9 @@
         <property key="legacy-libc" value="false"/>
         <property key="oXC16glb-macros" value=""/>
         <property key="output-file-format" value="elf"/>
+        <property key="save-temps" value="false"/>
       </C30Global>
       <Simulator>
-        <property key="animationupdates.realtimewatchupdates" value="false"/>
-        <property key="animationupdates.steptime" value=""/>
-        <property key="animationupdates.updatetime" value=""/>
         <property key="breakoptions.coreerrors" value="Ignore"/>
         <property key="breakoptions.corewarnings" value="Ignore"/>
         <property key="breakoptions.peripheralerrors" value="Ignore"/>
@@ -298,17 +309,52 @@
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
         <property key="oscillator.frequency" value="1"/>
         <property key="oscillator.frequencyunit" value="Mega"/>
+        <property key="oscillator.rcfrequency" value="250"/>
+        <property key="oscillator.rcfrequencyunit" value="Kilo"/>
         <property key="performancedata.show" value="false"/>
         <property key="periphADC1.altscl" value="false"/>
+        <property key="periphADC1.minTacq" value=""/>
+        <property key="periphADC1.tacqunits" value="microseconds"/>
         <property key="periphADC2.altscl" value="false"/>
+        <property key="periphADC2.minTacq" value=""/>
+        <property key="periphADC2.tacqunits" value="microseconds"/>
+        <property key="tracecontrol.include.timestamp" value="false"/>
         <property key="tracecontrol.select" value="0"/>
+        <property key="tracecontrol.stallontracebufferfull" value="false"/>
         <property key="tracecontrol.timestamp" value="2"/>
         <property key="tracecontrol.tracebufmax" value="54600"/>
         <property key="tracecontrol.tracefile" value="C:\Users\Jared\mpdeftrace.log"/>
         <property key="tracecontrol.traceresetonrun" value="false"/>
+        <property key="uart10io.output" value="window"/>
+        <property key="uart10io.outputfile" value=""/>
+        <property key="uart10io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
         <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart2io.output" value="window"/>
+        <property key="uart2io.outputfile" value=""/>
+        <property key="uart2io.uartioenabled" value="false"/>
+        <property key="uart3io.output" value="window"/>
+        <property key="uart3io.outputfile" value=""/>
+        <property key="uart3io.uartioenabled" value="false"/>
+        <property key="uart4io.output" value="window"/>
+        <property key="uart4io.outputfile" value=""/>
+        <property key="uart4io.uartioenabled" value="false"/>
+        <property key="uart5io.output" value="window"/>
+        <property key="uart5io.outputfile" value=""/>
+        <property key="uart5io.uartioenabled" value="false"/>
+        <property key="uart6io.output" value="window"/>
+        <property key="uart6io.outputfile" value=""/>
+        <property key="uart6io.uartioenabled" value="false"/>
+        <property key="uart7io.output" value="window"/>
+        <property key="uart7io.outputfile" value=""/>
+        <property key="uart7io.uartioenabled" value="false"/>
+        <property key="uart8io.output" value="window"/>
+        <property key="uart8io.outputfile" value=""/>
+        <property key="uart8io.uartioenabled" value="false"/>
+        <property key="uart9io.output" value="window"/>
+        <property key="uart9io.outputfile" value=""/>
+        <property key="uart9io.uartioenabled" value="false"/>
       </Simulator>
     </conf>
   </confs>
