@@ -133,9 +133,9 @@ void ScreenOff() {
 
 void ScreenOn() {
     // Draw a frame before fading in
-    //DrawFrame();
+    DrawFrame();
     //_LAT(OL_POWER) = 1;
-    //UpdateDisplay();
+    UpdateDisplay();
 
     ssd1351_DisplayOn();
 
