@@ -88,7 +88,7 @@ void appclock_Draw() {
     x = DrawImString(day_suffix[i], x,y, WHITE);
     x += 4;
 
-    x = DrawImString(short_months[date.month], x,y, WHITE);
+    x = DrawImString(short_months[date.month-1], x,y, WHITE);
 
     //sprintf(s, " %d/%02d", date.day, date.month);
     //x = DrawImString(s, x,45, WHITE);
@@ -96,11 +96,11 @@ void appclock_Draw() {
 
     //// Upcoming Events ////
 
-    x = 44;
+    /*x = 44;
     y = 66;
 
     y = CalendarDrawEvent(x,y, event1);
-    y = CalendarDrawEvent(x,y, event2);
+    y = CalendarDrawEvent(x,y, event2);*/
 
     //DrawBox(8,60, DISPLAY_WIDTH-16,2, SKYBLUE,SKYBLUE);
 
