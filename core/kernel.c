@@ -177,6 +177,8 @@ void KernelSwitchTask() {
     // The kernel will automatically push the current task's registers
     // onto the stack, then store the stack pointer to 'task_sp'.
 
+    ClrWdt();
+
     static uint last_tick;
     uint i;
 
