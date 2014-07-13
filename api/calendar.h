@@ -12,7 +12,7 @@
 #include "api/clock.h"
 #include "util/timestamp.h"
 
-#define MAX_EVENTS 128
+#define MAX_EVENTS 32
 
 #define MAX_LABEL_LEN 20
 #define MAX_LOCATION_LEN 20
@@ -44,17 +44,21 @@ typedef struct {
     char location[MAX_LOCATION_LEN];
     color_t color;
 
+    rtc_dow_t day;
+    uint hr;
+    uint min;
+
     //char* label;        // Dynamically allocated
     //char* location;
 
-    timestamp_t start;
-    timestamp_t end;
-    bool all_day;
+    //timestamp_t start;
+    //timestamp_t end;
+    //bool all_day;
 
     // Recurrance properties
-    calendar_repeat_t repeat;
+    /*calendar_repeat_t repeat;
     uint8 repeat_weekly_days;
-    uint8 every; // Every X days/weeks/months
+    uint8 every; // Every X days/weeks/months*/
 
     // Alarm/Notifications
     //bool beep;
@@ -69,8 +73,8 @@ typedef struct {
 extern event_t *events[MAX_EVENTS];
 extern uint num_events;
 
-event_t* NewEvent(const char* label, const char* location);
-int CalendarDrawEvent(uint8 x, uint8 y, event_t* event);
+event_t* NewEvent(const char* label, const char* location, rtc_dow_t day, uint hr, uint min);
+int CalendarDrawEvent(uint8 x, uint8 y, event_t* event, color_t color);
 
 
 #endif	/* CALENDAR_H */
