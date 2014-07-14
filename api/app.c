@@ -31,7 +31,9 @@ void RegisterUserApplication(application_t* app) {
 void InitializeApplications() {
     uint i;
     for (i=0; i<app_count; i++) {
+        ClrWdt();
         application_t* app = installed_apps[i];
+        BootPrintln(app->name);
 
         if (app->init != NULL)
             app->init();

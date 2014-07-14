@@ -12,17 +12,17 @@
 ////////// Interrupts //////////////////////////////////////////////////////////
 
 void isr _OscillatorFail() {
-    while (1);
+    Reset();
 }
 
 void isr _AddressError() {
-    while (1);
+    Reset();
 }
 
 void isr _StackError() {
-    while (1);
+    Reset();
 }
 
 void isr _MathError() {
-    while (1);
+    Reset();
 }

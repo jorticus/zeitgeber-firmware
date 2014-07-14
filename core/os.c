@@ -217,6 +217,13 @@ void CheckButtons() {
     // Can't use sleep yet until we can wake up from it.
 }
 
+void BootPrintln(const char* s) {
+    static uint32 y = 8;
+    DrawString(s, 8, y, WHITE);
+    UpdateDisplay();
+    y += 10;
+}
+
 void DisplayBootScreen() {
     byte y = 8;
     char s[10];
@@ -227,11 +234,8 @@ void DisplayBootScreen() {
     ClearImage();
 
     ClrWdt();
-    DrawString("OLED Watch v1.0", 8, y, WHITE); y += 10;
+    BootPrintln("OLED Watch v1.0");
     //DrawString("Booting...", 8, y, WHITE); y += 10;
-
-    ClrWdt();
-    UpdateDisplay();
 
     // Check the reset status
     // Software resets are the only type of reset that should occur normally
@@ -240,35 +244,31 @@ void DisplayBootScreen() {
 
         if (RCONbits.BOR)
             // Likely cause: low battery voltage.
-            DrawString("RST: Brown-out", 8,y,WHITE);
+            BootPrintln("RST: Brown-out");
         else if (RCONbits.CM)
-            DrawString("RST: Conf Mismatch", 8,y,WHITE);
+            BootPrintln("RST: Conf Mismatch");
         else if (RCONbits.IOPUWR)
             // Likely cause: pointer to function pointed to an invalid memory region, so PC encountered an invalid opcode
-            DrawString("RST: Invalid Opcode", 8,y,WHITE);
+            BootPrintln("RST: Invalid Opcode");
         else if (RCONbits.EXTR)
             // Manual MCLR reset
-            DrawString("RST: MCLR", 8,y,WHITE);
+            BootPrintln("RST: MCLR");
         else if (RCONbits.POR)
             // This will only happen if powering-up from a flat battery.
-            DrawString("RST: Power-on", 8,y,WHITE);
+            BootPrintln("RST: Power-on");
         else if (RCONbits.WDTO)
             // This will happen if the code gets stuck in a loop somewhere
-            DrawString("RST: Watchdog Timeout", 8,y,WHITE);
+            BootPrintln("RST: Watchdog Timeout");
         else if (RCONbits.TRAPR)
             // This will happen if a trap interrupt is triggered
-            DrawString("RST: Trap Error", 8,y,WHITE);
+            BootPrintln("RST: Trap Error");
         //else if (RCONbits.SWR)
         //    DrawString("RST: Software", 8,y,WHITE);
         else {
+            BootPrintln("RST: Unknown");
             utoa(s, RCON & RCON_RESET, 16);
-            x = 8;
-            x = DrawString("RST: Unknown - ", x,y,WHITE);
-            DrawString(s, x,y,WHITE);
+            BootPrintln(s);
         }
-        y += 10;
-
-        UpdateDisplay();
 
         // Optionally reset back into the bootloader,
         // to allow any problems to be fixed

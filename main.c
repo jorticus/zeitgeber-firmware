@@ -112,6 +112,8 @@ void Shutdown() {
 
     Sleep(); // Permanent sleep
     while(1); // Trap
+
+    //TODO: Could we wake back up upon USB connect?
 }
 
 void Initialize() {
@@ -133,6 +135,7 @@ void Initialize() {
     InitializeOled();
     InitializeOS();
 
+    ClearImage();
     ScreenOn();
     DisplayBootScreen();
 
@@ -147,16 +150,21 @@ int main() {
     Initialize();
 
     RegisterUserApplication(&appclock);
-    RegisterUserApplication(&appimu);
+    //RegisterUserApplication(&appimu); //TODO: I2C pullups are too weak?
     RegisterUserApplication(&apptest);
     RegisterUserApplication(&appkdiag);
-    
+
+    ClrWdt();
+    BootPrintln("Initializing apps:");
     InitializeApplications();
 
+    ClrWdt();
+    BootPrintln("Starting the kernel");
     SetForegroundApp(&appclock);
     //SetForegroundApp(&apptest);
     //SetForegroundApp(&appimu);
 
+    ClrWdt();
     KernelStart();
     return 0;
 }
