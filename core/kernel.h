@@ -20,8 +20,8 @@
 #define CPU_HISTORY_LEN 16
 
 // IMPORTANT: If you increase the stack size, make sure you also increase the allocated space in kernel_asm.s
-#define TASK_STACK_SIZE 350     // Size of the stack for each task
-#define MAX_TASKS 10            // Maximum number of tasks allocated
+#define TASK_STACK_SIZE 512     // Size of the stack for each task
+#define MAX_TASKS 8            // Maximum number of tasks allocated
 
 #define CALC_CPU_TICKS 100      // Number of CPU ticks before CPU utilization is re-calculated.
 
