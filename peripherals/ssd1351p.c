@@ -100,19 +100,30 @@ extern void ssd1351_writeimgbuf(__eds__ color_t* buf, uint size) {
     mDataTrisWrite();
     _LAT(OL_RW) = WRITE;
 
+    // By accessing the port this way, the compiler will optimize
+    // the operation as a single MOV.B instruction, instead of having
+    // to do a complicated operation such as:
+    // OL_DATA_LAT = (OL_DATA_LAT & ~OL_DATA_MASK) | b;
+    typedef struct {
+        unsigned data: 8;
+        unsigned :8;
+    } ol_data_port_t;
+    volatile ol_data_port_t* dp = (volatile ol_data_port_t*)&OL_DATA_LAT;
+
+    // The register keyword forces the compiler to use fast registers
     register uint i=size;
+    register byte b;
     while (i--) {
-        register byte b;
+        // This generates quite a few instructions, but is unavoidable
+        // due to requiring EDS space
         color_t c = *buf++;
 
-        b = (c & 0xFF00) >> 8;
         _LAT(OL_E) = 1; _LAT(OL_CS) = 0;
-        OL_DATA_LAT = (OL_DATA_LAT & ~OL_DATA_MASK) | bitreverse[b];
+        dp->data = bitreverse[(byte)(c >> 8)];
         _LAT(OL_CS) = 1; _LAT(OL_E) = 0;
 
-        b = c & 0x00FF;
         _LAT(OL_E) = 1; _LAT(OL_CS) = 0;
-        OL_DATA_LAT = (OL_DATA_LAT & ~OL_DATA_MASK) | bitreverse[b];
+        dp->data = bitreverse[(byte)c];
         _LAT(OL_CS) = 1; _LAT(OL_E) = 0;
     }
 }
