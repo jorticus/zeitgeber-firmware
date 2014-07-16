@@ -14,7 +14,7 @@
 ////////// Variables ///////////////////////////////////////////////////////////
 
 // Internal screen buffer
-__eds__ color_t screen[DISPLAY_SIZE-1] __attribute__((space(eds),section(".gfx"),eds));
+__eds__ color_t screen[DISPLAY_SIZE] __attribute__((space(eds),section(".gfx"),eds));
 //color_t screen[DISPLAY_SIZE-1];
 
 drawop_t global_drawop = SRCCOPY;

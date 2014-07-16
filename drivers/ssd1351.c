@@ -255,12 +255,5 @@ void ssd1351_SetPixel(uint x, uint y, color_t c) {
 #define mSetDataMode() _LAT(OL_DC) = DATA
 void ssd1351_UpdateScreen(__eds__ color_t* buf, uint size) {
     ssd1351_SetCursor(0,0);
-    mSetDataMode();
-
-    register uint i=size;
-    while (--i) {
-        color_t c = *buf++;
-        ssd1351_write((c & 0xFF00) >> 8);
-        ssd1351_write(c & 0x00FF);
-    }
+    ssd1351_writeimgbuf(buf, size);
 }

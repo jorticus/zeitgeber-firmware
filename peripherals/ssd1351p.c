@@ -93,6 +93,30 @@ void ssd1351_writebuf(char* buf, uint size) {
     }
 }
 
+extern void ssd1351_writeimgbuf(__eds__ color_t* buf, uint size) {
+    // Optimised for speed
+
+    mSetDataMode();
+    mDataTrisWrite();
+    _LAT(OL_RW) = WRITE;
+
+    register uint i=size;
+    while (i--) {
+        register byte b;
+        color_t c = *buf++;
+
+        b = (c & 0xFF00) >> 8;
+        _LAT(OL_E) = 1; _LAT(OL_CS) = 0;
+        OL_DATA_LAT = (OL_DATA_LAT & ~OL_DATA_MASK) | bitreverse[b];
+        _LAT(OL_CS) = 1; _LAT(OL_E) = 0;
+
+        b = c & 0x00FF;
+        _LAT(OL_E) = 1; _LAT(OL_CS) = 0;
+        OL_DATA_LAT = (OL_DATA_LAT & ~OL_DATA_MASK) | bitreverse[b];
+        _LAT(OL_CS) = 1; _LAT(OL_E) = 0;
+    }
+}
+
 char ssd1351_read() {
     mDataTrisRead();
     //OL_DATA_LAT &= ~OL_DATA_MASK | 0xFF;

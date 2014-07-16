@@ -304,7 +304,7 @@
           <property key="enable-ansi-std" value="false"/>
           <property key="enable-ansi-warnings" value="false"/>
           <property key="enable-fatal-warnings" value="false"/>
-          <property key="enable-large-arrays" value="false"/>
+          <property key="enable-large-arrays" value="true"/>
           <property key="enable-omit-frame-pointer" value="true"/>
           <property key="enable-procedural-abstraction" value="false"/>
           <property key="enable-short-double" value="false"/>
@@ -335,6 +335,8 @@
           <property key="use-cci" value="true"/>
           <property key="use-iar" value="false"/>
         </C30>
+        <C30-AS>
+        </C30-AS>
         <C30-LD>
           <property key="additional-options-use-response-files" value="false"/>
           <property key="boot-eeprom" value="no_eeprom"/>

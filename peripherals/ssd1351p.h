@@ -11,6 +11,8 @@
 #ifndef SSD1351_PERIPH_H
 #define	SSD1351_PERIPH_H
 
+#include "api/graphics/gfx.h"
+
 ////////// Defines /////////////////////////////////////////////////////////////
 
 #define READ    1
@@ -23,6 +25,7 @@
 
 extern void ssd1351_write(BYTE c);
 extern void ssd1351_writebuf(char* buf, uint size);
+extern void ssd1351_writeimgbuf(__eds__ color_t* buf, uint size);
 extern char ssd1351_read();
 
 extern void ssd1351_command(uint8 cmd);
