@@ -345,14 +345,14 @@ void DrawLoop() {
     while (1) {
         uint t1, t2;
         uint next_tick = systick + DRAW_INTERVAL;
-        
-        DrawFrame();
 
         t1 = systick;
 
-        _LAT(LED1) = 1;
+        DrawFrame();
+
+        //_LAT(LED1) = 1;
         UpdateDisplay();
-        _LAT(LED1) = 0;
+        //_LAT(LED1) = 0;
 
         t2 = systick;
         draw_ticks = (t2 >= t1) ? (t2 - t1) : 0;

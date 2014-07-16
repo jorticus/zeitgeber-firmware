@@ -99,6 +99,11 @@ SECTIONS
         *(usercode);
   } >program
 
+  .images :
+  {
+    *(.images);
+  } >program
+
 
   /*
   ** User-Defined Constants in Program Memory

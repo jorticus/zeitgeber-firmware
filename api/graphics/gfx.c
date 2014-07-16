@@ -46,11 +46,11 @@ void UpdateDisplay() {
 ////////// Low Level Functions /////////////////////////////////////////////////
 
 
-__inline__ uint16 threshold(uint16 color) {
+static INLINE uint16 threshold(uint16 color) {
 	return (color > COLOR(0x7F,0x7F,0x7F)) ? 0xFFFF : 0x0000;
 }
 
-__inline__ void DrawOp(drawop_t drawop, __eds__ color_t* destbuf, __eds__ color_t* srcbuf, __eds__ color_t* maskbuf, bool invert) {
+static INLINE void DrawOp(drawop_t drawop, __eds__ color_t* destbuf, __eds__ color_t* srcbuf, __eds__ color_t* maskbuf, bool invert) {
     color_t srccol = (invert) ? ~*srcbuf : *srcbuf;
 
     switch (drawop) {
@@ -162,7 +162,7 @@ void ClearImage() {
     }
 }
 
-INLINE uint byte_index(uint8 x, uint8 y) {
+static INLINE uint byte_index(uint8 x, uint8 y) {
 #ifdef FLIP_DISPLAY
     return (DISPLAY_WIDTH * DISPLAY_HEIGHT) - (x + (y * DISPLAY_WIDTH)) - 1;
 #else
@@ -174,8 +174,7 @@ INLINE uint byte_index(uint8 x, uint8 y) {
     return x % 8;
 }*/
 
-// Set a single pixel to be black (0) or white (1)
-
+// Set a single pixel
 void SetPixel(uint8 x, uint8 y, color_t color) {
     uint idx = byte_index(x,y);
 	//screen[idx] = color;
@@ -188,8 +187,7 @@ void TogglePixel(uint8 x, uint8 y) {
 	screen[idx] ^= 0xFFFF;
 }
 
-// Returns 0 (black) or 1 (white) for the given pixel
-
+// Returns colour for the given pixel
 color_t GetPixel(uint8 x, uint8 y) {
     //int idx = byte_index(x, y);
     //uint8 mask = 1 << bit_index(x);
@@ -287,52 +285,6 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
     }
 }
 
-void DrawImage(int x, int y, image_t image) {
-	//BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY,0);
-
-    __eds__ color_t* c = &image.pixels[0];
-    uint ix,iy;
-    for (iy=0; iy<image.height; iy++) {
-        for (ix=0; ix<image.width; ix++) {
-            SetPixel(ix+x,iy+y,(*c++));
-        }
-    }
-
-   /* int idx = 0;
-    int mask = 1;
-	color_t chunk = image.pixels[0];
-
-    // Precalculate x,y position for performance
-    int iw = x + image.width;
-    int ih = y + image.height;
-    w += x;
-    h += y;
-
-    int ix, iy;
-    for (iy = y; iy < ih; iy++) {
-        for (ix = x; ix < iw; ix++) {
-            // Retrieve the current pixel
-            uint8 pixel = chunk & mask;
-
-            // Go to the next pixel in the image
-            // (pixels are grouped into 8 pixels per byte)
-            mask <<= 1;
-            if (mask == (1 << 8)) {
-                mask = 1;
-                idx++;
-                chunk = image.pixels[idx].val;
-            }
-
-            // Clip pixels outside the specified region
-            if ((ix < w) && (iy < h)) {
-                SetPixel(ix, iy, pixel);
-            }
-        }
-
-    }*/
-}
-
-
 INLINE uint max(uint a, uint b) {
 	return (a < b) ? b : a;
 }
@@ -345,7 +297,7 @@ INLINE uint min(uint a, uint b) {
 
 // Copy a source image to the screen using the specified drawing operation
 void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t drawop, bool invert) {
-    if (src != NULL) {
+    /*if (src != NULL) {
         uint x,y,w,h;
         uint destDelta, srcDelta;
         __eds__ color_t *srcbuf;
@@ -392,6 +344,6 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
             destbuf += destDelta;
             srcbuf += srcDelta;
         }
-    }
+    }*/
 }
 
