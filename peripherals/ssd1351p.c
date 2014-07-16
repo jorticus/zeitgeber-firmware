@@ -99,8 +99,9 @@ extern void ssd1351_writeimgbuf(__eds__ color_t* buf, uint size) {
     mSetDataMode();
     mDataTrisWrite();
     _LAT(OL_RW) = WRITE;
+    _LAT(OL_CS) = 0;
 
-    // By accessing the port this way, the compiler will optimize
+    // By accessing the port this way, the compiler will (probably) optimize
     // the operation as a single MOV.B instruction, instead of having
     // to do a complicated operation such as:
     // OL_DATA_LAT = (OL_DATA_LAT & ~OL_DATA_MASK) | b;
@@ -112,20 +113,19 @@ extern void ssd1351_writeimgbuf(__eds__ color_t* buf, uint size) {
 
     // The register keyword forces the compiler to use fast registers
     register uint i=size;
-    register byte b;
     while (i--) {
         // This generates quite a few instructions, but is unavoidable
         // due to requiring EDS space
         color_t c = *buf++;
 
-        _LAT(OL_E) = 1; _LAT(OL_CS) = 0;
+        _LAT(OL_E) = 1; 
         dp->data = bitreverse[(byte)(c >> 8)];
-        _LAT(OL_CS) = 1; _LAT(OL_E) = 0;
-
-        _LAT(OL_E) = 1; _LAT(OL_CS) = 0;
+        _LAT(OL_E) = 0;
+        _LAT(OL_E) = 1;
         dp->data = bitreverse[(byte)c];
-        _LAT(OL_CS) = 1; _LAT(OL_E) = 0;
+        _LAT(OL_E) = 0;
     }
+    _LAT(OL_CS) = 1;
 }
 
 char ssd1351_read() {
