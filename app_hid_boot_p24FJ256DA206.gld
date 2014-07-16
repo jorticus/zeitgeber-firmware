@@ -23,6 +23,7 @@ MEMORY
   CONFIG3        : ORIGIN = 0x2ABFA,       LENGTH = 0x2
   CONFIG2        : ORIGIN = 0x2ABFC,       LENGTH = 0x2
   CONFIG1        : ORIGIN = 0x2ABFE,       LENGTH = 0x2
+  eds            : ORIGIN = 0x8000,        LENGTH = 0x7FFF
 }
 
 __CONFIG4 = 0x2ABF8;
@@ -167,10 +168,10 @@ SECTIONS
   ** for more information.
   */
 
-  .yer :
+  .eds :
   {
-    *(yer)
-  } > data
+    *(.gfx) /* This uses all 32767 bytes of EDS data space */
+  } > eds
 
   /*
   ** ========== Debug Info ==============

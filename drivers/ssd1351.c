@@ -257,7 +257,7 @@ void ssd1351_UpdateScreen(__eds__ color_t* buf, uint size) {
     ssd1351_SetCursor(0,0);
     mSetDataMode();
 
-    uint i=size;
+    register uint i=size;
     while (--i) {
         color_t c = *buf++;
         ssd1351_write((c & 0xFF00) >> 8);

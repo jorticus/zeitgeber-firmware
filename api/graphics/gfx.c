@@ -14,7 +14,8 @@
 ////////// Variables ///////////////////////////////////////////////////////////
 
 // Internal screen buffer
-__eds__ color_t screen[DISPLAY_SIZE] __attribute__((space(eds),section("eds1"),address(0x8000),eds));
+__eds__ color_t screen[DISPLAY_SIZE-1] __attribute__((space(eds),section(".gfx"),eds));
+//color_t screen[DISPLAY_SIZE-1];
 
 drawop_t global_drawop = SRCCOPY;
 
@@ -344,53 +345,53 @@ INLINE uint min(uint a, uint b) {
 
 // Copy a source image to the screen using the specified drawing operation
 void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t drawop, bool invert) {
-	if (src != NULL) {
-		uint x,y,w,h;
-		uint destDelta, srcDelta;
-		__eds__ color_t *srcbuf, *destbuf, *maskbuf;
+    if (src != NULL) {
+        uint x,y,w,h;
+        uint destDelta, srcDelta;
+        __eds__ color_t *srcbuf;
+        __eds__ color_t *destbuf;
+        __eds__ color_t *maskbuf;
 
-		if (width == 0) width = src->width;
-		if (height == 0) height = src->height;
+        if (width == 0) width = src->width;
+        if (height == 0) height = src->height;
 
-		// If mask isn't defined, make it something valid
-		if (mask == NULL) mask = src;
+        // If mask isn't defined, make it something valid
+        if (mask == NULL) mask = src;
 
-		srcbuf = &src->pixels[0];
-		destbuf = &screen[0];
-		maskbuf = &mask->pixels[0]; //TODO: Tradeoff between mask image size (1 bit) and performance (16 bit)
+        srcbuf = &src->pixels[0];
+        destbuf = &screen[0];
+        maskbuf = &mask->pixels[0]; //TODO: Tradeoff between mask image size (1 bit) and performance (16 bit)
 
 
-		// Calculate minimum clipping region
-		w = min(src->width, width);
-		h = min(src->height, height);
+        // Calculate minimum clipping region
+        w = min(src->width, width);
+        h = min(src->height, height);
 
-		// Offset the source image
-		// Use if statement because this is less likely to be used (and can be optimised away)
-		if (xsrc != 0 || ysrc != 0) {
-			srcbuf += xsrc + (ysrc * src->width);
-		}
+        // Offset the source image
+        // Use if statement because this is less likely to be used (and can be optimised away)
+        if (xsrc != 0 || ysrc != 0) {
+                srcbuf += xsrc + (ysrc * src->width);
+        }
 
-		// Offset the dest buffer
-		// No if statement because this is more likely to be used
-		destbuf += xdest + (ydest * DISPLAY_WIDTH);
+        // Offset the dest buffer
+        // No if statement because this is more likely to be used
+        destbuf += xdest + (ydest * DISPLAY_WIDTH);
 
-		// Precompute deltas
-		destDelta = DISPLAY_WIDTH - w;
-		srcDelta = src->width - w;
+        // Precompute deltas
+        destDelta = DISPLAY_WIDTH - w;
+        srcDelta = src->width - w;
 
-		// Copy pixels from the image directly to the screen buffer
-		for (y = 0; y < h; y++) {
-			for (x = 0; x < w; x++) {
+        // Copy pixels from the image directly to the screen buffer
+        for (y = 0; y < h; y++) {
+            for (x = 0; x < w; x++) {
                 DrawOp(drawop, destbuf, srcbuf, maskbuf, invert);
-				destbuf++; srcbuf++; maskbuf++;
-			}
+                destbuf++; srcbuf++; maskbuf++;
+            }
 
-			// Skip over pixels that lie outside the clipping region
-			destbuf += destDelta;
-			srcbuf += srcDelta;
-
-		}
-
-	}
+            // Skip over pixels that lie outside the clipping region
+            destbuf += destDelta;
+            srcbuf += srcDelta;
+        }
+    }
 }
 

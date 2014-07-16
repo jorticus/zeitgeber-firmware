@@ -312,24 +312,31 @@ void DrawFrame() {
         case pwCharging: c = ORANGE; break;
     }
     // Extra padding at the top of the display to compensate for the bezel
-    DrawBox(0,0, DISPLAY_WIDTH,4, BLACK,BLACK);
-    DrawBox(0,5, w,3, c,c);
+    //DrawBox(0,0, DISPLAY_WIDTH,4, BLACK,BLACK);
+    DrawBox(0,0, w,3, c,c);
 
     // Draw the battery icon
     if (power_status == pwBattery) {
-        char s[5];
+        char s[8];
         sprintf(s, "%3d%%", battery_level);
         //utoa(s, battery_level, 10);
         //int x = DISPLAY_WIDTH - StringWidth(s) - 2;
         int x = DISPLAY_WIDTH - 30;
-        DrawImString(s, x,10, WHITE);
+        DrawImString(s, x,5, WHITE);
 
     } else {
         if (usb_connected) {
-            DrawImage(DISPLAY_WIDTH-USB_WIDTH-2,10, img_usb);
+            DrawImage(DISPLAY_WIDTH-USB_WIDTH-2,5, img_usb);
         } else {
-            DrawImage(DISPLAY_WIDTH-POWER_WIDTH-2,11, img_power);
+            DrawImage(DISPLAY_WIDTH-POWER_WIDTH-2,6, img_power);
         }
+    }
+
+    // Framerate debug info
+    {
+        char s[8];
+        sprintf(s, "%d", draw_ticks);
+        DrawString(s, 4,5, DARKGREEN);
     }
 }
 

@@ -77,13 +77,16 @@ void ssd1351_write(BYTE c) {
     _LAT(OL_CS) = 0;
 
     // Write data out
-    BYTE b = bitreverse[c];
+    register BYTE b = bitreverse[c];
     OL_DATA_LAT = (OL_DATA_LAT & ~OL_DATA_MASK) | b;
 
     _LAT(OL_CS) = 1;
     _LAT(OL_E) = 0;
 }
 void ssd1351_writebuf(char* buf, uint size) {
+    mDataTrisWrite();
+    _LAT(OL_RW) = WRITE;
+
     uint i;
     for (i=0; i<size; i++) {
         ssd1351_write(buf[i]);
