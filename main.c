@@ -140,7 +140,7 @@ void Initialize() {
     DisplayBootScreen();
 
     // Enable watchdog
-    RCONbits.SWDTEN = 1;
+    RCONbits.SWDTEN = 0;
 
     _LAT(LED1) = 0;
 }

@@ -23,7 +23,7 @@
 #define TASK_STACK_SIZE 512     // Size of the stack for each task
 #define MAX_TASKS 8            // Maximum number of tasks allocated
 
-#define CALC_CPU_TICKS 100      // Number of CPU ticks before CPU utilization is re-calculated.
+#define CALC_CPU_TICKS 1000      // Number of CPU ticks before CPU utilization is re-calculated.
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 

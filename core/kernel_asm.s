@@ -32,7 +32,7 @@ __T1Interrupt:
     bclr IFS0, #3
 
     ; Increment kernel systick
-    clrwdt
+    ;clrwdt
     inc _systick
 
     ;btg LATE, #6  ; LED2

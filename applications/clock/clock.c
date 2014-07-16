@@ -93,20 +93,18 @@ void appclock_Draw() {
     x = DrawImString(day_suffix[i], x,y, WHITE);
     x += 4;
 
-    x = DrawImString(short_months[date.month], x,y, WHITE);
+    x = DrawImString(short_months[date.month-1], x,y, WHITE);
 
     //sprintf(s, " %d/%02d", date.day, date.month);
     //x = DrawImString(s, x,45, WHITE);
 
-
-    //// Upcoming Events ////
-
     x = 44;
     y = 60;
 
-    int num = 1;
+    //// Upcoming Events ////
 
     //TODO: Sort events in circular order after the current time
+    uint num = 0;
 
     rtc_dow_t tomorrow = date.day_of_week+1;
     if (tomorrow > dwSaturday) tomorrow = dwSunday;
