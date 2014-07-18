@@ -49,6 +49,7 @@
         <itemPath>core/cpu.h</itemPath>
         <itemPath>core/os.h</itemPath>
         <itemPath>core/kernel.h</itemPath>
+        <itemPath>core/error.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="drivers" projectFiles="true">
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
@@ -118,10 +119,10 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="core" projectFiles="true">
         <itemPath>core/cpu.c</itemPath>
-        <itemPath>core/traps.c</itemPath>
         <itemPath>core/os.c</itemPath>
         <itemPath>core/kernel.c</itemPath>
         <itemPath>core/kernel_asm.s</itemPath>
+        <itemPath>core/error.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="drivers" projectFiles="true">
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
@@ -158,6 +159,7 @@
   <sourceRootList>
     <Elem>applications/clock</Elem>
     <Elem>usb</Elem>
+    <Elem>core</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -424,6 +426,8 @@
           <property key="use-cci" value="true"/>
           <property key="use-iar" value="false"/>
         </C30>
+        <C30-AS>
+        </C30-AS>
         <C30-LD>
           <property key="additional-options-use-response-files" value="false"/>
           <property key="boot-eeprom" value="no_eeprom"/>

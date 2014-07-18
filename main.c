@@ -63,6 +63,7 @@
 #include "api/graphics/gfx.h"
 #include "util/util.h"
 #include "api/graphics/font.h"
+#include "core/error.h"
 
 //#include "gui/icons/bat.h"
 
@@ -140,7 +141,7 @@ void Initialize() {
     DisplayBootScreen();
 
     // Enable watchdog
-    RCONbits.SWDTEN = 0;
+    RCONbits.SWDTEN = 1;
 
     _LAT(LED1) = 0;
 }
