@@ -20,6 +20,7 @@
 #include "core/kernel.h"
 #include "background/power_monitor.h"
 #include "peripherals/adc.h"
+#include "api/calendar.h"
 
 //#include "gui/Wallpapers/wallpaper1.h"
 //#define wallpaper img_wallpaper1
@@ -35,11 +36,10 @@
 
 ////////// App Definition //////////////////////////////////////////////////////
 
-void apptest_Initialize();
-void apptest_Process();
-void apptest_Draw();
+static void Initialize();
+static void Draw();
 
-application_t apptest = APPLICATION("Test", apptest_Initialize, apptest_Process, apptest_Draw);
+application_t apptest = {.name="Test", .init=Initialize, .draw=Draw};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 extern task_t* draw_task;
@@ -54,19 +54,12 @@ extern bool usb_connected;
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
-void apptest_Initialize() {
+static void Initialize() {
 
-}
-
-// Called periodically when state==asRunning
-void apptest_Process() {
-    while (1) {
-        Delay(1000);
-    }
 }
 
 // Called periodically when isForeground==true (30Hz)
-void apptest_Draw() {
+static void Draw() {
     UINT32 i;
     UINT8 x = 8;
     UINT8 y = 8;

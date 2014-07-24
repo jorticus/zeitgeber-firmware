@@ -73,8 +73,6 @@ const image_t imgBat = {bat_bytes, BAT_WIDTH, BAT_HEIGHT};
 
 bool displayOn = true;
 
-application_t* foreground_app = NULL;
-
 task_t* core_task;
 task_t* draw_task;
 
@@ -103,20 +101,9 @@ void InitializeOS() {
     draw_task = RegisterTask("Draw", DrawLoop);
 }
 
-void SetForegroundApp(application_t* app) {
-    if (foreground_app != NULL) {
-        foreground_app->isForeground = false;
-        foreground_app->task->state = tsStop; // Disable the other app
-    }
-    app->isForeground = true;
-	foreground_app = app;
-
-	app->task->state = tsRun;
-
-    //TODO: Maybe some sort of transition between screens?
-}
-
 void ScreenOff() {
+    AppGlobalEvent(evtScreenOff, NULL);
+
     accel_SetMode(accStandby);
 
     // Disable drawing
@@ -143,11 +130,7 @@ void ScreenOn() {
 
     draw_task->state = tsRun;
 
-    if (foreground_app != NULL) {
-        foreground_app->task->state = tsRun;
-    }
-
-    accel_SetMode(accMeasure);
+    AppGlobalEvent(evtScreenOn, NULL);
 }
 
 
@@ -211,6 +194,9 @@ void CheckButtons() {
         }
     }
 
+    byte btn = _PORT(BTN1) | (_PORT(BTN2)<<1) | (_PORT(BTN3)<<2) | (_PORT(BTN4)<<3);
+    if (btn)
+        AppForegroundEvent(evtBtnPress, btn);
 
     /*if (_PORT(BTN3)) {
         ssd1351_DisplayOff();

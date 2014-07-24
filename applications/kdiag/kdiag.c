@@ -14,11 +14,10 @@
 
 ////////// App Definition //////////////////////////////////////////////////////
 
-void appkdiag_Initialize();
-void appkdiag_Process();
-void appkdiag_Draw();
+static void Initialize();
+static void Draw();
 
-application_t appkdiag = APPLICATION("K-Diag", appkdiag_Initialize, appkdiag_Process, appkdiag_Draw);
+application_t appkdiag = {.name="K-Diag", .init=Initialize, .draw=Draw};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -28,19 +27,12 @@ extern task_t tasks[];
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
-void appkdiag_Initialize() {
+static void Initialize() {
     appkdiag.task->state = tsStop;
 }
 
-// Called periodically when state==asRunning
-void appkdiag_Process() {
-    while (1) {
-        Delay(1000);
-    }
-}
-
 // Called periodically when isForeground==true (30Hz)
-void appkdiag_Draw() {
+static void Draw() {
     uint i;
     uint x=0;
     uint y=16;

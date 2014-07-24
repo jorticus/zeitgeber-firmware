@@ -151,7 +151,7 @@ int main() {
     Initialize();
 
     RegisterUserApplication(&appclock);
-    //RegisterUserApplication(&appimu); //TODO: I2C pullups are too weak?
+    RegisterUserApplication(&appimu); //TODO: I2C pullups are too weak?
     RegisterUserApplication(&apptest);
     RegisterUserApplication(&appkdiag);
 

@@ -24,45 +24,38 @@
 #include "applications/clock/clock_font.h"
 #include "api/calendar.h"
 
-
-
 ////////// App Definition //////////////////////////////////////////////////////
 
-void appclock_Initialize();
-void appclock_Process();
-void appclock_Draw();
+static void Initialize();
+static void Draw();
 
-application_t appclock = APPLICATION("Clock", appclock_Initialize, appclock_Process, appclock_Draw);
+application_t appclock = {.name="Clock", .init=Initialize, .draw=Draw};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
-#define NUM_EVENTS 6
+#define NUM_EVENTS 7
 event_t* my_events[NUM_EVENTS];
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
-void appclock_Initialize() {
+static void Initialize() {
     appclock.task->state = tsStop;
 
-    //                       label      loc     day        hr min
-    my_events[0] = NewEvent("ENCE462", "Er466", dwMonday,  12, 0);
-    my_events[1] = NewEvent("COSC418", "Er235", dwMonday,  15, 0);
-    my_events[2] = NewEvent("ENCE463", "KF07",  dwTuesday,  9, 0);
-    my_events[3] = NewEvent("ENCE462", "KD05",  dwTuesday, 12, 0);
-    my_events[4] = NewEvent("ENCE463", "E11",  dwWednesday, 10, 0);
-    my_events[5] = NewEvent("ENCE463", "KD05",  dwThursday, 11, 0);
-}
+    const event_t test = {.label="ENCE462", .location="Er466", .day=dwMonday, .time=((rtc_time_t){.hour=12})};
 
-// Called periodically when state==asRunning
-void appclock_Process() {
-    while (1) {
-        Delay(1000);
-    }
+    //                       label      loc     day        hr min
+    my_events[0] = NewEvent("ENCE462", "Er466", dwMonday,    12, 0);
+    my_events[1] = NewEvent("COSC418", "Er235", dwMonday,    15, 0);
+    my_events[2] = NewEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
+    my_events[3] = NewEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
+    my_events[4] = NewEvent("ENCE463", "E11",   dwWednesday, 10, 0);
+    my_events[5] = NewEvent("ENCE463", "KD05",  dwThursday,  11, 0);
+    my_events[6] = NewEvent("ENCE462", "Er466", dwThursday,  14, 0);
 }
 
 // Called periodically when isForeground==true (30Hz)
-void appclock_Draw() {
+static void Draw() {
     char s[10];
     int x,y,i;
 

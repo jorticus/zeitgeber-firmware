@@ -36,11 +36,12 @@
 
 ////////// App Definition //////////////////////////////////////////////////////
 
-void appimu_Initialize();
-void appimu_Process();
-void appimu_Draw();
+static void Initialize();
+static void Process();
+static void Draw();
+static void Event(event_type_t type, uint param);
 
-application_t appimu = APPLICATION("IMU", appimu_Initialize, appimu_Process, appimu_Draw);
+application_t appimu = {.name="IMU", .init=Initialize, .process=Process, .draw=Draw, .event=Event};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -64,7 +65,7 @@ extern bool displayOn;
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
-void appimu_Initialize() {
+static void Initialize() {
 
     accel_init();
     accel_SetMode(accMeasure);
@@ -78,7 +79,7 @@ void appimu_Initialize() {
 }
 
 // Called periodically when state==asRunning
-void appimu_Process() {
+static void Process() {
     while (1) {
         /*if (!accel_initted) {
             accel_init();
@@ -86,24 +87,36 @@ void appimu_Process() {
             accel_initted = true;
         }*/
 
-        if (appimu.task->state == tsRun) {
-            Delay(10);
-            
-            accel_vec = accel_ReadXYZ8();
-            accel_log[accel_log_index] = accel_vec;
+        Delay(10);
 
-            accel_log_index++;
-            if (accel_log_index == ACCEL_LOG_SIZE)
-                accel_log_index = 0;
+        accel_vec = accel_ReadXYZ8();
+        accel_log[accel_log_index] = accel_vec;
 
-        } else {
-            Delay(1000);
+        accel_log_index++;
+        if (accel_log_index == ACCEL_LOG_SIZE)
+            accel_log_index = 0;
+    }
+}
+
+static void Event(event_type_t type, uint param) {
+    switch (type) {
+        case evtScreenOff:
+            appimu.task->state = tsStop;
+            break;
+        case evtScreenOn:
+            appimu.task->state = tsRun;
+            break;
+        case evtBtnPress: {
+            byte btn = (byte)param;
+            if (btn & 1)
+                appimu.task->state = (appimu.task->state == tsRun) ? tsStop : tsRun;
+            break;
         }
     }
 }
 
 // Called periodically when isForeground==true (30Hz)
-void appimu_Draw() {
+static void Draw() {
 
 
     UINT32 i;
