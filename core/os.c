@@ -127,6 +127,7 @@ void ScreenOff() {
     }
 
     ssd1351_DisplayOff();
+    ssd1351_PowerOff();
     _LAT(LED1) = 0;
     _LAT(LED2) = 0;
 }
@@ -137,6 +138,7 @@ void ScreenOn() {
     //_LAT(OL_POWER) = 1;
     UpdateDisplay();
 
+    ssd1351_PowerOn();
     ssd1351_DisplayOn();
 
     draw_task->state = tsRun;
