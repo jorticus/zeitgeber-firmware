@@ -37,6 +37,9 @@ extern task_t* core_task;
 uint cpu_tick_counter = 0;
 uint total_cpu_ticks = 0;
 
+uint cpu_tick_history_idx = 0;
+uint cpu_tick_history[CPU_TICK_HISTORY_LEN];
+
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void KernelIdleTask();
@@ -198,6 +201,11 @@ void KernelSwitchTask() {
             if (i) total_cpu_ticks += task->ticks; // Skip the idle task
             task->ticks = 0;
         }
+
+        // Add current CPU utilization to the history buffer
+        cpu_tick_history[cpu_tick_history_idx] = total_cpu_ticks;
+        if (cpu_tick_history_idx++ == CPU_TICK_HISTORY_LEN)
+            cpu_tick_history_idx = 0;
     }
     cpu_tick_counter++;
 

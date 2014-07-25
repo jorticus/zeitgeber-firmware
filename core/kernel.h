@@ -17,13 +17,13 @@
 
 #define TASK_NAME_LEN 6         // Maximum chars allocated for a task's name
 
-#define CPU_HISTORY_LEN 16
-
 // IMPORTANT: If you increase the stack size, make sure you also increase the allocated space in kernel_asm.s
 #define TASK_STACK_SIZE 512     // Size of the stack for each task
 #define MAX_TASKS 8            // Maximum number of tasks allocated
 
 #define CALC_CPU_TICKS 1000      // Number of CPU ticks before CPU utilization is re-calculated.
+
+#define CPU_TICK_HISTORY_LEN 128
 
 ////////// Typedefs ////////////////////////////////////////////////////////////
 
@@ -44,7 +44,7 @@ typedef struct {
     uint16 stack_base;  // Task stack base address
     uint16 stack_size;  // Task stack size
     
-	char name[TASK_NAME_LEN+1];
+    char name[TASK_NAME_LEN+1];
 
     task_proc_t proc;
     task_state_t state;
@@ -54,10 +54,7 @@ typedef struct {
     uint ticks;
     uint last_run;
     uint cpu_usage;
-	uint cpu_ticks;
-
-    //uint cpu_history[CPU_HISTORY_LEN];
-    //uint cpu_history_idx;
+    uint cpu_ticks;
 } task_t;
 
 
@@ -98,6 +95,9 @@ extern void WaitUntil(uint tick);
 extern volatile uint systick;
 
 extern uint total_cpu_ticks;
+
+extern uint cpu_tick_history_idx;
+extern uint cpu_tick_history[CPU_TICK_HISTORY_LEN];
 
 
 #endif	/* SCHEDULER_H */
