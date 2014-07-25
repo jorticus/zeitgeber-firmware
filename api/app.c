@@ -64,7 +64,8 @@ void AppForegroundEvent(event_type_t type, uint param) {
 void AppGlobalEvent(event_type_t type, uint param) {
     uint i;
     for (i=0; i<app_count; i++) {
-        installed_apps[i]->event(type, param);
+        if (installed_apps[i]->event != NULL)
+            installed_apps[i]->event(type, param);
     }
 }
 

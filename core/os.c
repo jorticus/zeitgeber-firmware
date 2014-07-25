@@ -109,9 +109,9 @@ void ScreenOff() {
     // Disable drawing
     draw_task->state = tsStop;
 
-    if (foreground_app != NULL) {
+    /*if (foreground_app != NULL) {
         foreground_app->task->state = tsStop;
-    }
+    }*/
 
     ssd1351_DisplayOff();
     ssd1351_PowerOff();

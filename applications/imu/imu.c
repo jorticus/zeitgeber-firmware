@@ -62,13 +62,25 @@ bool accel_initted = false;
 
 extern bool displayOn;
 
+static bool capturing = false;
+
 ////////// Code ////////////////////////////////////////////////////////////////
+
+static void StartCapture() {
+    accel_SetMode(accMeasure);
+    appimu.task->state = tsRun;
+    capturing = true;
+}
+
+static void StopCapture() {
+    appimu.task->state = tsStop;
+    capturing = false;
+    accel_SetMode(accStandby);
+}
 
 // Called when CPU initializes 
 static void Initialize() {
-
     accel_init();
-    accel_SetMode(accMeasure);
 
     uint i;
     for (i=0; i<ACCEL_LOG_SIZE; i++) {
@@ -76,6 +88,8 @@ static void Initialize() {
         accel_log[i].y = 0;
         accel_log[i].z = 0;
     }
+
+    StartCapture();
 }
 
 // Called periodically when state==asRunning
@@ -89,6 +103,8 @@ static void Process() {
 
         Delay(10);
 
+        //TODO: Shift accelerometer logging into the IMU API
+
         accel_vec = accel_ReadXYZ8();
         accel_log[accel_log_index] = accel_vec;
 
@@ -99,19 +115,26 @@ static void Process() {
 }
 
 static void Event(event_type_t type, uint param) {
+    //TODO: Stack size isn't big enough for event message passing???
     switch (type) {
         case evtScreenOff:
-            appimu.task->state = tsStop;
+            StopCapture();
             break;
         case evtScreenOn:
-            appimu.task->state = tsRun;
+            StartCapture();
             break;
         case evtBtnPress: {
             byte btn = (byte)param;
-            if (btn & 1)
-                appimu.task->state = (appimu.task->state == tsRun) ? tsStop : tsRun;
+            if (btn & 1) {
+                if (capturing)
+                    StopCapture();
+                else
+                    StartCapture();
+            }
             break;
         }
+        default:
+            break;
     }
 }
 
