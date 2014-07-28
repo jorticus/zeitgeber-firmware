@@ -18,5 +18,7 @@ void bcd2str(byte bcd, char* s);
 byte bcd2int(byte bcd);
 byte int2bcd(byte i);
 
+char* decitoa(char* buf, unsigned val);
+
 #endif	/* UTIL_H */
 

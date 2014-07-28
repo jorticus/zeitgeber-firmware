@@ -11,6 +11,7 @@
 #include "system.h"
 #include "api/app.h"
 #include "api/graphics/gfx.h"
+#include "util/util.h"
 
 ////////// App Definition //////////////////////////////////////////////////////
 
@@ -24,11 +25,18 @@ application_t appkdiag = {.name="K-Diag", .init=Initialize, .draw=Draw};
 extern uint num_tasks;
 extern task_t tasks[];
 
+#define BASE_CURRENT 2      // 200uA CPI idle + 90mA OLED display
+#define CPU_CURRENT 160     // 16mA at full CPU speed
+
 ////////// Code ////////////////////////////////////////////////////////////////
 
 // Called when CPU initializes 
 static void Initialize() {
     appkdiag.task->state = tsStop;
+}
+
+static INLINE uint cpu_current(uint utilization) {
+    return (utilization * CPU_CURRENT) / 1000;
 }
 
 // Called periodically when isForeground==true (30Hz)
@@ -59,6 +67,7 @@ static void Draw() {
     y += 12;
 
     DrawString("CPU%", 60,y, WHITE);
+    DrawString("mA", 85,y, WHITE);
     //DrawString("%CPU", 88,y, WHITE);
     y += 8;
 
@@ -71,8 +80,11 @@ static void Draw() {
         DrawString(task->name, 8,y, color);
         
         //utoa(s, task->next_run, 10);
-        utoa(s, task->cpu_ticks, 10);
+        decitoa(s, task->cpu_ticks);
         DrawString(s, 60,y, color);
+
+        decitoa(s, cpu_current(task->cpu_ticks));
+        DrawString(s, 85,y, color);
 
         //utoa(s, task->cpu_usage, 10);
         //DrawString(s, 88,y, color);
@@ -82,7 +94,7 @@ static void Draw() {
 
     DrawString("Total", 8,y, WHITE);
 
-    utoa(s, total_cpu_ticks, 10);
+    decitoa(s, total_cpu_ticks);
     DrawString(s, 60,y, WHITE);
 
     //utoa(s, 0, 10);

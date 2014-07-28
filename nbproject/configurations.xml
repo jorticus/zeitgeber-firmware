@@ -147,6 +147,7 @@
         <itemPath>util/vector.c</itemPath>
         <itemPath>util/bcd.c</itemPath>
         <itemPath>util/timestamp.c</itemPath>
+        <itemPath>util/str.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
@@ -160,6 +161,7 @@
     <Elem>applications/clock</Elem>
     <Elem>usb</Elem>
     <Elem>core</Elem>
+    <Elem>util</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
