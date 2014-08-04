@@ -29,6 +29,7 @@
           <itemPath>api/graphics/font.h</itemPath>
           <itemPath>api/graphics/gfx.h</itemPath>
           <itemPath>api/graphics/imfont.h</itemPath>
+          <itemPath>api/graphics/colors.h</itemPath>
         </logicalFolder>
         <itemPath>api/bluetooth.h</itemPath>
         <itemPath>api/oled.h</itemPath>
@@ -233,7 +234,6 @@
         <property key="preprocessor-macros" value=""/>
         <property key="scalar-model" value="large-scalar"/>
         <property key="use-cci" value="true"/>
-        <property key="use-iar" value="false"/>
       </C30>
       <C30-AS>
         <property key="assembler-symbols" value=""/>
@@ -388,6 +388,46 @@
           <property key="output-file-format" value="elf"/>
           <property key="save-temps" value="false"/>
         </C30Global>
+      </item>
+      <item path="api/graphics/img.c" ex="false" overriding="true">
+        <C30>
+          <property key="code-model" value="large-code"/>
+          <property key="const-model" value="default"/>
+          <property key="data-model" value="large-data"/>
+          <property key="enable-all-warnings" value="true"/>
+          <property key="enable-ansi-std" value="false"/>
+          <property key="enable-ansi-warnings" value="false"/>
+          <property key="enable-fatal-warnings" value="false"/>
+          <property key="enable-large-arrays" value="true"/>
+          <property key="enable-omit-frame-pointer" value="true"/>
+          <property key="enable-procedural-abstraction" value="false"/>
+          <property key="enable-short-double" value="false"/>
+          <property key="enable-symbols" value="true"/>
+          <property key="enable-unroll-loops" value="false"/>
+          <property key="extra-include-directories" value=".;usb"/>
+          <property key="isolate-each-function" value="false"/>
+          <property key="keep-inline" value="false"/>
+          <property key="oXC16gcc-align-arr" value="true"/>
+          <property key="oXC16gcc-cnsts-mauxflash" value="false"/>
+          <property key="oXC16gcc-data-sects" value="false"/>
+          <property key="oXC16gcc-errata" value=""/>
+          <property key="oXC16gcc-fillupper" value=""/>
+          <property key="oXC16gcc-large-aggregate" value="false"/>
+          <property key="oXC16gcc-mauxflash" value="false"/>
+          <property key="oXC16gcc-mpa-lvl" value=""/>
+          <property key="oXC16gcc-name-text-sec" value=""/>
+          <property key="oXC16gcc-near-chars" value="false"/>
+          <property key="oXC16gcc-no-isr-warn" value="false"/>
+          <property key="oXC16gcc-sfr-warn" value="false"/>
+          <property key="oXC16gcc-smar-io-lvl" value="1"/>
+          <property key="oXC16gcc-smart-io-fmt" value=""/>
+          <property key="optimization-level" value="0"/>
+          <property key="post-instruction-scheduling" value="default"/>
+          <property key="pre-instruction-scheduling" value="default"/>
+          <property key="preprocessor-macros" value=""/>
+          <property key="scalar-model" value="large-scalar"/>
+          <property key="use-cci" value="true"/>
+        </C30>
       </item>
     </conf>
   </confs>
