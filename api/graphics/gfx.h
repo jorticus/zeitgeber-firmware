@@ -115,6 +115,7 @@ extern void UpdateDisplay();
 
 // Clear the internal screen buffer
 extern void ClearImage();
+extern void ClearImageEx(color_t c);
 
 ///// Drawing /////
 

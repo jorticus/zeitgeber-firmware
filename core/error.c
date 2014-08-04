@@ -24,21 +24,26 @@ static bool in_error = false;
 //TODO: What happens with the stack when the stack trap is called???
 
 void CriticalError(const char* msg) {
+    // Display a blue screen of death
+
     task_t* task = current_task;
 
     // Disable the RTOS
     T1CONbits.TON = 0;
     RCONbits.SWDTEN = 0;
 
-    // Display an error message
-    ClearImage();
-    DrawString("CRITICAL ERROR", 8,8, RED);
-    DrawString(msg, 8,18, WHITE);
+    ClearImageEx(SKYBLUE);
+    SetFontSize(2);
+    DrawString("CRITICAL", 8,8, HEXCOLOR32(0xFF2211));
+    DrawString("ERROR", 8,24, HEXCOLOR32(0xFF2211));
+    SetFontSize(1);
+
+    DrawString(msg, 8,48, WHITE);
     UpdateDisplay();
 
     // Gather some kernel diagnostics
-    DrawString("Task:", 8,38, WHITE);
-    DrawString(task->name, 45,38, SKYBLUE);
+    DrawString("Task:", 8,58, WHITE);
+    DrawString(task->name, 45,58, WHITE);
     UpdateDisplay();
 
     while (!_PORT(BTN1) && !_PORT(BTN2) && !_PORT(BTN3) && !_PORT(BTN4));

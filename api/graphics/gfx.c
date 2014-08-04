@@ -156,10 +156,14 @@ static INLINE void DrawOp(drawop_t drawop, __eds__ color_t* destbuf, __eds__ col
 
 void ClearImage() {
     int i;
-    for (i = 0; i < DISPLAY_SIZE; i++) {
-		color_t  c = {0x00};
+    for (i = 0; i < DISPLAY_SIZE; i++)
+        screen[i] = 0x00;
+}
+
+void ClearImageEx(color_t c) {
+    int i;
+    for (i = 0; i < DISPLAY_SIZE; i++)
         screen[i] = c;
-    }
 }
 
 static INLINE uint byte_index(uint8 x, uint8 y) {
