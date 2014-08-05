@@ -3,6 +3,10 @@
  * Author: Jared
  *
  * Created on 19 July 2013, 5:41 PM
+ *
+ * ViscGFX Library, RGB656 Buffered Implementation
+ *
+ * IMPORTANT: This file must be compiled with -menable-large-arrays (32k arrays) !!
  */
 
 ////////// Includes ////////////////////////////////////////////////////////////

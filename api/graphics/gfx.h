@@ -4,7 +4,7 @@
  *
  * Created on 19 July 2013, 5:41 PM
  *
- * Graphics library
+ * ViscGFX Library, RGB656 Buffered Implementation
  */
 
 #ifndef GFX_H
@@ -122,7 +122,7 @@ extern void ClearImageEx(color_t c);
 extern void DrawBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t fill);
 extern void DrawRoundedBox(uint8 x, uint8 y, uint8 w, uint8 h, color_t border, color_t fill);
 extern void DrawLine(int x0, int y0, int x1, int y1, color_t color);
-extern void DrawImage(int x, int y, image_t image);
+extern void DrawImage(int x, int y, const image_t* image);
 //extern image_t OffsetImage(int x, int y, image_t image);
 void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t rop, bool invert);
 

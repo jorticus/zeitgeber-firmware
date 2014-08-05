@@ -314,9 +314,9 @@ void DrawFrame() {
 
     } else {
         if (usb_connected) {
-            DrawImage(DISPLAY_WIDTH-USB_WIDTH-2,5, img_usb);
+            DrawImage(DISPLAY_WIDTH-USB_WIDTH-2,5, &img_usb);
         } else {
-            DrawImage(DISPLAY_WIDTH-POWER_WIDTH-2,6, img_power);
+            DrawImage(DISPLAY_WIDTH-POWER_WIDTH-2,6, &img_power);
         }
     }
 

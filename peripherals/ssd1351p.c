@@ -13,6 +13,8 @@
  * OL_RESET     Reset signal for the OLED
  * OL_SHDN      OLED power supply shut down (active low)
  * OL_DATA_LAT  8-bit data bus (RD0=D7, RD7=D0)
+ *
+ * IMPORTANT: This file must be compiled with -menable-large-arrays (32k arrays) !!
  */
 
 ////////// Includes ////////////////////////////////////////////////////////////
@@ -112,13 +114,16 @@ extern void ssd1351_writeimgbuf(__eds__ color_t* buf, uint size) {
     volatile ol_data_port_t* dp = (volatile ol_data_port_t*)&OL_DATA_LAT;
 
     // The register keyword forces the compiler to use fast registers
+    // NOTE: Do not modify this, the compiler crashes with any other looping method!
+    //  eg. for(i=0; i<size; i++) buf[i]  or even  *buf++
     register uint i=size;
+    register uint j=0;
     while (i--) {
         // This generates quite a few instructions, but is unavoidable
         // due to requiring EDS space
-        color_t c = *buf++;
+        color_t c = buf[j++];
 
-        _LAT(OL_E) = 1; 
+        _LAT(OL_E) = 1;
         dp->data = bitreverse[(byte)(c >> 8)];
         _LAT(OL_E) = 0;
         _LAT(OL_E) = 1;

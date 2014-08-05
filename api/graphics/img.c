@@ -8,13 +8,13 @@
 #include <system.h>
 #include "api/graphics/gfx.h"
 
-void DrawImage(int x, int y, image_t image) {
+void DrawImage(int x, int y, const image_t* image) {
 	//BitBlit(&image, NULL, x, y, w, h, 0, 0, SRCCOPY,0);
 
-    __eds__ color_t* c = image.pixels;
+    __eds__ color_t* c = image->pixels;
     uint ix,iy;
-    for (iy=0; iy<image.height; iy++) {
-        for (ix=0; ix<image.width; ix++) {
+    for (iy=0; iy<image->height; iy++) {
+        for (ix=0; ix<image->width; ix++) {
             SetPixel(ix+x,iy+y,*c++);
         }
     }
