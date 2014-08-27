@@ -32,7 +32,7 @@ extern task_t tasks[];
 
 // Called when CPU initializes 
 static void Initialize() {
-    appkdiag.task->state = tsStop;
+
 }
 
 static INLINE uint cpu_current(uint utilization) {
@@ -99,6 +99,5 @@ static void Draw() {
 
     //utoa(s, 0, 10);
     //DrawString(s, 88,y, WHITE);
-
 
 }

@@ -28,7 +28,7 @@ typedef struct {
 
     // READ ONLY, SYSTEM USE
     bool isForeground;  // App is currently the foreground process being drawn on the screen
-    task_t* task;
+    task_t* task;       // task is only registered if process is not null
 } application_t;
 
 // Register a user-mode application with the system

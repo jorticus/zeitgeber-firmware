@@ -40,7 +40,6 @@ event_t* my_events[NUM_EVENTS];
 
 // Called when CPU initializes 
 static void Initialize() {
-    appclock.task->state = tsStop;
 
 //    const event_t test = {.label="ENCE462", .location="Er466", .day=dwMonday, .time=((rtc_time_t){.hour=12})};
 
