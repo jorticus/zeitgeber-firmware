@@ -81,6 +81,7 @@
         <itemPath>peripherals/ssd1351p.h</itemPath>
         <itemPath>peripherals/spi.h</itemPath>
         <itemPath>peripherals/i2c.h</itemPath>
+        <itemPath>peripherals/cn.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.h</itemPath>
@@ -143,6 +144,7 @@
         <itemPath>peripherals/ssd1351p.c</itemPath>
         <itemPath>peripherals/i2c.c</itemPath>
         <itemPath>peripherals/spi.c</itemPath>
+        <itemPath>peripherals/cn.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.c</itemPath>

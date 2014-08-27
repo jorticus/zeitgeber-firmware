@@ -14,7 +14,7 @@
 
 #define MAX_APPLICATIONS 10
 
-typedef enum { evtUnknown, evtBtnPress, evtScreenOff, evtScreenOn } event_type_t;
+typedef enum { evtUnknown, evtBtnPress, evtBtnRelease, evtScreenOff, evtScreenOn } event_type_t;
 
 typedef void (*event_proc_t)(event_type_t, uint param);
 

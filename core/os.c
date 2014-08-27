@@ -20,6 +20,8 @@
 #include "background/power_monitor.h"
 #include "drivers/MMA7455.h"
 #include "util/util.h"
+#include "peripherals/gpio.h"
+#include "peripherals/cn.h"
 
 
 ////////// GUI Resources ///////////////////////////////////////////////////////
@@ -88,6 +90,11 @@ void DrawLoop();
 void DisplayBootScreen();
 void CheckButtons();
 
+void OnBTN1Change(bool btn_pressed);
+void OnBTN2Change(bool btn_pressed);
+void OnBTN3Change(bool btn_pressed);
+void OnBTN4Change(bool btn_pressed);
+
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeOS() {
@@ -99,6 +106,16 @@ void InitializeOS() {
 
     // Drawing, only needs to be run when screen is on
     draw_task = RegisterTask("Draw", DrawLoop);
+
+    // Initialize button interrupts
+    _CNIEn(BTN1_CN) = 1;
+    _CNIEn(BTN2_CN) = 1;
+    _CNIEn(BTN3_CN) = 1;
+    _CNIEn(BTN4_CN) = 1;
+    cn_register_cb(_CNIDX(BTN1_CN), _PINREF(BTN1), OnBTN1Change);
+    cn_register_cb(_CNIDX(BTN2_CN), _PINREF(BTN2), OnBTN2Change);
+    cn_register_cb(_CNIDX(BTN3_CN), _PINREF(BTN3), OnBTN3Change);
+    cn_register_cb(_CNIDX(BTN4_CN), _PINREF(BTN4), OnBTN4Change);
 }
 
 void ScreenOff() {
@@ -117,6 +134,8 @@ void ScreenOff() {
     ssd1351_PowerOff();
     _LAT(LED1) = 0;
     _LAT(LED2) = 0;
+
+    displayOn = false;
 }
 
 void ScreenOn() {
@@ -131,13 +150,14 @@ void ScreenOn() {
     draw_task->state = tsRun;
 
     AppGlobalEvent(evtScreenOn, NULL);
+
+    displayOn = true;
 }
 
 
 void ProcessCore() {
     while (1) {
         ProcessPowerMonitor();
-        CheckButtons();
 
         if (displayOn)
             Delay(CORE_PROCESS_INTERVAL);
@@ -146,64 +166,58 @@ void ProcessCore() {
     }
 }
 
-void CheckButtons() {
-    UINT32 i;
-/*#ifdef HID_BOOTLOADER
-     // Execute bootloader if USB cable is plugged in and a button is pressed
-    if (USB_VBUS_SENSE && (_PORT(BTN1) || _PORT(BTN4))) {
-        _LAT(LED1) = 0; _LAT(LED2) = 0;
-        for (i=0; i<100000; i++);
-        while ( _PORT(BTN1) || _PORT(BTN4) );
-        Reset();
+static void NextApp() {
+    if (current_app <= app_count-2) {
+        current_app++;
+        SetForegroundApp(installed_apps[current_app]);
     }
-#endif*/
-
-    // Wake up the display on any button press
-    if (!displayOn) {
-        if (_PORT(BTN1) || _PORT(BTN2) || _PORT(BTN3) || _PORT(BTN4)) {
-            displayOn = true;
-            ScreenOn();
-            Delay(100);
-        }
-    }
-
-    else {
-        // Screen off
-        if (_PORT(BTN4)) {
-            displayOn = false;
-            ScreenOff();
-            Delay(100);
-        }
-
-        // Prev app
-        if (_PORT(BTN2)) {
-            if (current_app > 0) {
-                current_app--;
-                SetForegroundApp(installed_apps[current_app]);
-                Delay(200);
-            }
-        }
-
-        // Next app
-        if (_PORT(BTN3)) {
-            if (current_app <= app_count-2) {
-                current_app++;
-                SetForegroundApp(installed_apps[current_app]);
-                Delay(200);
-            }
-        }
-    }
-
-    byte btn = _PORT(BTN1) | (_PORT(BTN2)<<1) | (_PORT(BTN3)<<2) | (_PORT(BTN4)<<3);
-    if (btn)
-        AppForegroundEvent(evtBtnPress, btn);
-
-    /*if (_PORT(BTN3)) {
-        ssd1351_DisplayOff();
-        WatchSleep();
-    }*/
-    // Can't use sleep yet until we can wake up from it.
 }
+static void PrevApp() {
+    if (current_app > 0) {
+        current_app--;
+        SetForegroundApp(installed_apps[current_app]);
+    }
+}
+
+static inline void OnBTNChange(bool btn_pressed, uint btn) {
+    if (btn_pressed) {
+        if (!displayOn) {
+            ScreenOn();
+        }
+        else {
+            switch (btn) {
+                case 1:
+                    break;
+                case 2:
+                    PrevApp();
+                    break;
+                case 3:
+                    NextApp();
+                    break;
+                case 4:
+                    ScreenOff();
+                    break;
+            }
+        }
+
+        AppForegroundEvent(evtBtnPress, btn);
+    } else {
+        AppForegroundEvent(evtBtnRelease, btn);
+    }
+}
+void OnBTN1Change(bool btn_pressed) {
+    OnBTNChange(btn_pressed, 1);
+}
+void OnBTN2Change(bool btn_pressed) {
+    OnBTNChange(btn_pressed, 2);
+}
+void OnBTN3Change(bool btn_pressed) {
+    OnBTNChange(btn_pressed, 3);
+}
+void OnBTN4Change(bool btn_pressed) {
+    OnBTNChange(btn_pressed, 4);
+}
+
 
 void BootPrintln(const char* s) {
     static uint32 y = 8;
@@ -321,6 +335,7 @@ void DrawFrame() {
     }
 
     // Framerate debug info
+    if (displayOn)
     {
         char s[8];
         sprintf(s, "%d", draw_ticks);

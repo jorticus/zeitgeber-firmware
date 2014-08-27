@@ -114,6 +114,8 @@ extern uint16 hw_dummy;
 #define _CNPUE_F(alpha)    (_CN ## alpha ## PUE)
 #define _CNPDE(pin)            pin(_CNPDE_F)
 #define _CNPDE_F(alpha)    (_CN ## alpha ## PDE)
+#define _CNIDX(pin)            pin(_CNIDX_F)
+#define _CNIDX_F(alpha)   alpha
 
 ////////// GPIO Configuration //////////////////////////////////////////////////
 
@@ -199,6 +201,9 @@ extern uint16 hw_dummy;
 // Secondary oscillator is 32.768kHz (For RTCC module)
 
 #define POSC 32000000ULL
+
+// Maximum number of CN pins available on the device
+#define NUM_CN_PINS 84
 
 #endif	/* HARDWARE_H */
 

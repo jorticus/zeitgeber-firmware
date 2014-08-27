@@ -12,33 +12,16 @@
 
 ////////// Globals /////////////////////////////////////////////////////////////
 
-buttons_t buttons;
-button_handlers_t button_handlers;
-
 ////////// Methods /////////////////////////////////////////////////////////////
 
-void gpio_init() {
-    // Ports are already initialized in the main Initialization routine
-
-    // Register PWM/tick handlers for flashing/beeping
+uint gpio_read(pinref_t* pinref) {
+    return ((*pinref->port) & pinref->pin_mask) ? true : false;  // Assumes mask only has 1 bit set
 }
 
-
-void gpio_process() {
-    // Debouncing
-
-    // Callbacks
-}
-
-
-void gpio_flash(uint led) {
-
-}
-
-void gpio_beep() {
-
-}
-
-void gpio_vibrate() {
-
+void gpio_write(pinref_t* pinref, uint value) {
+    if (value) {
+        (*pinref->lat) |= pinref->pin_mask;
+    } else {
+        (*pinref->lat) &= ~pinref->pin_mask;
+    }
 }

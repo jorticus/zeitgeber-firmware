@@ -16,35 +16,31 @@
 
 ////////// Properties //////////////////////////////////////////////////////////
 
-// Current state of the buttons
-// You must manually clear buttons to 0
 typedef struct {
-    unsigned btn1: 1;
-    unsigned btn2: 1;
-    unsigned btn3: 1;
-    unsigned btn4: 1;
-} buttons_t;
-extern buttons_t buttons;
+    volatile uint* tris;
+    volatile uint* port;
+    volatile uint* lat;
+    uint pin;
+    uint pin_mask;
+} pinref_t;
 
-typedef void (*btn_proc_t)(void);
+#define _TRIS_REG(pin)            pin(_TRIS_REG_F)
+#define _TRIS_REG_F(alpha,bit)    (TRIS ## alpha)
+#define _PORT_REG(pin)            pin(_PORT_REG_F)
+#define _PORT_REG_F(alpha,bit)    (PORT ## alpha)
+#define _LAT_REG(pin)            pin(_LAT_REG_F)
+#define _LAT_REG_F(alpha,bit)    (LAT ## alpha)
 
-// Callback functions which are activated when a button press is detected
-typedef struct {
-    btn_proc_t btn1_press;
-    btn_proc_t btn2_press;
-    btn_proc_t btn3_press;
-    btn_proc_t btn4_press;
-} button_handlers_t;
-extern button_handlers_t button_handlers;
+#define _PIN_IDX(pin)          pin(_PIN_IDX_F)
+#define _PIN_IDX_F(alpha,bit)   bit
+
+#define _PINREF(pin) (pinref_t){&_TRIS_REG(pin), &_PORT_REG(pin), &_LAT_REG(pin), _PIN_IDX(pin), 1 << _PIN_IDX(pin)}
+
+uint gpio_read(pinref_t* pinref);
+void gpio_write(pinref_t* pinref, uint value);
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
-extern void gpio_init();
-extern void gpio_process();
-
-extern void gpio_flash(uint led);
-extern void gpio_beep();
-extern void gpio_vibrate();
 
 
 #endif	/* GPIO_H */

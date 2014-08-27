@@ -125,7 +125,7 @@ static void Event(event_type_t type, uint param) {
             break;
         case evtBtnPress: {
             byte btn = (byte)param;
-            if (btn & 1) {
+            if (btn == 1) {
                 if (capturing)
                     StopCapture();
                 else
