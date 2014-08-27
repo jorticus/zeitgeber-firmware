@@ -129,8 +129,8 @@ void ssd1351_PowerOn() {
     //return;
     UINT32 i;
     
-    _LAT(OL_RESET) = 1;
-    for (i=0; i<10000; i++) { ClrWdt(); }
+    //_LAT(OL_RESET) = 1;
+    //for (i=0; i<10000; i++) { ClrWdt(); }
     _LAT(OL_RESET) = 0;
     for (i=0; i<100000; i++) { ClrWdt(); }
     _LAT(OL_RESET) = 1;
@@ -202,7 +202,7 @@ void ssd1351_PowerOff() {
     // Power off sequence
     ssd1351_DisplayOff();
 
-    _LAT(OL_RESET) = 1;
+    _LAT(OL_RESET) = 0;
     _LAT(OL_POWER) = 0;
 }
 

@@ -41,11 +41,11 @@ void InitializeIO() {
     _TRIS(OL_RW) = OUTPUT;
     _TRIS(OL_DC) = OUTPUT;
     _TRIS(OL_CS) = OUTPUT;
+    _LAT(OL_POWER) = 0;          // OLED supply off
+    _LAT(OL_RESET) = 0;          // Disable OLED
     _TRIS(OL_RESET) = OUTPUT;
     _TRIS(OL_POWER) = OUTPUT;
     OL_DATA_TRIS &= ~OL_DATA_MASK; // D0..D7 output
-    _LAT(OL_POWER) = 0;          // OLED supply off
-    _LAT(OL_RESET) = 1;          // Disable OLED
 
     /// Buttons ///
     _TRIS(BTN1) = INPUT;
@@ -75,8 +75,8 @@ void InitializeIO() {
     /// Power Supply ///
     _TRIS(PW_STAT1) = INPUT;
     _TRIS(PW_STAT2) = INPUT;
-    _TRIS(PW_CE) = OUTPUT;
     _LAT(PW_CE) = 0;        // Enable charging
+    _TRIS(PW_CE) = OUTPUT;
 
     /// Bluetooth ///
     _TRIS(BT_MISO) = INPUT;
@@ -84,8 +84,8 @@ void InitializeIO() {
     _TRIS(BT_REQN) = OUTPUT;
     _TRIS(BT_SCK) = OUTPUT;
     _TRIS(BT_RDYN) = INPUT;
+    _LAT(BT_RESET) = 0;     // Keep BT in reset
     _TRIS(BT_RESET) = OUTPUT;
-    _LAT(BT_RESET) = 1;     // Keep BT in reset
 
     /// Pin-Change Interrupts ///
     _CNIEn(INTM_CN) = 1;
