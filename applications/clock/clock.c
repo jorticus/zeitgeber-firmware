@@ -42,7 +42,7 @@ event_t* my_events[NUM_EVENTS];
 static void Initialize() {
     appclock.task->state = tsStop;
 
-    const event_t test = {.label="ENCE462", .location="Er466", .day=dwMonday, .time=((rtc_time_t){.hour=12})};
+//    const event_t test = {.label="ENCE462", .location="Er466", .day=dwMonday, .time=((rtc_time_t){.hour=12})};
 
     //                       label      loc     day        hr min
     my_events[0] = NewEvent("ENCE462", "Er466", dwMonday,    12, 0);

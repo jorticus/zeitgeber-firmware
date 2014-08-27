@@ -434,7 +434,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="applications/test/test.c" ex="false" overriding="false">
+      <item path="applications/test/test.c" ex="false" overriding="true">
         <C30>
           <property key="code-model" value="large-code"/>
           <property key="const-model" value="default"/>
