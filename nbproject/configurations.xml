@@ -70,7 +70,6 @@
         <itemPath>usb/usb_ch9.h</itemPath>
         <itemPath>usb/usb_common.h</itemPath>
         <itemPath>usb/usb_device.h</itemPath>
-        <itemPath>usb/usb_function_hid.h</itemPath>
         <itemPath>usb/usb_hal.h</itemPath>
         <itemPath>usb/usb_hal_pic24.h</itemPath>
       </logicalFolder>

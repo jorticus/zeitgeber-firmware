@@ -33,6 +33,7 @@ USB_HANDLE USBInHandle = 0; //USB handle.  Must be initialized to 0 at startup.
 
 static proc_t on_usb_sleep = NULL;
 static proc_t on_usb_wake = NULL;
+static bool connected = false;
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
@@ -53,6 +54,7 @@ void InitializeUSB(proc_t usb_sleep_cb, proc_t usb_wake_cb) {
 
     on_usb_sleep = usb_sleep_cb;
     on_usb_wake = usb_wake_cb;
+    connected = false;
 
     // Attach USB interrupts
 #if defined(USB_INTERRUPT)
@@ -90,8 +92,11 @@ BOOL USBTransmitBusy() {
  * Call back that is invoked when a USB suspend is detected
  */
 void USBCBSuspend(void) {
-    if (on_usb_sleep != NULL)
-        on_usb_sleep();
+    if (connected == true) {
+        connected = false;
+        if (on_usb_sleep != NULL)
+            on_usb_sleep();
+    }
 
     //Example power saving code.  Insert appropriate code here for the desired
     //application behavior.  If the microcontroller will be put to sleep, a
@@ -136,8 +141,11 @@ void USBCBWakeFromSuspend(void) {
     // Make sure the selected oscillator settings are consistent with USB
     // operation before returning from this function.
 
-    if (on_usb_wake != NULL)
-        on_usb_wake();
+    if (connected == false) {
+        connected = true;
+        if (on_usb_wake != NULL)
+            on_usb_wake();
+    }
 }
 
 /*
@@ -150,6 +158,11 @@ void USBCB_SOF_Handler(void) {
     // No need to clear UIRbits.SOFIF to 0 here.
     // Callback caller is already doing that.
 
+    if (connected == false) {
+        connected = true;
+        if (on_usb_wake != NULL)
+            on_usb_wake();
+    }
 }
 
 /*
@@ -221,8 +234,11 @@ void USBCBInitEP(void) {
     //Re-arm the OUT endpoint for the next packet
     USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & usb_rx_buffer, PACKET_SIZE);
 
-    if (on_usb_wake != NULL)
-        on_usb_wake();
+    if (connected == false) {
+        connected = true;
+        if (on_usb_wake != NULL)
+            on_usb_wake();
+    }
 }
 
 /*
