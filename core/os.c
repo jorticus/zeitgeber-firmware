@@ -83,6 +83,9 @@ uint draw_ticks;
 
 uint current_app = 0;
 
+volatile bool lock_display = false;
+volatile bool display_frame_ready = false;
+
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void ProcessCore();
@@ -315,11 +318,17 @@ void DrawLoop() {
 
         t1 = systick;
 
-        DrawFrame();
+        if (!lock_display) {
+            display_frame_ready = false;
 
-        //_LAT(LED1) = 1;
-        UpdateDisplay();
-        //_LAT(LED1) = 0;
+            DrawFrame();
+        
+            display_frame_ready = true;
+
+            //_LAT(LED1) = 1;
+            UpdateDisplay();
+            //_LAT(LED1) = 0;
+        }
 
         t2 = systick;
         draw_ticks = (t2 >= t1) ? (t2 - t1) : 0;

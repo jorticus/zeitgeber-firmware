@@ -19,14 +19,15 @@
 // System debug information
 #define CMD_GET_BATTERY_INFO    0x10    // Battery voltage, VDD, levels, status
 #define CMD_GET_CPU_INFO        0x11    // Osc freq, systick, utilization, time spent in sleep
-#define CMD_GET_NEXT_MESSAGE   0x12    // Next debug message in the buffer
+#define CMD_GET_NEXT_MESSAGE    0x12    // Next debug message in the buffer
 
 // Display interface
 #define CMD_QUERY_DISPLAY       0x20    // Returns parameters of the display
 #define CMD_SET_DISPLAY_POWER   0x21    // Turns the display on or off
-#define CMD_DISPLAY_OVERRIDE    0x22    // Stops the display buffer from being updated by the system
-#define CMD_UPDATE_DISPLAY_BUF  0x24    // Update the display buffer with some custom data
-#define CMD_READ_DISPLAY_BUF    0x25    // Retrieve the contents of the display buffer
+#define CMD_DISPLAY_LOCK        0x22    // Stops the display buffer from being updated by the system
+#define CMD_DISPLAY_UNLOCK      0x23
+#define CMD_DISPLAY_WRITEBUF    0x24    // Update the display buffer with some custom data
+#define CMD_DISPLAY_READBUF     0x25    // Retrieve the contents of the display buffer
 
 // Sensors
 #define CMD_QUERY_SENSORS       0x30    // Return a list of available sensors
@@ -73,6 +74,14 @@ typedef struct {
     // Current display parameters
     uint16 display_on;
 } display_query_t;
+
+#define DISP_CHUNK_SIZE 32
+typedef struct {
+    byte command;
+    byte state;
+    uint16 offset;
+    byte buf[DISP_CHUNK_SIZE];
+} display_chunk_t;
 
 typedef struct {
     byte command;

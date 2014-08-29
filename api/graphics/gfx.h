@@ -139,5 +139,9 @@ extern int DrawString(const char* str, uint8 x, uint8 y, color_t color);
 // Calculate the width in pixels of the provided string, including 1px char spacing
 extern int StringWidth(const char* str);
 
+///// Buffer Capture /////
+
+extern void ReadScreenBuffer(byte* buf, uint offset, uint len);
+
 #endif	/* GFX_H */
 

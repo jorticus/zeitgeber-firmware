@@ -355,3 +355,12 @@ void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, ui
     }*/
 }
 
+
+extern void ReadScreenBuffer(byte* buf, uint offset, uint len) {
+    uint i, j;
+
+    __eds__ byte* screen_buf = (__eds__ byte*)screen;
+    for (i=0, j=offset; i<len; i++, j++) {
+        buf[i] = screen_buf[j];
+    }
+}

@@ -22,6 +22,7 @@
 #include "api/graphics/gfx.h"
 #include "drivers/ssd1351.h"
 #include "core/printf.h"
+#include "core/os.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
@@ -42,7 +43,6 @@ comms_status_t comms_status = cmDisconnected;
 unsigned char tx_buffer[PACKET_SIZE];
 
 static task_t* comms_task;
-
 
 
 ////////// Prototypes //////////////////////////////////////////////////////////
@@ -191,22 +191,42 @@ void comms_ReceivedPacket(unsigned char* packet) {
             break;
         }
 
-        case CMD_DISPLAY_OVERRIDE:
+        case CMD_DISPLAY_LOCK:
         {
-            bool override = packet[1];
-            // TODO
+            lock_display = true;
             break;
         }
 
-        case CMD_UPDATE_DISPLAY_BUF:
+        case CMD_DISPLAY_UNLOCK:
+        {
+            lock_display = false;
+            break;
+        }
+
+        case CMD_DISPLAY_WRITEBUF:
         {
             //TODO: Will require multiple RX packets
             break;
         }
 
-        case CMD_READ_DISPLAY_BUF:
+        case CMD_DISPLAY_READBUF:
         {
-            //TODO: Will require multiple TX packets
+            display_chunk_t* request = (display_chunk_t*)packet;
+            display_chunk_t* chunk = (display_chunk_t*)tx_buffer;
+
+            // Make sure the display has a full frame first
+            if (display_frame_ready) {
+                chunk->state = 1;
+                
+                // Send the next chunk
+                chunk->offset = request->offset;
+                ReadScreenBuffer(chunk->buf, request->offset, DISP_CHUNK_SIZE);
+
+            } else {
+                chunk->state = 0;
+            }
+
+            //comms_read_display_buf(tx_packet);
             break;
         }
 
