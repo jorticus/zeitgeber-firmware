@@ -19,6 +19,7 @@
 // System debug information
 #define CMD_GET_BATTERY_INFO    0x10    // Battery voltage, VDD, levels, status
 #define CMD_GET_CPU_INFO        0x11    // Osc freq, systick, utilization, time spent in sleep
+#define CMD_GET_NEXT_MESSAGE   0x12    // Next debug message in the buffer
 
 // Display interface
 #define CMD_QUERY_DISPLAY       0x20    // Returns parameters of the display
@@ -89,6 +90,16 @@ typedef struct {
 
     byte data[PACKET_SIZE-4];     // Raw data, format depends on the sensor type
 } sensor_packet_t;
+
+#define DEBUG_MESSAGE_MAXLEN  PACKET_SIZE-4
+typedef struct {
+    byte command;
+    byte reserved;
+
+    uint16 len;
+
+    char message[DEBUG_MESSAGE_MAXLEN];
+} message_packet_t;
 
 typedef struct {
     byte command;

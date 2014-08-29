@@ -62,7 +62,7 @@ extern void KernelStartTask(task_t* sp);
 #endif
 
 
-volatile uint systick = 1;
+volatile uint __attribute__((near)) systick = 1;
 
 // Note: since we want to stop the systick interrupt from waking the CPU
 // out of sleep mode, we'll need to add the number of ticks spent sleeping somehow?

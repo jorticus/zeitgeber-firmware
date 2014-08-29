@@ -8,6 +8,7 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "system.h"
 #include "core/kernel.h"
 #include "api/graphics/gfx.h"
@@ -239,44 +240,7 @@ void DisplayBootScreen() {
     BootPrintln("OLED Watch v1.0");
     //DrawString("Booting...", 8, y, WHITE); y += 10;
 
-    // Check the reset status
-    // Software resets are the only type of reset that should occur normally
-    if (RCON & UNEXPECTED_RESET) {
-        //TODO: Draw an error icon or something
-
-        if (RCONbits.BOR)
-            // Likely cause: low battery voltage.
-            BootPrintln("RST: Brown-out");
-        else if (RCONbits.CM)
-            BootPrintln("RST: Conf Mismatch");
-        else if (RCONbits.IOPUWR)
-            // Likely cause: pointer to function pointed to an invalid memory region, so PC encountered an invalid opcode
-            BootPrintln("RST: Invalid Opcode");
-        else if (RCONbits.EXTR)
-            // Manual MCLR reset
-            BootPrintln("RST: MCLR");
-        else if (RCONbits.POR)
-            // This will only happen if powering-up from a flat battery.
-            BootPrintln("RST: Power-on");
-        else if (RCONbits.WDTO)
-            // This will happen if the code gets stuck in a loop somewhere
-            BootPrintln("RST: Watchdog Timeout");
-        else if (RCONbits.TRAPR)
-            // This will happen if a trap interrupt is triggered
-            BootPrintln("RST: Trap Error");
-        //else if (RCONbits.SWR)
-        //    DrawString("RST: Software", 8,y,WHITE);
-        else {
-            BootPrintln("RST: Unknown");
-            utoa(s, RCON & RCON_RESET, 16);
-            BootPrintln(s);
-        }
-
-        // Optionally reset back into the bootloader,
-        // to allow any problems to be fixed
-
-    }
-    RCON &= ~RCON_RESET;
+    
     
     for (i=0; i<1000000; i++) { ClrWdt(); }
 }

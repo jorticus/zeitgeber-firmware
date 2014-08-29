@@ -35,7 +35,7 @@ void InitializeApplications() {
     for (i=0; i<app_count; i++) {
         ClrWdt();
         application_t* app = installed_apps[i];
-        BootPrintln(app->name);
+        printf("\t%s\n", app->name);
 
         if (app->init != NULL)
             app->init();

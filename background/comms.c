@@ -21,6 +21,7 @@
 #include "background/power_monitor.h"
 #include "api/graphics/gfx.h"
 #include "drivers/ssd1351.h"
+#include "core/printf.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
 
@@ -42,6 +43,8 @@ unsigned char tx_buffer[PACKET_SIZE];
 
 static task_t* comms_task;
 
+
+
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void ProcessComms();
@@ -53,6 +56,8 @@ void comms_wake();
 ////////// Methods /////////////////////////////////////////////////////////////
 
 void InitializeComms() {
+    msg_init();
+
     InitializeUSB(&comms_sleep, &comms_wake);
     
     // Communications, only needs to be run when USB is connected
@@ -141,6 +146,20 @@ void comms_ReceivedPacket(unsigned char* packet) {
 
             // systick.h
             tx_packet->systick = systick;
+
+            break;
+        }
+
+        case CMD_GET_NEXT_MESSAGE:
+        {
+            message_packet_t* tx_packet = (message_packet_t*)tx_buffer;
+
+            if (!msg_isempty()) {
+                msg_pop(tx_packet->message);
+                tx_packet->len = strlen(tx_packet->message);
+            } else {
+                tx_packet->len = 0;
+            }
 
             break;
         }

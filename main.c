@@ -30,6 +30,7 @@
 
 #include <stdlib.h>
 #include <system.h>
+#include <stdio.h>
 #include <Rtcc.h>
 #include "hardware.h"
 
@@ -121,6 +122,9 @@ void Initialize() {
     InitializeIO();
     InitializeOsc();
 
+    // Enable watchdog (default approx 1 sec timeout)
+    RCONbits.SWDTEN = 1;
+
     //_LAT(LED1) = 1;
     //_LAT(LED2) = 1;
 
@@ -133,15 +137,48 @@ void Initialize() {
     InitializeClock();
     InitializeKernel();
     InitializeComms();
-    InitializeOled();
+    //InitializeOled();
     InitializeOS();
 
+    printf("Zeitgeber (OLED Watch r2)\n");
+
+    // Check the reset status
+    // Software resets are the only type of reset that should occur normally
+    if (RCON) {
+        printf("RST: ");
+        if (RCONbits.BOR)
+            // Likely cause: low battery voltage.
+            printf("Brown-out\n");
+        else if (RCONbits.CM)
+            printf("Conf Mismatch\n");
+        else if (RCONbits.IOPUWR)
+            // Likely cause: pointer to function pointed to an invalid memory region, so PC encountered an invalid opcode
+            printf("Invalid Opcode\n");
+        else if (RCONbits.EXTR)
+            // Manual MCLR reset
+            printf("MCLR\n");
+        else if (RCONbits.POR)
+            // This will only happen if powering-up from a flat battery.
+            printf("Power-on\n");
+        else if (RCONbits.WDTO)
+            // This will happen if the code gets stuck in a loop somewhere
+            printf("Watchdog Timeout\n");
+        else if (RCONbits.TRAPR)
+            // This will happen if a trap interrupt is triggered
+            printf("Trap Error\n");
+        else if (RCONbits.SWR)
+            printf("Software\n");
+        else {
+            printf("Unknown (%d)\n", RCON & RCON_RESET);
+        }
+    }
+    RCON &= ~RCON_RESET;
+
+
+    printf("Initializing OLED\n");
     ClearImage();
     ScreenOn();
-    DisplayBootScreen();
-
-    // Enable watchdog
-    RCONbits.SWDTEN = 1;
+    //DisplayBootScreen();
 
     _LAT(LED1) = 0;
 }
@@ -156,11 +193,11 @@ int main() {
     RegisterUserApplication(&appkdiag);
 
     ClrWdt();
-    BootPrintln("Initializing apps:");
+    printf("Initializing apps:\n");
     InitializeApplications();
 
     ClrWdt();
-    BootPrintln("Starting the kernel");
+    printf("Starting the kernel\n");
     SetForegroundApp(&appclock);
     //SetForegroundApp(&apptest);
     //SetForegroundApp(&appimu);
