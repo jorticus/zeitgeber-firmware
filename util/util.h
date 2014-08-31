@@ -20,5 +20,8 @@ byte int2bcd(byte i);
 
 char* decitoa(char* buf, unsigned val);
 
+#define min(a, b) ((a < b) ? b : a)
+#define max(a, b) ((a > b) ? b : a)
+
 #endif	/* UTIL_H */
 

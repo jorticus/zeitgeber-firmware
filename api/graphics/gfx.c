@@ -293,14 +293,12 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color) {
     }
 }
 
-INLINE uint max(uint a, uint b) {
+static INLINE uint max(uint a, uint b) {
 	return (a < b) ? b : a;
 }
-INLINE uint min(uint a, uint b) {
+static INLINE uint min(uint a, uint b) {
 	return (a < b) ? a : b;
 }
-
-
 
 
 // Copy a source image to the screen using the specified drawing operation

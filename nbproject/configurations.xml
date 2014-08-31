@@ -54,6 +54,9 @@
         <itemPath>core/printf.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="drivers" projectFiles="true">
+        <logicalFolder name="f2" displayName="btle" projectFiles="true">
+          <itemPath>drivers/btle/btle.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
           <itemPath>drivers/usb/usb.h</itemPath>
           <itemPath>HardwareProfile.h</itemPath>
@@ -87,6 +90,7 @@
         <itemPath>util/vector.h</itemPath>
         <itemPath>util/util.h</itemPath>
         <itemPath>util/timestamp.h</itemPath>
+        <itemPath>util/fifo.h</itemPath>
       </logicalFolder>
       <itemPath>system.h</itemPath>
       <itemPath>hardware.h</itemPath>
@@ -128,6 +132,10 @@
         <itemPath>core/printf.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="drivers" projectFiles="true">
+        <logicalFolder name="f2" displayName="btle" projectFiles="true">
+          <itemPath>drivers/btle/btaci.c</itemPath>
+          <itemPath>drivers/btle/btle.c</itemPath>
+        </logicalFolder>
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
           <itemPath>drivers/usb/usb_descriptors.c</itemPath>
           <itemPath>drivers/usb/usb_device.c</itemPath>
@@ -152,6 +160,7 @@
         <itemPath>util/bcd.c</itemPath>
         <itemPath>util/timestamp.c</itemPath>
         <itemPath>util/str.c</itemPath>
+        <itemPath>util/fifo.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
