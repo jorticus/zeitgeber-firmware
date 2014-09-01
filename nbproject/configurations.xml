@@ -161,6 +161,7 @@
         <itemPath>util/timestamp.c</itemPath>
         <itemPath>util/str.c</itemPath>
         <itemPath>util/fifo.c</itemPath>
+        <itemPath>util/bitreverse.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>

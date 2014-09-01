@@ -13,7 +13,7 @@
 #include "background/comms.h"
 #include "printf.h"
 
-#define MESSAGE_FIFO_SIZE 16
+#define MESSAGE_FIFO_SIZE 32
 
 typedef struct {
     char message[DEBUG_MESSAGE_MAXLEN];

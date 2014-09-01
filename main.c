@@ -102,7 +102,7 @@ void Shutdown() {
 
     _LAT(OL_POWER) = 0;
     _LAT(OL_RESET) = 1;
-    _LAT(BT_RESET) = 1;
+    _LAT(BT_RESET) = 0;
 
     _LAT(LED1) = 0;
     _LAT(LED2) = 0;
@@ -174,6 +174,8 @@ void Initialize() {
     }
     RCON &= ~RCON_RESET;
 
+    printf("Initializing BTLE\n");
+    InitializeBTLE();
 
     printf("Initializing OLED\n");
     ClearImage();

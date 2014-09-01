@@ -20,8 +20,10 @@ byte int2bcd(byte i);
 
 char* decitoa(char* buf, unsigned val);
 
-#define min(a, b) ((a < b) ? b : a)
-#define max(a, b) ((a > b) ? b : a)
+extern const uint8 bitreverse[256];
+
+#define min(a, b) ((a < b) ? a : b)
+#define max(a, b) ((a > b) ? a : b)
 
 #endif	/* UTIL_H */
 

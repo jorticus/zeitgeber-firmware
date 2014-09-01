@@ -8,6 +8,7 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <system.h>
+#include <PPS.h>
 #include "cpu.h"
 #include "hardware.h"
 
@@ -105,11 +106,12 @@ void InitializeIO() {
     _TRIS(USB_VBUS) = INPUT;
     _CNPUE(USB_DPLUS_CN) = 0;
 
-    /// Peripheral Pin Select ///
-    // BT_MISO : SDI
-    // BT_MOSI : SDO
-    // BT_SCK : SCK
-    // Chip select?
+    // Configure pin remapping
+    PPSUnLock;
+    PPSInput(PPS_SDI1, PPS_RP6);        // BT_MISO : SDI : RP6 (Input)
+    PPSOutput(PPS_RP7, PPS_SDO1);       // BT_MOSI : SDO : RP7 (Output)
+    PPSOutput(PPS_RP9, PPS_SCK1OUT);    // BT_SCK  : SCK : RP9 (Output)
+    PPSLock;
 
     /// Disable Unused Peripherals ///
     // Setting the PMD bit on a peripheral will cut the clock source to it.

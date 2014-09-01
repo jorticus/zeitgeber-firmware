@@ -10,9 +10,12 @@
 
 ////////// Includes ////////////////////////////////////////////////////////////
 
+#define USE_AND_OR      // For <spi.h>
+
 #include <system.h>
 #include <stdio.h>
 #include <spi.h>
+#include <PPS.h>
 #include "hardware.h"
 #include "util/fifo.h"
 #include "util/util.h"
@@ -76,13 +79,19 @@ static int credits = 0;
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 static bool btle_aci_use_credit(byte command);
-void btle_aci_transfer_packet(aci_packet_t* tx_packet);
+bool btle_aci_transfer_packet(aci_packet_t* tx_packet);
+void btle_aci_reset();
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
 
-byte spi_transfer(byte b) {
-    return 0;
+static byte spi_transfer(byte b) {
+    WriteSPI1(bitreverse[b]);
+
+    while (!DataRdySPI1()) continue;
+    
+    byte rb = ReadSPI1() & 0xFF;
+    return bitreverse[rb];
 }
 
 static inline void btle_aci_start() {
@@ -100,31 +109,53 @@ static inline void btle_aci_stop() {
 }
 
 void btle_aci_init() {
+    _SPI1MD = 0; // Enable SPI peripheral
+
     // Initialize IO
     _LAT(BT_REQN) = 1;      // Active-low
     _TRIS(BT_REQN) = OUTPUT;
     _TRIS(BT_RDYN) = INPUT;
-    
-    // Set up pin-change interrupt for RDYN signal
 
-    // Set up the SPI interface
+    // Set up the SPI interface..
+    // Output data is clocked out on the rising edge
+    // Input data is sampled on the falling edge
+    // Clock is active-high
+    OpenSPI1(ENABLE_SCK_PIN | ENABLE_SDO_PIN | SPI_MODE8_ON | SPI_SMP_OFF |
+            SPI_CKE_ON | SLAVE_ENABLE_OFF | CLK_POL_ACTIVE_HIGH | MASTER_ENABLE_ON |
+            //PRI_PRESCAL_1_1 | SEC_PRESCAL_1_1, // Fastest
+            PRI_PRESCAL_16_1 | SEC_PRESCAL_1_1, // Slower, for debugging
+            FRAME_ENABLE_OFF | SPI_ENH_BUFF_DISABLE,
+            SPI_IDLE_CON | SPI_ENABLE);
+
+    // Initialize interrupts
+    //_SPI1IP = 3;
+    //_SPI1IF = 0;
+    //_SPI1IE = 1;
 
     // Initialize FIFOs
-    fifo_init(&recv_queue, FIFO_SIZE);
-    fifo_init(&send_queue, FIFO_SIZE);
+    //fifo_init(&recv_queue, FIFO_SIZE);
+    //fifo_init(&send_queue, FIFO_SIZE);
 
-    _LAT(BT_RESET) = 1;     // Enable BT
+    btle_aci_reset();
     // NOTE: Must wait 62ms before RDYN is valid
 }
 
 void btle_aci_process() {
+    uint i;
 
     // The bluetooth chip wants to send a packet
     if (_RDYN) {
-        printf("NRF: Event received\n");
+        //printf("NRF: Event received\n");
         btle_aci_transfer_packet(NULL);
     }
     
+}
+
+void btle_aci_reset() {
+    _LAT(BT_RESET) = 0;
+    Delay(1);
+    _LAT(BT_RESET) = 1;
+    Delay(64);
 }
 
 static bool btle_aci_use_credit(byte command) {
@@ -153,17 +184,17 @@ bool btle_aci_transfer_packet(aci_packet_t* tx_packet) {
     byte tx_len = 0;
     byte tx_command = 0;
 
-    if (tx_packet != NULL) {
+    /*if (tx_packet != NULL) {
         tx_len = tx_packet->len;
         tx_command = tx_packet->command;
-        printf("TX: %d bytes (code:0x%x)\n", tx_packet->len, tx_packet->event);
-    }
+        //printf("TX: %d bytes (code:0x%x)\n", tx_packet->len, tx_packet->event);
+    }*/
     
     // Check we have enough available credits
-    if (tx_len > 0) {
+    /*if (tx_len > 0) {
         if (!btle_aci_use_credit(tx_command))
             return false; // Insufficient credits
-    }
+    }*/
 
     // Start the transmission
     btle_aci_start();
@@ -179,12 +210,12 @@ bool btle_aci_transfer_packet(aci_packet_t* tx_packet) {
     for (i=0; i<len; i++) {
         byte rxb, txb;
 
-        if ((tx_packet != NULL) && (i < tx_len))
+        /*if ((tx_packet != NULL) && (i < tx_len))
             txb = tx_packet->payload[i+1];  // Transmit payload
         else
-            txb = 0x00;  // Receive only
+            txb = 0x00;  // Receive only*/
 
-        rxb = spi_transfer(txb);
+        rxb = spi_transfer(0x00);
 
         if (i < rx_len)
             rx_packet.payload[i] = rxb;
@@ -195,7 +226,7 @@ bool btle_aci_transfer_packet(aci_packet_t* tx_packet) {
 
     // Process the received packet
     if ((rx_debug == 0) && (rx_packet.len > 0)) {
-        printf("RX: %d bytes (code:0x%x)\n", rx_packet.len, rx_packet.event);
+        printf("RX: %d bytes, code:0x%x\n", rx_packet.len, rx_packet.event);
 
         //TODO: Process the event
         // is it a response to a command? -> set flag and notify
@@ -204,3 +235,10 @@ bool btle_aci_transfer_packet(aci_packet_t* tx_packet) {
 
     return true;
 }
+
+
+////////// Interrupts //////////////////////////////////////////////////////////
+
+/*void isr _SPI1Interrupt() {
+    // Triggered when a byte has finished transmitting or when a byte is received
+}*/
