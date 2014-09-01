@@ -13,3 +13,11 @@ It is written for the PIC24FJ256DA206 and PIC24FJ256GB206, using the XC16 free (
 - Device drivers for connected sensors
 - USB HID communications (driver free!)
 - It can tell the time!
+
+## Screenshots ##
+
+These were pulled directly from the watch while it was operating!
+
+![Clock Screenshot](https://raw.githubusercontent.com/jorticus/zeitgeber-firmware/master/screenshots/screenshot-clock.png "Clock Screenshot")
+
+![Accelerometer Log Screenshot](https://raw.githubusercontent.com/jorticus/zeitgeber-firmware/master/screenshots/screenshot-accelerometer.png "Accelerometer Log Screenshot")
