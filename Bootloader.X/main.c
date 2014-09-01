@@ -64,7 +64,7 @@
 /** CONFIGURATION **************************************************/
 
 _CONFIG1(FWDTEN_OFF & WDTPS_PS256 & WINDIS_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
-_CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV8 & IESO_OFF) // For 32MHz OSC
+_CONFIG2(POSCMOD_HS & IOL1WAY_OFF & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV8 & IESO_OFF) // For 32MHz OSC
 _CONFIG3(0xFFFF);
 
 
@@ -274,6 +274,10 @@ void InitializeIO()
     _TRIS(OL_RESET) = OUTPUT;
     _LAT(OL_POWER) = 0;     // Disable +12V
     _LAT(OL_RESET) = 1;     // Disable OLED
+
+    /// Bluetooth ///
+    _LAT(BT_RESET) = 0;
+    _TRIS(BT_RESET) = OUTPUT;
 
     // Reference Clock Out
     //_RODIV = 0b0101;  // 1MHz
