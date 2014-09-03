@@ -16,56 +16,41 @@
 #include <stdio.h>
 #include <spi.h>
 #include <PPS.h>
+#include "core/kernel.h"
 #include "hardware.h"
 #include "util/fifo.h"
 #include "util/util.h"
+#include "btaci.h"
+#include "btaci_events.h"
+#include "btaci_statuscodes.h"
+#include "btaci_commands.h"
+
+
+////////// Shared Module Variables /////////////////////////////////////////////
+
+device_state_t btle_device_state = nsUnknown;
+bool btle_connected = false;
+
+uint8 btle_pipes_open = 0;
 
 ////////// Local Variables /////////////////////////////////////////////////////
 
-#define FIFO_SIZE 8
-
-#define MAX_PACKET_SIZE 32
-#define MAX_TX_SIZE (MAX_PACKET_SIZE-1)
-//#define MAX_RX_SIZE (MAX_PACKET_SIZE-2)
-
-typedef struct {
-    byte len;
-    byte buf[MAX_PACKET_SIZE];
-} message_t;
-
-
-typedef struct {
-    byte len;
-    union {
-        byte payload [MAX_PACKET_SIZE-1];
-        
-        struct {
-            byte command;
-        };
-        
-        struct {
-            byte event;
-        };
-    };
-} aci_packet_t;
-
-
-static fifo_t recv_queue;
-static fifo_t send_queue;
+//static fifo_t recv_queue;
+//static fifo_t send_queue;
 
 // recv_message_queue (queue of received ACI data, set asynchronously via interrupt)
 // send_message_queue (queue of ACI commands to send. each goes through the reqn/rdyn handshaking process)
 // aci_state (message_to_send, reqn, rdyn, waiting_for_rdyn/sending/done)
 
-
-typedef enum { ddIdle, ddTransmit, ddReceive } aci_datadir_t;
+/*typedef enum { ddIdle, ddTransmit, ddReceive } aci_datadir_t;
 typedef enum { txWaitForRDYN, txTransmit } aci_txstate_t;
 
 static aci_datadir_t aci_state = ddIdle;
 static aci_txstate_t aci_txstate;
-static bool aci_rdyn = false;
+static bool aci_rdyn = false;*/
 
-static int credits = 0;
+static int available_credits = 0;
+static int next_setup_message = -1;
 
 ////////// Macros //////////////////////////////////////////////////////////////
 
@@ -78,9 +63,14 @@ static int credits = 0;
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
+void btle_debug_packet(aci_packet_t* packet);
+
 static bool btle_aci_use_credit(byte command);
-bool btle_aci_transfer_packet(aci_packet_t* tx_packet);
-void btle_aci_reset();
+static bool btle_aci_handle_event(aci_packet_t* rx_packet);
+static bool btle_aci_handle_command_response(command_response_evt* response);
+
+// btle.c
+extern bool btle_app_handle_event(aci_packet_t* rx_packet);
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
@@ -141,8 +131,6 @@ void btle_aci_init() {
 }
 
 void btle_aci_process() {
-    uint i;
-
     // The bluetooth chip wants to send a packet
     if (_RDYN) {
         //printf("NRF: Event received\n");
@@ -162,13 +150,13 @@ static bool btle_aci_use_credit(byte command) {
     // Check we have enough available credits
     if (command == 0 || command == 0) {
 
-        if (credits < 1) {
+        if (available_credits < 1) {
             printf("NRF: Insufficient credits\n");
             return false; // Insufficient credits
         }
 
         // Use a credit
-        credits--;
+        available_credits--;
     }
     
     return true;
@@ -184,11 +172,11 @@ bool btle_aci_transfer_packet(aci_packet_t* tx_packet) {
     byte tx_len = 0;
     byte tx_command = 0;
 
-    /*if (tx_packet != NULL) {
+    if (tx_packet != NULL) {
         tx_len = tx_packet->len;
         tx_command = tx_packet->command;
-        //printf("TX: %d bytes (code:0x%x)\n", tx_packet->len, tx_packet->event);
-    }*/
+        printf("TX: %d bytes (code:0x%x)\n", tx_packet->len, tx_packet->command);
+    }
     
     // Check we have enough available credits
     /*if (tx_len > 0) {
@@ -210,12 +198,12 @@ bool btle_aci_transfer_packet(aci_packet_t* tx_packet) {
     for (i=0; i<len; i++) {
         byte rxb, txb;
 
-        /*if ((tx_packet != NULL) && (i < tx_len))
+        if ((tx_packet != NULL) && (i < tx_len))
             txb = tx_packet->payload[i+1];  // Transmit payload
         else
-            txb = 0x00;  // Receive only*/
+            txb = 0x00;  // Receive only
 
-        rxb = spi_transfer(0x00);
+        rxb = spi_transfer(txb);
 
         if (i < rx_len)
             rx_packet.payload[i] = rxb;
@@ -224,18 +212,154 @@ bool btle_aci_transfer_packet(aci_packet_t* tx_packet) {
     // Finish the transmission
     btle_aci_stop();
 
+    if (rx_packet.len > 0) {
+
+        printf("RX: ");
+        btle_debug_packet(&rx_packet);
+        
+        btle_aci_handle_event(&rx_packet);
+        btle_app_handle_event(&rx_packet);
+    }
+
     // Process the received packet
-    if ((rx_debug == 0) && (rx_packet.len > 0)) {
-        printf("RX: %d bytes, code:0x%x\n", rx_packet.len, rx_packet.event);
+    /*if ((rx_debug == 0) && (rx_packet.len > 0)) {
+        //printf("RX: %d bytes, code:0x%x\n", rx_packet.len, rx_packet.event);
 
         //TODO: Process the event
         // is it a response to a command? -> set flag and notify
         // is it an asynchronous event? -> call an appropriate callback & debug
-    }
+    } else {
+        //printf("RX: DEBUG\n");
+    }*/
 
     return true;
 }
 
+bool btle_aci_handle_event(aci_packet_t* rx_packet) {
+
+    // Handle ACI-specific events
+    switch (rx_packet->command) {
+        case NRF_EVENT_DEVICE_STARTED:
+        {
+            device_started_evt* event = (device_started_evt*)rx_packet;
+
+            /*printf("RX: ");
+            btle_debug_packet(rx_packet);*/
+
+            available_credits = event->data_credit_available;
+            btle_device_state = event->operating_mode;
+
+            // DEBUG INFO
+            printf("NRF: DeviceStartedEvent Mode:");
+            switch (event->operating_mode) {
+                case 0x01:
+                    printf("test");
+                    break;
+                case 0x02:
+                    printf("setup");
+                    break;
+                case 0x03:
+                    printf("standby");
+                    break;
+            }
+            printf("\n");
+
+            break;
+        }
+
+        case NRF_EVENT_COMMAND_RESPONSE:
+        {
+            command_response_evt* event = (command_response_evt*)rx_packet;
+
+            if (event->status != ACI_STATUS_SUCCESS) {
+
+                // Handle setup command
+                if (event->command == NRF_CMD_SETUP) {
+                    if (event->status == ACI_STATUS_TRANSACTION_CONTINUE) {
+                        next_setup_message++;
+                        printf("NRF: Ready for next setup message\n");
+                        break;
+                    } else if (event->status == ACI_STATUS_TRANSACTION_COMPLETE) {
+                        next_setup_message = -1;
+                        printf("NRF: Setup complete\n");
+                        break;
+                    }
+                }
+            }
+
+            if (event->status & 0x80) {
+                // Report error
+                printf("ERR: (Cmd: 0x%.2x, Error: 0x%.2x)\n", event->command, event->status);
+                break;
+            } else {
+                // DEBUG INFO
+                printf("RESP: (Cmd:0x%.2x Status:%.2x) ", event->command, event->status);
+                uint i;
+                for (i=0; i<event->len-3; i++) {
+                    printf(" %.2x", event->response_data[i]);
+                }
+                printf("\n");
+            }
+
+            //return btle_aci_handle_command_response(event);
+            break;
+        }
+
+        /*case NRF_EVENT_CONNECTED:
+        {
+            btle_connected = true;
+            printf("NRF: Connected!\n");
+            break;
+        }
+
+        case NRF_EVENT_DISCONNECTED:
+        {
+            btle_connected = false;
+            printf("NRF: Disconnected!\n");
+            break;
+        }
+
+        case NRF_EVENT_DATA_CREDIT:
+        {
+
+            break;
+        }
+
+        case NRF_EVENT_PIPE_STATUS:
+        {
+            break;
+        }
+
+        case NRF_EVENT_BOND_STATUS:
+        {
+            break;
+        }*/
+
+        default:
+            return false;
+    }
+    return true;
+}
+
+static bool btle_aci_handle_command_response(command_response_evt* response) {
+
+}
+
+void btle_debug_packet(aci_packet_t* packet) {
+    uint i;
+    printf("0x%.2x %d :", packet->command, packet->len);
+    for (i=0; i<packet->len-1; i++)
+        printf(" %.2x", packet->content[i]);
+    printf("\n");
+}
+
+////////// ACI Methods /////////////////////////////////////////////////////////
+
+/*void btle_broadcast(uint16 timeout, uint16 adv_interval) {
+    aci_packet_t packet;
+    packet.len = 5;
+    packet.command = NRF_CMD_BROADCAST;
+}*/
 
 ////////// Interrupts //////////////////////////////////////////////////////////
 
