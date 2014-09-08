@@ -40,17 +40,16 @@ event_t* my_events[NUM_EVENTS];
 
 // Called when CPU initializes 
 static void Initialize() {
-
-//    const event_t test = {.label="ENCE462", .location="Er466", .day=dwMonday, .time=((rtc_time_t){.hour=12})};
-
     //                       label      loc     day        hr min
-    my_events[0] = NewEvent("ENCE462", "Er466", dwMonday,    12, 0);
-    my_events[1] = NewEvent("COSC418", "Er235", dwMonday,    15, 0);
-    my_events[2] = NewEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
-    my_events[3] = NewEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
-    my_events[4] = NewEvent("ENCE463", "E11",   dwWednesday, 10, 0);
-    my_events[5] = NewEvent("ENCE463", "KD05",  dwThursday,  11, 0);
-    my_events[6] = NewEvent("ENCE462", "Er466", dwThursday,  14, 0);
+    AddTimetableEvent("ENCE462", "Er466", dwMonday,    12, 0);
+    AddTimetableEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
+    AddTimetableEvent("ENCE462", "Er466", dwThursday,  14, 0);
+
+    AddTimetableEvent("COSC418", "Er235", dwMonday,    15, 0);
+
+    AddTimetableEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
+    AddTimetableEvent("ENCE463", "E11",   dwWednesday, 10, 0);
+    AddTimetableEvent("ENCE463", "KD05",  dwThursday,  11, 0);
 }
 
 // Called periodically when isForeground==true (30Hz)
@@ -101,12 +100,19 @@ static void Draw() {
     rtc_dow_t tomorrow = date.day_of_week+1;
     if (tomorrow > dwSaturday) tomorrow = dwSunday;
 
+    for (i=0; i<3; i++) {
+        event_t* event = CalendarGetNextEvent();
+        if (event == NULL)
+            break;
+
+        if (event->day == date.day_of_week)
+    }
     
-    for (i=0; i<NUM_EVENTS; i++) {
+    /*for (i=0; i<NUM_EVENTS; i++) {
         event_t* event = my_events[i];
 
         // First populate today's events
-        if ((event->day == date.day_of_week) && (event->hr > time.hour) && (num <= 3)) {
+        if ((event->day == date.day_of_week) && (event->hr > time.hour) && (num < 3)) {
             uint w;
             uint x2 = x;
 
@@ -131,7 +137,7 @@ static void Draw() {
         }
 
         // Then populate tomorrow's events
-        else if ((event->day > date.day_of_week) && (num <= 3)) {
+        else if ((event->day > date.day_of_week) && (num < 3)) {
             uint w;
             uint y2 = y;
             uint x2 = x;
@@ -160,7 +166,7 @@ static void Draw() {
             num++;
 
         }
-    }
+    }*/
 
     
 }

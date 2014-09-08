@@ -110,6 +110,19 @@ rtc_time_t ClockGetTime() {
     return time;
 }
 
+timestamp_t ClockGetTimestamp() {
+    rtc_time_t time = ClockGetTime();
+    rtc_date_t date = ClockGetDate();
+    timestamp_t ts;
+        ts.sec = time.sec;
+        ts.min = time.min;
+        ts.hour = time.hour;
+        ts.day = date.day;
+        ts.month = date.month;
+        ts.year = date.year;
+    return ts;
+}
+
 uint8 ClockGet12Hour(uint8 hour24) {
     uint8 hour12 = hour24;
 

@@ -18,6 +18,11 @@
 #define MAX_LOCATION_LEN 20
 
 typedef enum {
+    etTimetableEvent,   // Specific time, for only one day
+    etAllDayEvent,      // No specific time, display it all day
+} calendar_event_type_t;
+
+typedef enum {
     rpSingle,
     rpDaily,
     rpWeekdays,
@@ -43,6 +48,8 @@ typedef struct {
     char label[MAX_LABEL_LEN];
     char location[MAX_LOCATION_LEN];
     color_t color;
+
+    calendar_event_type_t event_type;
 
     rtc_dow_t day;
     uint hr;
@@ -73,7 +80,16 @@ typedef struct {
 extern event_t *events[MAX_EVENTS];
 extern uint num_events;
 
-event_t* NewEvent(const char* label, const char* location, rtc_dow_t day, uint hr, uint min);
+// Allocate a new event and store it in the internal calendar
+event_t* AddTimetableEvent(const char* label, const char* location, rtc_dow_t day, uint hr, uint min);
+
+// Calculate the timestamp of the next occurrance of the given event
+timestamp_t EventGetTimestamp(event_t* event);
+
+// Find the next timetabled event in the calendar
+event_t* CalendarGetNextEvent();
+
+// Draw an event to the screen
 int CalendarDrawEvent(uint8 x, uint8 y, event_t* event, color_t color);
 
 

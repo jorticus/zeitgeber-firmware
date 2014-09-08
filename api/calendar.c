@@ -22,20 +22,31 @@ uint num_events;
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
-event_t* NewEvent(const char* label, const char* location, rtc_dow_t day, uint hr, uint min) {
-    //event_t* event = (event_t*)malloc(sizeof(event_t));
+event_t* malloc_event() {
+   //event_t* event = (event_t*)malloc(sizeof(event_t));
+    if (num_events == MAX_EVENTS)
+        return NULL;
     event_t* event = &event_alloc[num_events++];
-    
+
     if (event != NULL) {
         event->active = true;
         event->color = WHITE;
+        event->label[0] = '\0';
+        event->location[0] = '\0';
+    }
+    return event;
+}
 
+event_t* AddTimetableEvent(const char* label, const char* location, rtc_dow_t day, uint hr, uint min) {
+    event_t* event = malloc_event();
+
+    if (event != NULL) {
         strncpy(event->label, label, MAX_LABEL_LEN-1);
         event->label[MAX_LABEL_LEN-1] = '\0';
 
         strncpy(event->location, location, MAX_LABEL_LEN-1);
         event->location[MAX_LABEL_LEN-1] = '\0';
-
+        
         event->day = day;
         event->hr = hr;
         event->min = min;
@@ -51,6 +62,44 @@ void CalendarAddEvent(event_t* event) {
         events[num_events] = new_event;
         num_events++;
     }
+}
+
+
+timestamp_t EventGetTimestamp(event_t* event) {
+    timestamp_t ts = ClockGetTimestamp();
+
+    // Weekly events
+    if (event->event_type == etTimetableEvent) {
+        //ts.day = event->day; TODO: event->day is a day_of_week, so need to find the day of the start of week first!
+        ts.hour = event->hr;
+        ts.min = event->min;
+    }
+    //TODO: other event types
+
+    return ts;
+}
+
+
+event_t* CalendarGetNextEvent() {
+    // Scan the calendar, find the next upcoming event
+    uint i;
+    timestamp_t next_ts = {MAX_UINT32};
+    event_t* next_event = NULL;
+
+    if (num_events == 0)
+        return NULL;
+
+    for (i=0; i<num_events; i++) {
+        event_t* event = &events[i];
+        timestamp_t ts = EventGetTimestamp(event);
+
+        if (ts.ts < next_ts.ts) {
+            next_ts = ts;
+            next_event = event;
+        }
+    }
+    
+    return next_event;
 }
 
 

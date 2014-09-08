@@ -58,6 +58,7 @@ void ClockTimeToStr(char* s);
 
 rtc_time_t ClockGetTime();
 rtc_date_t ClockGetDate();
+timestamp_t ClockGetTimestamp();
 
 uint8 ClockGet12Hour(uint8 hour24);
 #define ClockIsPM(hour24) (hour24 >= 12)
