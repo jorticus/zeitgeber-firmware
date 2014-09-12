@@ -78,6 +78,28 @@
         <itemPath>usb/usb_hal.h</itemPath>
         <itemPath>usb/usb_hal_pic24.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="nrf" displayName="nrf" projectFiles="true">
+        <logicalFolder name="hal" displayName="hal" projectFiles="true">
+          <itemPath>nrf/hal/hal_aci_tl.h</itemPath>
+          <itemPath>nrf/hal/hal_io.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="uart" displayName="uart" projectFiles="true">
+          <itemPath>nrf/uart/services.h</itemPath>
+        </logicalFolder>
+        <itemPath>nrf/aci.h</itemPath>
+        <itemPath>nrf/acilib.h</itemPath>
+        <itemPath>nrf/acilib_defs.h</itemPath>
+        <itemPath>nrf/acilib_if.h</itemPath>
+        <itemPath>nrf/acilib_types.h</itemPath>
+        <itemPath>nrf/aci_cmds.h</itemPath>
+        <itemPath>nrf/aci_evts.h</itemPath>
+        <itemPath>nrf/aci_protocol_defines.h</itemPath>
+        <itemPath>nrf/aci_setup.h</itemPath>
+        <itemPath>nrf/ble_system.h</itemPath>
+        <itemPath>nrf/dtm.h</itemPath>
+        <itemPath>nrf/hal_platform.h</itemPath>
+        <itemPath>nrf/lib_aci.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="peripherals" projectFiles="true">
         <itemPath>peripherals/gpio.h</itemPath>
         <itemPath>peripherals/adc.h</itemPath>
@@ -147,6 +169,12 @@
         <itemPath>drivers/MMA7455.c</itemPath>
         <itemPath>drivers/ssd1351.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="nrf" displayName="nrf" projectFiles="true">
+        <itemPath>nrf/acilib.c</itemPath>
+        <itemPath>nrf/aci_setup.c</itemPath>
+        <itemPath>nrf/hal_aci_tl.c</itemPath>
+        <itemPath>nrf/lib_aci.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="peripherals" projectFiles="true">
         <itemPath>peripherals/gpio.c</itemPath>
         <itemPath>peripherals/adc.c</itemPath>
@@ -178,6 +206,7 @@
     <Elem>core</Elem>
     <Elem>util</Elem>
     <Elem>api/graphics</Elem>
+    <Elem>nrf</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
