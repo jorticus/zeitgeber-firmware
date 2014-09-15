@@ -41,22 +41,22 @@ event_t* my_events[NUM_EVENTS];
 // Called when CPU initializes 
 static void Initialize() {
 
-//    const event_t test = {.label="ENCE462", .location="Er466", .day=dwMonday, .time=((rtc_time_t){.hour=12})};
-
     //                       label      loc     day        hr min
-    my_events[0] = NewEvent("ENCE462", "Er466", dwMonday,    12, 0);
+    my_events[0] = NewEvent("ENCE462", "Er446", dwMonday,    12, 0);
     my_events[1] = NewEvent("COSC418", "Er235", dwMonday,    15, 0);
-    my_events[2] = NewEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
+    my_events[2] = NewEvent("ENCE463", "KD08",  dwTuesday,    9, 0);
     my_events[3] = NewEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
     my_events[4] = NewEvent("ENCE463", "E11",   dwWednesday, 10, 0);
-    my_events[5] = NewEvent("ENCE463", "KD05",  dwThursday,  11, 0);
-    my_events[6] = NewEvent("ENCE462", "Er466", dwThursday,  14, 0);
+    my_events[5] = NewEvent("ENCE463", "KH07",  dwThursday,  11, 0);
+    my_events[6] = NewEvent("ENCE462", "Er446", dwThursday,  14, 0);
 }
 
 // Called periodically when isForeground==true (30Hz)
 static void Draw() {
-    char s[10];
+    char s[50];
     int x,y,i;
+    int cx, cy, r;
+    static int a = 0;
 
     //SetFontSize(2);
 
@@ -64,9 +64,18 @@ static void Draw() {
     uint8 hour12 = ClockGet12Hour(time.hour);
     rtc_date_t date = ClockGetDate();
 
+    //// Analog Clock ////
+    DrawString("12", 64-6, 6, GRAY);
+    DrawString("3", 128-8, 64-4, GRAY);
+    DrawString("6", 64-6, 128-10, GRAY);
+    DrawString("9", 2, 64-4, GRAY);
+
+    DrawLinePolar(54, time.sec * 512 / 60, 64, 64, HEXCOLOR(0x444444));
+    DrawLinePolar(35, time.hour * 512 / 12, 64, 64, SKYBLUE);
+    DrawLinePolar(50, time.min * 512 / 60, 64, 64, SKYBLUE);
 
     //// Time ////
-    y = 20;
+    y = 16;
     x = 10;
     x = DrawClockInt(x,y, hour12, false);
     x = DrawClockDigit(x,y, CLOCK_DIGIT_COLON);
@@ -75,25 +84,17 @@ static void Draw() {
 
     //// Date ////
     y = 45;
-    x = 12;
-    x = DrawImString(days[date.day_of_week], x,y, WHITE);
-    x += 4;
+    sprintf(s, "%d/%02d/20%d", date.day, date.month, date.year);
+    x = 64 - (StringWidth(s) / 2);
+    x = DrawString(s, x,y, WHITE);
 
-    utoa(s, date.day, 10);
-    i = ClockDaySuffix(date.day);
-    x = DrawImString(s, x,y, WHITE);
-    x = DrawImString(day_suffix[i], x,y, WHITE);
-    x += 4;
-
-    x = DrawImString(short_months[date.month-1], x,y, WHITE);
-
-    //sprintf(s, " %d/%02d", date.day, date.month);
-    //x = DrawImString(s, x,45, WHITE);
-
-    x = 44;
-    y = 60;
+    x = 128 - 16 - StringWidth(short_days[date.day_of_week]);
+    x = DrawString(short_days[date.day_of_week], x,y, WHITE);
 
     //// Upcoming Events ////
+
+    x = 55;
+    y = 55;
 
     //TODO: Sort events in circular order after the current time
     uint num = 0;
@@ -106,7 +107,7 @@ static void Draw() {
         event_t* event = my_events[i];
 
         // First populate today's events
-        if ((event->day == date.day_of_week) && (event->hr > time.hour) && (num <= 3)) {
+        if ((event->day == date.day_of_week) && (event->hr > time.hour) && (num < 3)) {
             uint w;
             uint x2 = x;
 
@@ -131,7 +132,7 @@ static void Draw() {
         }
 
         // Then populate tomorrow's events
-        else if ((event->day > date.day_of_week) && (num <= 3)) {
+        else if ((event->day > date.day_of_week) && (num < 3)) {
             uint w;
             uint y2 = y;
             uint x2 = x;
@@ -162,5 +163,4 @@ static void Draw() {
         }
     }
 
-    
 }

@@ -21,53 +21,53 @@
 // Default Stellaris API font
 #include "fonts\stellaris_font.h"
 
-/*
+
 // Small fonts
 #include "fonts\pzim3x5_font.h" // upper-case, plain text, 3px wide
 #include "fonts\5x5_font.h" 		// upper-case, square characters
-#include "fonts\BMplain_font.h"  // square characters, 'e' and 's' look sharp like 'z'
+//#include "fonts\BMplain_font.h"  // square characters, 'e' and 's' look sharp like 'z'
 
 // Artsy
-#include "fonts\m38_font.h" 	//very blocky
-#include "fonts\bubblesstandard_font.h"
-#include "fonts\haiku_font.h" 	//doesnt look right
-#include "fonts\Blokus_font.h" 	//broken? freehand style
+//#include "fonts\m38_font.h" 	//very blocky
+//#include "fonts\bubblesstandard_font.h"
+//#include "fonts\haiku_font.h" 	//doesnt look right
+//#include "fonts\Blokus_font.h" 	//broken? freehand style
 
 // Futuristic
-#include "fonts\SUPERDIG_font.h"
-#include "fonts\sloth_font.h"
-#include "fonts\7linedigital_font.h" //7-seg display
-#include "fonts\Raumsond_font.h" //good small font
+//#include "fonts\SUPERDIG_font.h"
+//#include "fonts\sloth_font.h"
+//#include "fonts\7linedigital_font.h" //7-seg display
+//#include "fonts\Raumsond_font.h" //good small font
 
 // Variable-width
 // NOTE: Variable width characters are not currently implemented. These fonts will have bad kerning
-#include "fonts\tama_mini02_font.h" // square numbers, plain text
-#include "fonts\zxpix_font.h" // large print
-#include "fonts\BMSPA_font.h" // upper-case, very large print
-#include "fonts\aztech_font.h" // squiggly
-#include "fonts\formplex12_font.h" // bold, blocky, '0' needs tweaking
- */
+//#include "fonts\tama_mini02_font.h" // square numbers, plain text
+//#include "fonts\zxpix_font.h" // large print
+//#include "fonts\BMSPA_font.h" // upper-case, very large print
+//#include "fonts\aztech_font.h" // squiggly
+//#include "fonts\formplex12_font.h" // bold, blocky, '0' needs tweaking
+ 
 
 ////////// Font Table //////////////////////////////////////////////////////////
 
 const fonts_t fonts = {
     &font_Stellaris,
-    /*&font_PZim3x5,
+    &font_PZim3x5,
     &font_f5x5,
-    &font_BMPlain,
-    &font_m38,
-    &font_Bubble,
-    &font_Haiku,
-    &font_Blokus,
-    &font_SuperDigital,
-    &font_Sloth,
-    &font_SevenSeg,
-    &font_Raumsond,
-    &font_TamaMini02,
-    &font_ZxPix,
-    &font_BMSPA,
-    &font_Aztech,
-    &font_Formplex12,*/
+//    &font_BMPlain,
+//    &font_m38,
+//    &font_Bubble,
+//    &font_Haiku,
+//    &font_Blokus,
+//    &font_SuperDigital,
+//    &font_Sloth,
+//    &font_SevenSeg,
+//    &font_Raumsond,
+//    &font_TamaMini02,
+//    &font_ZxPix,
+//    &font_BMSPA,
+//    &font_Aztech,
+//    &font_Formplex12,
 };
 
 

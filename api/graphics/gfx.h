@@ -126,6 +126,11 @@ extern void DrawImage(int x, int y, const image_t* image);
 //extern image_t OffsetImage(int x, int y, image_t image);
 void BitBlit(image_t* src, image_t* mask, uint xdest, uint ydest, uint width, uint height, uint xsrc, uint ysrc, drawop_t rop, bool invert);
 
+// Polar co-ordinates
+extern void PolarToCartesian(int radius, int theta, int* xout, int* yout);
+extern void DrawPolarPixel(uint8 radius, uint16 theta, uint8 cx, uint8 cy, color_t color);
+extern void DrawLinePolar(uint8 radius, uint16 theta, uint8 cx, uint8 cy, color_t color);
+
 ///// Fonts /////
 
 #include <api/graphics/font.h>
