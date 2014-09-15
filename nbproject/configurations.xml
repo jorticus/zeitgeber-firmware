@@ -56,7 +56,6 @@
       <logicalFolder name="f3" displayName="drivers" projectFiles="true">
         <logicalFolder name="f2" displayName="btle" projectFiles="true">
           <itemPath>drivers/btle/btle.h</itemPath>
-          <itemPath>drivers/btle/btaci.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="usb" projectFiles="true">
           <itemPath>drivers/usb/usb.h</itemPath>
@@ -156,7 +155,6 @@
       </logicalFolder>
       <logicalFolder name="f4" displayName="drivers" projectFiles="true">
         <logicalFolder name="f2" displayName="btle" projectFiles="true">
-          <itemPath>drivers/btle/btaci.c</itemPath>
           <itemPath>drivers/btle/btle.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="usb" projectFiles="true">

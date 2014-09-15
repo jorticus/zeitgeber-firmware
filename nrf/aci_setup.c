@@ -14,10 +14,13 @@
 /**
  * My project template
  */
- 
-#include <avr/pgmspace.h>
-#include <ble_system.h>
-#include <lib_aci.h>
+
+#include "system.h"
+#include <stdio.h>
+#include <string.h>
+
+#include "ble_system.h"
+#include "lib_aci.h"
 #include "aci_setup.h"
 
 
@@ -45,13 +48,15 @@ aci_status_code_t aci_setup(aci_state_t *aci_stat, uint8_t num_cmds, uint8_t num
   {
     //Copy the setup ACI message from Flash to RAM
     //Add 2 bytes to the length byte for status byte, length for the total number of bytes
-    memcpy_P(&aci_cmd, &(aci_stat->aci_setup_info.setup_msgs[num_cmd_offset+i]), 
-              pgm_read_byte_near(&(aci_stat->aci_setup_info.setup_msgs[num_cmd_offset+i].buffer[0]))+2); 
+    //memcpy_P(&aci_cmd, &(aci_stat->aci_setup_info.setup_msgs[num_cmd_offset+i]),
+    //          pgm_read_byte_near(&(aci_stat->aci_setup_info.setup_msgs[num_cmd_offset+i].buffer[0]))+2);
+      memcpy(&aci_cmd, &(aci_stat->aci_setup_info.setup_msgs[num_cmd_offset+i]),
+              aci_stat->aci_setup_info.setup_msgs[num_cmd_offset+i].buffer[0] + 2);
     
     //Put the Setup ACI message in the command queue
     if (!hal_aci_tl_send(&aci_cmd))
     {
-      Serial.println(F("Cmd Queue Full"));
+      printf("NRF: Cmd queue full\n");
       return ACI_STATUS_ERROR_INTERNAL;
     }
     else

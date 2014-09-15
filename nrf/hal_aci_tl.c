@@ -15,65 +15,21 @@
 @brief Implementation of the ACI transport layer module
 */
 
+#include "system.h"
+#include <stdio.h>
+#include <string.h>
 #include <SPI.h>
+#include <PPS.h>
+#include "hardware.h"
+#include "util/util.h"
+
 #include "hal_platform.h"
 #include "hal/hal_aci_tl.h"
 #include "hal/hal_io.h"
 #include "ble_system.h"
-#include <avr/sleep.h>
+//#include <avr/sleep.h>
 
 extern int8_t HAL_IO_RADIO_RESET, HAL_IO_RADIO_REQN, HAL_IO_RADIO_RDY, HAL_IO_RADIO_IRQ;
-
-static const uint8_t dreqinttable[] = {
-#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined (__AVR_ATmega328__) || defined(__AVR_ATmega8__) 
-  2, 0,
-  3, 1,
-#elif defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__) 
-  2, 0,
-  3, 1,
-  21, 2, 
-  20, 3,
-  19, 4,
-  18, 5,
-#elif  defined(__AVR_ATmega32U4__) && defined(CORE_TEENSY)
-  5, 0,
-  6, 1,
-  7, 2,
-  8, 3,
-#elif  defined(__AVR_AT90USB1286__) && defined(CORE_TEENSY)
-  0, 0,
-  1, 1,
-  2, 2,
-  3, 3,
-  36, 4,
-  37, 5,
-  18, 6,
-  19, 7,
-#elif  defined(__arm__) && defined(CORE_TEENSY)
-  0, 0, 1, 1, 2, 2, 3, 3, 4, 4,
-  5, 5, 6, 6, 7, 7, 8, 8, 9, 9,
-  10, 10, 11, 11, 12, 12, 13, 13, 14, 14,
-  15, 15, 16, 16, 17, 17, 18, 18, 19, 19,
-  20, 20, 21, 21, 22, 22, 23, 23, 24, 24,
-  25, 25, 26, 26, 27, 27, 28, 28, 29, 29,
-  30, 30, 31, 31, 32, 32, 33, 33,
-#elif  defined(__AVR_ATmega32U4__) 
-  7, 4,
-  3, 0,
-  2, 1,
-  0, 2,
-  1, 3,
-#elif  defined(__AVR_ATmega256RFR2__) 
-  4,  0,
-  5,  1,
-  15, 2,
-  16, 3,
-  13, 4,
-  14, 5,
-  7,  6,
-  18, 7,
-#endif
-};
 
 
 static void           m_print_aci_data(hal_aci_data_t *p_data);
@@ -181,22 +137,22 @@ void m_print_aci_data(hal_aci_data_t *p_data)
 {
   const uint8_t length = p_data->buffer[0];
   uint8_t i;
-  Serial.print(length, DEC);
-  Serial.print(" :");
+  printf("%d :", length);
   for (i=0; i<=length; i++)
   {
-    Serial.print(p_data->buffer[i], HEX);
-    Serial.print(F(", "));
+      printf("%.2x ", p_data->buffer[i]);
   }
-  Serial.println(F(""));
+  printf("\n");
 }
 
+#if 0
 void toggle_eimsk(bool state)
 {
   /* ToDo: This will currently only work with the UNO/ATMega48/88/128/328 */
   /*       due to EIMSK. Abstract this away to something MCU nuetral! */
   uint8_t eimsk_bit = 0xFF;
-  for (uint8_t i=0; i<sizeof(dreqinttable); i+=2) {
+  uint8_t i;
+  for (i=0; i<sizeof(dreqinttable); i+=2) {
     if (HAL_IO_RADIO_RDY == dreqinttable[i]) {
       eimsk_bit = dreqinttable[i+1];
     }
@@ -214,6 +170,7 @@ void toggle_eimsk(bool state)
     while(1);
   }         
 }
+#endif
 
 void m_rdy_line_handle(void)
 {
@@ -254,7 +211,7 @@ bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
   {
     if (true == aci_debug_print)
     {
-      Serial.print(" E");
+        printf(" E");
       m_print_aci_data(p_aci_data);
     }
     
@@ -274,11 +231,23 @@ void hal_aci_tl_init()
 {
   received_data.buffer[0] = 0;
 
-  SPI.begin();
-  SPI.setBitOrder(LSBFIRST);
-  SPI.setClockDivider(SPI_CLOCK_DIV8);
-  SPI.setDataMode(SPI_MODE0);
+    _SPI1MD = 0; // Enable SPI peripheral
 
+    // Initialize IO
+    _LAT(BT_REQN) = 1;      // Active-low
+    _TRIS(BT_REQN) = OUTPUT;
+    _TRIS(BT_RDYN) = INPUT;
+
+    // Set up the SPI interface..
+    // Output data is clocked out on the rising edge
+    // Input data is sampled on the falling edge
+    // Clock is active-high
+    OpenSPI1(ENABLE_SCK_PIN | ENABLE_SDO_PIN | SPI_MODE8_ON | SPI_SMP_OFF |
+            SPI_CKE_ON | SLAVE_ENABLE_OFF | CLK_POL_ACTIVE_HIGH | MASTER_ENABLE_ON |
+            //PRI_PRESCAL_1_1 | SEC_PRESCAL_1_1, // Fastest
+            PRI_PRESCAL_16_1 | SEC_PRESCAL_1_1, // Slower, for debugging
+            FRAME_ENABLE_OFF | SPI_ENH_BUFF_DISABLE,
+            SPI_IDLE_CON | SPI_ENABLE);
 
   
   /* initialize aci cmd queue */
@@ -332,7 +301,7 @@ bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)
 
   if (true == aci_debug_print)
   {
-    Serial.print("C");
+      printf("C");
     m_print_aci_data(p_aci_cmd);
   }
   
@@ -412,7 +381,12 @@ hal_aci_data_t * hal_aci_tl_poll_get(void)
 
 static uint8_t spi_readwrite(const uint8_t aci_byte)
 {
-	return SPI.transfer(aci_byte);
+    WriteSPI1(bitreverse[aci_byte]);
+
+    while (!DataRdySPI1()) continue;
+
+    byte rb = ReadSPI1() & 0xFF;
+    return bitreverse[rb];
 }
 
 void m_aci_q_flush(void)

@@ -20,7 +20,7 @@
  * @brief Macros input/output management
 */
 
-#include "hal_platform.h"
+#include "../hal_platform.h"
 
 #ifndef HAL_IO_H__
 #define HAL_IO_H__

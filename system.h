@@ -36,6 +36,7 @@ typedef unsigned int uint32;
 
 #include <p24Fxxxx.h>
 #include <GenericTypeDefs.h>
+#include <stdint.h>
 
 typedef UINT uint;
 typedef UINT8 uint8;

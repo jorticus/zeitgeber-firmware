@@ -19,6 +19,7 @@
   @brief Implementation of the ACI library.
  */
 
+#include "system.h"
 #include "hal_platform.h"
 #include "aci.h"
 #include "aci_cmds.h"

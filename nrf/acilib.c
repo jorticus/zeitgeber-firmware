@@ -20,6 +20,8 @@
  */
 
 
+#include "system.h"
+#include <string.h>
 #include "hal_platform.h"
 #include "aci.h"
 #include "aci_cmds.h"
