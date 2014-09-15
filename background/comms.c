@@ -73,6 +73,9 @@ void comms_sleep() {
     comms_task->state = tsStop;
     usb_connected = false;
     comms_status = cmDisconnected;
+
+    //os.h
+    auto_screen_off = true;
 }
 
 void comms_wake() {
@@ -80,6 +83,9 @@ void comms_wake() {
     comms_task->state = tsRun;
     usb_connected = true;
     comms_status = cmIdle;
+
+    //os.h
+    auto_screen_off = false; // Prevent screen from turning off
 }
 
 void ProcessComms() {

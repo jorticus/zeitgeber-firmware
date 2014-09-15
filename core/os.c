@@ -95,6 +95,10 @@ static uint btn_debounce_tick[5];
 bool btn_state[5];
 bool btn_debouncing[5];
 
+uint sleep_time;
+bool auto_screen_off = true;
+uint auto_screen_off_interval = 10000; //systicks
+
 ////////// Prototypes //////////////////////////////////////////////////////////
 
 void ProcessCore();
@@ -137,6 +141,10 @@ void InitializeOS() {
     }
 }
 
+static void reset_auto_screen_off() {
+    sleep_time = systick + auto_screen_off_interval;
+}
+
 void ScreenOff() {
     AppGlobalEvent(evtScreenOff, NULL);
 
@@ -171,6 +179,7 @@ void ScreenOn() {
     AppGlobalEvent(evtScreenOn, NULL);
 
     displayOn = true;
+    reset_auto_screen_off();
 }
 
 
@@ -184,9 +193,12 @@ void ProcessCore() {
         for (i=1; i<=4; i++) {
             if (btn_debouncing[i] && systick >= btn_debounce_tick[i]) {
                 btn_debouncing[i] = false;
-                //btn_state[i] = ;
-                //printf("btn rst %d : %d\n", i, btn_state[i]);
             }
+        }
+
+        // Turn off screen automatically after some amount of time
+        if (auto_screen_off && displayOn && systick > sleep_time) {
+            ScreenOff();
         }
 
         if (displayOn)
@@ -227,6 +239,8 @@ static inline void OnBTNChange(bool btn_pressed, uint btn) {
     *debouncing = true;
 
     //printf("btn %d : %d\n", btn, btn_pressed);
+
+    reset_auto_screen_off();
 
     // Event handling
     if (btn_pressed) {
