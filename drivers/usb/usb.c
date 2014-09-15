@@ -66,10 +66,13 @@ void InitializeUSB(proc_t usb_sleep_cb, proc_t usb_wake_cb) {
 #endif
 }
 
+static void usb_reset_timeout() {
+    connection_timeout = systick + CONNECTION_TIMEOUT;
+}
 static void usb_connect() {
     if (!connected) {
         connected = true;
-        connection_timeout = systick;
+        usb_reset_timeout();
         if (on_usb_wake != NULL)
             on_usb_wake();
     }
@@ -82,7 +85,13 @@ static void usb_disconnect() {
     }
 }
 static void usb_check_timeout() {
-    if (systick > connection_timeout + CONNECTION_TIMEOUT) {
+    // Prevent systick roll-over issues
+    if (connection_timeout < CONNECTION_TIMEOUT + 1) {
+        usb_reset_timeout();
+        return;
+    }
+
+    if (systick > connection_timeout) {
         usb_disconnect();
     }
 }
@@ -258,7 +267,7 @@ void USBCBInitEP(void) {
  */
 BOOL USER_USB_CALLBACK_EVENT_HANDLER(int event, void *pdata, WORD size) {
     usb_connect();
-    connection_timeout = systick;  // Reset the timeout
+    usb_reset_timeout();
 
     switch (event) {
         case EVENT_TRANSFER:
