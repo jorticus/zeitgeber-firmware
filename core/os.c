@@ -74,6 +74,8 @@ const image_t imgBat = {bat_bytes, BAT_WIDTH, BAT_HEIGHT};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
+#define DEBOUNCE_INTERVAL 100 //systicks (ms)
+
 bool displayOn = true;
 
 task_t* core_task;
@@ -85,6 +87,8 @@ uint current_app = 0;
 
 volatile bool lock_display = false;
 volatile bool display_frame_ready = false;
+
+static uint btn_debounce_tick[4];
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
@@ -184,6 +188,15 @@ static void PrevApp() {
 }
 
 static inline void OnBTNChange(bool btn_pressed, uint btn) {
+    // Assumes btn 1..4
+
+    // De-bouncing
+    uint debounce_tick = btn_debounce_tick[btn];
+    if (systick < debounce_tick)
+        return;
+    btn_debounce_tick[btn] = systick + DEBOUNCE_INTERVAL;
+
+    // Event handling
     if (btn_pressed) {
         if (!displayOn) {
             ScreenOn();
