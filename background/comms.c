@@ -85,8 +85,9 @@ void comms_wake() {
 void ProcessComms() {
     while (1) {
         USBProcess(&comms_ReceivedPacket);
-        //TODO: determine whether status is cmIdle or cmActive
-        Delay(PROCESS_COMMS_INTERVAL);
+
+        //TODO: Implement some sort of variable delay that waits for data transmission
+        Delay(1);
     }
 }
 

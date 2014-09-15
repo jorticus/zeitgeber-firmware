@@ -14,8 +14,11 @@
 #include "usb_config.h"
 #include "./USB/usb.h"
 #include "./USB/usb_function_hid.h"
+#include "core/kernel.h"
 
 ////////// Defines /////////////////////////////////////////////////////////////
+
+#define CONNECTION_TIMEOUT 500
 
 ////////// Global Variables ////////////////////////////////////////////////////
 
@@ -34,6 +37,7 @@ USB_HANDLE USBInHandle = 0; //USB handle.  Must be initialized to 0 at startup.
 static proc_t on_usb_sleep = NULL;
 static proc_t on_usb_wake = NULL;
 static bool connected = false;
+static uint connection_timeout = 0;
 
 ////////// Methods /////////////////////////////////////////////////////////////
 
@@ -62,8 +66,33 @@ void InitializeUSB(proc_t usb_sleep_cb, proc_t usb_wake_cb) {
 #endif
 }
 
+static void usb_connect() {
+    if (!connected) {
+        connected = true;
+        connection_timeout = systick;
+        if (on_usb_wake != NULL)
+            on_usb_wake();
+    }
+}
+static void usb_disconnect() {
+    if (connected) {
+        connected = false;
+        if (on_usb_sleep != NULL)
+            on_usb_sleep();
+    }
+}
+static void usb_check_timeout() {
+    if (systick > connection_timeout + CONNECTION_TIMEOUT) {
+        usb_disconnect();
+    }
+}
+
 void USBProcess(usb_rx_packet_cb receive_callback) {
-    if ((USBDeviceState < CONFIGURED_STATE) || (USBSuspendControl == 1)) return;
+    usb_check_timeout();
+
+    if ((USBDeviceState < CONFIGURED_STATE) || (USBSuspendControl == 1)) {
+        return;
+    }
 
     //Check if we have received an OUT data packet from the host
     if (!HIDRxHandleBusy(USBOutHandle)) {
@@ -81,8 +110,9 @@ void USBSendPacket(unsigned char* packet) {
     }
 }
 
-BOOL USBTransmitBusy() {
-    return HIDTxHandleBusy(USBInHandle);
+BOOL USBBusy() {
+    if ((USBDeviceState < CONFIGURED_STATE) || (USBSuspendControl == 1)) return false;
+    return HIDRxHandleBusy(USBOutHandle) || HIDTxHandleBusy(USBInHandle);
 }
 
 
@@ -92,11 +122,7 @@ BOOL USBTransmitBusy() {
  * Call back that is invoked when a USB suspend is detected
  */
 void USBCBSuspend(void) {
-    if (connected == true) {
-        connected = false;
-        if (on_usb_sleep != NULL)
-            on_usb_sleep();
-    }
+    usb_disconnect();
 
     //Example power saving code.  Insert appropriate code here for the desired
     //application behavior.  If the microcontroller will be put to sleep, a
@@ -140,12 +166,7 @@ void USBCBWakeFromSuspend(void) {
     // operation).
     // Make sure the selected oscillator settings are consistent with USB
     // operation before returning from this function.
-
-    if (connected == false) {
-        connected = true;
-        if (on_usb_wake != NULL)
-            on_usb_wake();
-    }
+    
 }
 
 /*
@@ -157,12 +178,6 @@ void USBCBWakeFromSuspend(void) {
 void USBCB_SOF_Handler(void) {
     // No need to clear UIRbits.SOFIF to 0 here.
     // Callback caller is already doing that.
-
-    if (connected == false) {
-        connected = true;
-        if (on_usb_wake != NULL)
-            on_usb_wake();
-    }
 }
 
 /*
@@ -233,12 +248,6 @@ void USBCBInitEP(void) {
     USBEnableEndpoint(HID_EP, USB_IN_ENABLED | USB_OUT_ENABLED | USB_HANDSHAKE_ENABLED | USB_DISALLOW_SETUP);
     //Re-arm the OUT endpoint for the next packet
     USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & usb_rx_buffer, PACKET_SIZE);
-
-    if (connected == false) {
-        connected = true;
-        if (on_usb_wake != NULL)
-            on_usb_wake();
-    }
 }
 
 /*
@@ -248,6 +257,9 @@ void USBCBInitEP(void) {
  * when the USB_INTERRUPT option is selected.
  */
 BOOL USER_USB_CALLBACK_EVENT_HANDLER(int event, void *pdata, WORD size) {
+    usb_connect();
+    connection_timeout = systick;  // Reset the timeout
+
     switch (event) {
         case EVENT_TRANSFER:
             //Add application specific callback task or callback function here if desired.
