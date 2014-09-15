@@ -34,7 +34,7 @@ void msg_init() {
 
 void msg_push(const char* msg) {
     // Drop the oldest message if buffer is full
-    if (message_fifo.count == MESSAGE_FIFO_SIZE) {
+    if (message_fifo.count == MESSAGE_FIFO_SIZE-1) {
         msg_pop(NULL);
     }
 
@@ -46,7 +46,7 @@ void msg_push(const char* msg) {
     entry[DEBUG_MESSAGE_MAXLEN-1] = '\0';
 
     // Update indices
-    if (message_fifo.i_last++ == MESSAGE_FIFO_SIZE)
+    if (message_fifo.i_last++ == MESSAGE_FIFO_SIZE-1)
         message_fifo.i_last = 0;
     message_fifo.count++;
 
@@ -65,7 +65,7 @@ bool msg_pop(char* buf) {
         strncpy(buf, entry, DEBUG_MESSAGE_MAXLEN);
 
         // Update indices
-        if (message_fifo.i_first++ == MESSAGE_FIFO_SIZE)
+        if (message_fifo.i_first++ == MESSAGE_FIFO_SIZE-1)
             message_fifo.i_first = 0;
         message_fifo.count--;
 
