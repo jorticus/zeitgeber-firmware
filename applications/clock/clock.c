@@ -33,8 +33,8 @@ application_t appclock = {.name="Clock", .init=Initialize, .draw=Draw};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
-#define NUM_EVENTS 7
-event_t* my_events[NUM_EVENTS];
+extern event_t *events[];
+extern uint num_events;
 
 ////////// Code ////////////////////////////////////////////////////////////////
 
@@ -42,6 +42,15 @@ event_t* my_events[NUM_EVENTS];
 static void Initialize() {
     //                       label      loc     day        hr min
     AddTimetableEvent("ENCE462", "Er466", dwMonday,    12, 0);
+    AddTimetableEvent("COSC418", "Er235", dwMonday,    15, 0);
+    AddTimetableEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
+    AddTimetableEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
+    AddTimetableEvent("ENCE463", "E11",   dwWednesday, 10, 0);
+    AddTimetableEvent("ENCE463", "KD05",  dwThursday,  11, 0);
+    AddTimetableEvent("ENCE462", "Er466", dwThursday,  14, 0);
+
+    //Shuffled timetable for testing
+    /*AddTimetableEvent("ENCE462", "Er466", dwMonday,    12, 0);
     AddTimetableEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
     AddTimetableEvent("ENCE462", "Er466", dwThursday,  14, 0);
 
@@ -49,7 +58,7 @@ static void Initialize() {
 
     AddTimetableEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
     AddTimetableEvent("ENCE463", "E11",   dwWednesday, 10, 0);
-    AddTimetableEvent("ENCE463", "KD05",  dwThursday,  11, 0);
+    AddTimetableEvent("ENCE463", "KD05",  dwThursday,  11, 0);*/
 }
 
 // Called periodically when isForeground==true (30Hz)
@@ -66,6 +75,7 @@ static void Draw() {
     rtc_date_t date = ClockGetDate();
 
     //// Analog Clock ////
+#if 0
     DrawString("12", 64-6, 6, GRAY);
     DrawString("3", 128-8, 64-4, GRAY);
     DrawString("6", 64-6, 128-10, GRAY);
@@ -74,6 +84,7 @@ static void Draw() {
     DrawLinePolar(54, time.sec * 512 / 60, 64, 64, HEXCOLOR(0x444444));
     DrawLinePolar(35, time.hour * 512 / 12, 64, 64, SKYBLUE);
     DrawLinePolar(50, time.min * 512 / 60, 64, 64, SKYBLUE);
+#endif
 
     //// Time ////
     y = 16;
@@ -86,7 +97,7 @@ static void Draw() {
     //// Date ////
     y = 45;
 
-    sprintf(s, "%d/%02d/20%d", date.day, date.month, date.year);
+    sprintf(s, "%d/%02d", date.day, date.month);
     x = 64 - (StringWidth(s) / 2);
     x = DrawImString(s, x,y, WHITE);
 
@@ -114,9 +125,10 @@ static void Draw() {
 
         if (event->day == date.day_of_week)
     }*/
-    
-    for (i=0; i<NUM_EVENTS; i++) {
-        event_t* event = my_events[i];
+
+    //TODO: re-implement CalendarGetNextEvent(timestamp);
+    for (i=0; i<num_events; i++) {
+        event_t* event = events[i];
 
         // First populate today's events
         if ((event->day == date.day_of_week) && (event->hr > time.hour) && (num < 3)) {

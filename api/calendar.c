@@ -26,7 +26,10 @@ event_t* malloc_event() {
    //event_t* event = (event_t*)malloc(sizeof(event_t));
     if (num_events == MAX_EVENTS)
         return NULL;
-    event_t* event = &event_alloc[num_events++];
+    event_t* event = &event_alloc[num_events];
+    
+    events[num_events] = event;
+    num_events++;
 
     if (event != NULL) {
         event->active = true;
