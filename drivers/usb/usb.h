@@ -20,9 +20,9 @@ extern unsigned char usb_tx_buffer[PACKET_SIZE];
 
 typedef void (*usb_rx_packet_cb)(unsigned char* packet);
 
-extern void USBProcess(usb_rx_packet_cb receive_callback);
-extern void USBSendPacket(unsigned char* packet);
-extern BOOL USBTransmitBusy();
+void USBProcess(usb_rx_packet_cb receive_callback);
+void USBSendPacket(unsigned char* packet);
+BOOL USBBusy();
 
 #endif	/* USB_H */
 

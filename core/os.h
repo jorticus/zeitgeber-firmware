@@ -22,6 +22,9 @@
 extern volatile bool lock_display;              // Prevent the OS from drawing to the image buffer
 extern volatile bool display_frame_ready;       // True if the display has a fully drawn frame
 
+extern bool auto_screen_off;                    // If true, screen will automatically turn off
+extern uint auto_screen_off_interval;           // Number of systicks before screen will automatically turn off
+
 void InitializeOS();
 
 // Set the specified app to be the foreground process

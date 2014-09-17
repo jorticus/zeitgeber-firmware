@@ -54,8 +54,10 @@ static void Initialize() {
 
 // Called periodically when isForeground==true (30Hz)
 static void Draw() {
-    char s[10];
+    char s[50];
     int x,y,i;
+    int cx, cy, r;
+    static int a = 0;
 
     //SetFontSize(2);
 
@@ -63,9 +65,18 @@ static void Draw() {
     uint8 hour12 = ClockGet12Hour(time.hour);
     rtc_date_t date = ClockGetDate();
 
+    //// Analog Clock ////
+    DrawString("12", 64-6, 6, GRAY);
+    DrawString("3", 128-8, 64-4, GRAY);
+    DrawString("6", 64-6, 128-10, GRAY);
+    DrawString("9", 2, 64-4, GRAY);
+
+    DrawLinePolar(54, time.sec * 512 / 60, 64, 64, HEXCOLOR(0x444444));
+    DrawLinePolar(35, time.hour * 512 / 12, 64, 64, SKYBLUE);
+    DrawLinePolar(50, time.min * 512 / 60, 64, 64, SKYBLUE);
 
     //// Time ////
-    y = 20;
+    y = 16;
     x = 10;
     x = DrawClockInt(x,y, hour12, false);
     x = DrawClockDigit(x,y, CLOCK_DIGIT_COLON);
@@ -74,25 +85,21 @@ static void Draw() {
 
     //// Date ////
     y = 45;
-    x = 12;
-    x = DrawImString(days[date.day_of_week], x,y, WHITE);
-    x += 4;
 
-    utoa(s, date.day, 10);
-    i = ClockDaySuffix(date.day);
+    sprintf(s, "%d/%02d/20%d", date.day, date.month, date.year);
+    x = 64 - (StringWidth(s) / 2);
     x = DrawImString(s, x,y, WHITE);
-    x = DrawImString(day_suffix[i], x,y, WHITE);
-    x += 4;
 
-    x = DrawImString(short_months[date.month-1], x,y, WHITE);
 
-    //sprintf(s, " %d/%02d", date.day, date.month);
-    //x = DrawImString(s, x,45, WHITE);
+    x = 128 - 16 - StringWidth(short_days[date.day_of_week]);
+    x = DrawImString(short_days[date.day_of_week], x,y, WHITE);
 
-    x = 44;
-    y = 60;
 
     //// Upcoming Events ////
+
+
+    x = 55;
+    y = 55;
 
     //TODO: Sort events in circular order after the current time
     uint num = 0;
@@ -100,15 +107,15 @@ static void Draw() {
     rtc_dow_t tomorrow = date.day_of_week+1;
     if (tomorrow > dwSaturday) tomorrow = dwSunday;
 
-    for (i=0; i<3; i++) {
+    /*for (i=0; i<3; i++) {
         event_t* event = CalendarGetNextEvent();
         if (event == NULL)
             break;
 
         if (event->day == date.day_of_week)
-    }
+    }*/
     
-    /*for (i=0; i<NUM_EVENTS; i++) {
+    for (i=0; i<NUM_EVENTS; i++) {
         event_t* event = my_events[i];
 
         // First populate today's events
@@ -166,7 +173,6 @@ static void Draw() {
             num++;
 
         }
-    }*/
+    }
 
-    
 }

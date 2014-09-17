@@ -40,6 +40,8 @@ int abs(int v) {
     return (v > 0) ? v : -v;
 }
 
+extern int16 sine_table[];
+
 
 ////////// Device Dependant Functions //////////////////////////////////////////
 
@@ -300,7 +302,36 @@ INLINE uint min(uint a, uint b) {
 	return (a < b) ? a : b;
 }
 
+// Convert polar (r,t) co-ordinates to cartesian (x,y) co-ordinates
+void PolarToCartesian(int radius, int theta, int* xout, int* yout) {
+	//theta: 0=0deg, 128=90deg, 256=180deg, 512=360deg
+	//radius: radius in pixels
 
+	unsigned long sangle = theta;
+    unsigned long cangle = theta + 128;
+
+	long sin = sine_table[sangle % 512];
+	long cos = sine_table[cangle % 512];
+
+	*xout = cos*radius / 32767;
+	*yout = sin*radius / 32767;
+}
+
+// Draw a pixel using polar co-ordinates (r,t), centered at cartesian co-ordiantes (cx,cy)
+void DrawPolarPixel(uint8 radius, uint16 theta, uint8 cx, uint8 cy, color_t color) {
+	int x,y;
+	PolarToCartesian(radius, theta, &x, &y);
+	SetPixel(x+cx,y+cy,color);
+}
+
+// Draw a line between cartesian coords (cx,cy) and polar coords (r,t)
+// ie. Draws a watch hand
+void DrawLinePolar(uint8 radius, uint16 theta, uint8 cx, uint8 cy, color_t color) {
+	int x,y;
+
+	PolarToCartesian(radius, theta, &x, &y);
+	DrawLine(x+cx,y+cy, cx,cy, color);
+}
 
 
 // Copy a source image to the screen using the specified drawing operation

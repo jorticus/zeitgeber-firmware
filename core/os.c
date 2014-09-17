@@ -74,6 +74,10 @@ const image_t imgBat = {bat_bytes, BAT_WIDTH, BAT_HEIGHT};
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
+#define DEBOUNCE_INTERVAL 25 //systicks (ms)
+
+enum { btnReleased=false, btnPressed=true };
+
 bool displayOn = true;
 
 task_t* core_task;
@@ -85,6 +89,15 @@ uint current_app = 0;
 
 volatile bool lock_display = false;
 volatile bool display_frame_ready = false;
+
+// Note: button indicies start at 1
+static uint btn_debounce_tick[5];
+bool btn_state[5];
+bool btn_debouncing[5];
+
+uint sleep_time;
+bool auto_screen_off = true;
+uint auto_screen_off_interval = 10000; //systicks
 
 ////////// Prototypes //////////////////////////////////////////////////////////
 
@@ -120,6 +133,16 @@ void InitializeOS() {
     cn_register_cb(_CNIDX(BTN2_CN), _PINREF(BTN2), OnBTN2Change);
     cn_register_cb(_CNIDX(BTN3_CN), _PINREF(BTN3), OnBTN3Change);
     cn_register_cb(_CNIDX(BTN4_CN), _PINREF(BTN4), OnBTN4Change);
+
+    uint i;
+    for (i=1; i<=4; i++) {
+        btn_debounce_tick[i] = 0;
+        btn_state[i] = 0;
+    }
+}
+
+static void reset_auto_screen_off() {
+    sleep_time = systick + auto_screen_off_interval;
 }
 
 void ScreenOff() {
@@ -156,12 +179,27 @@ void ScreenOn() {
     AppGlobalEvent(evtScreenOn, NULL);
 
     displayOn = true;
+    reset_auto_screen_off();
 }
 
 
 void ProcessCore() {
     while (1) {
         ProcessPowerMonitor();
+
+        // Reset debouncing when timeout period expires,
+        // to prevent lock-up when a roll-over occurrs.
+        uint i;
+        for (i=1; i<=4; i++) {
+            if (btn_debouncing[i] && systick >= btn_debounce_tick[i]) {
+                btn_debouncing[i] = false;
+            }
+        }
+
+        // Turn off screen automatically after some amount of time
+        if (auto_screen_off && displayOn && systick > sleep_time) {
+            ScreenOff();
+        }
 
         if (displayOn)
             Delay(CORE_PROCESS_INTERVAL);
@@ -184,6 +222,27 @@ static void PrevApp() {
 }
 
 static inline void OnBTNChange(bool btn_pressed, uint btn) {
+    // Assumes btn 1..4
+
+    // De-bouncing
+    bool *state = &btn_state[btn];
+    uint *tick = &btn_debounce_tick[btn];
+    bool *debouncing = &btn_debouncing[btn];
+
+    if (*debouncing && systick < *tick) {
+        return; // Event occurred within debounce interval
+    }
+
+    // Change state
+    *state = btn_pressed;
+    *tick = systick + DEBOUNCE_INTERVAL;
+    *debouncing = true;
+
+    //printf("btn %d : %d\n", btn, btn_pressed);
+
+    reset_auto_screen_off();
+
+    // Event handling
     if (btn_pressed) {
         if (!displayOn) {
             ScreenOn();
