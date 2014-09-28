@@ -135,7 +135,7 @@ static void Draw() {
 
         // Day (if not today)
         if (!occurs_today) {
-            char* day_s = short_days[event->dow];
+            const char* day_s = short_days[event->dow];
             w = MeasureImString(day_s) + 4;
             DrawImString(day_s, x-w,y, GRAY);
             double_height = true;

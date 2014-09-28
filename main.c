@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <system.h>
 #include <stdio.h>
-#include <Rtcc.h>
+//#include <Rtcc.h>
 #include "hardware.h"
 
 // Core
@@ -47,7 +47,6 @@
 
 // API
 #include "api/oled.h"
-#include "api/clock.h"
 
 // Background tasks
 #include "background/comms.h"
@@ -60,63 +59,12 @@
 #include "applications/test/test.h"
 #include "applications/kdiag/kdiag.h"
 
-#include "drivers/ssd1351.h"
-#include "api/graphics/gfx.h"
-#include "util/util.h"
-#include "api/graphics/font.h"
-#include "core/error.h"
-
-//#include "gui/icons/bat.h"
-
-//#include "tools/DSC09748.h"
-//const image_t img = {DSC09748_bytes, DSC09748_WIDTH, DSC09748_HEIGHT};
-
-//#include "tools/fluffy.h"
-//const image_t img = {fluffy_bytes, FLUFFY_WIDTH,  FLUFFY_HEIGHT};
-
-//#include <gui/statusbar.h>
-//#include <gui/icons/battery_50.h>
-//#include <gui/icons/bat.h>
-
-//#include "tools/wolf.h"
-//const image_t img = {wolf_bytes, WOLF_WIDTH,  WOLF_HEIGHT};
 
 #ifndef HID_BOOTLOADER
-    _CONFIG1(FWDTEN_OFF & FWPSA_PR128 & WDTPS_PS32 & WINDIS_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
+    _CONFIG1(FWDTEN_OFF & WDTPS_PS256 & WDTPS_PS32 & WINDIS_OFF & ICS_PGx2 & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
     _CONFIG2(POSCMOD_HS & IOL1WAY_ON & OSCIOFNC_OFF & FCKSM_CSDCMD & FNOSC_PRIPLL & PLL96MHZ_ON & PLLDIV_DIV8 & IESO_OFF) // For 32MHz OSC
     _CONFIG3(0xFFFF);
 #endif
-
-void Shutdown() {
-    // Stop execution and completely shut down the processor to save power.
-
-    //AD1CON1bits.ADON = 0;
-
-    // Disable peripherals
-    PMD1 = 0xFFFF;
-    PMD2 = 0xFFFF;
-    PMD3 = 0xFFFF;
-    PMD4 = 0xFFFF;
-    PMD5 = 0xFFFF;
-    PMD6 = 0xFFFF;
-
-    _LAT(OL_POWER) = 0;
-    _LAT(OL_RESET) = 1;
-    _LAT(BT_RESET) = 1;
-
-    _LAT(LED1) = 0;
-    _LAT(LED2) = 0;
-
-    _LAT(VMOTOR) = 0;
-    _LAT(PEIZO) = 0;
-
-    RCONbits.SWDTEN = 0;
-
-    Sleep(); // Permanent sleep
-    while(1); // Trap
-
-    //TODO: Could we wake back up upon USB connect?
-}
 
 void Initialize() {
     InitializeIO();
@@ -130,7 +78,6 @@ void Initialize() {
 
     // Peripherals
     //pwm_init();
-    //gpio_init();
     adc_init();
     adc_enable();
 

@@ -43,6 +43,9 @@ void AppForegroundEvent(event_type_t type, uint param);
 // Send an event to all registered apps
 void AppGlobalEvent(event_type_t type, uint param);
 
+// Call the initialization function on all registered applications
+void InitializeApplications();
+
 // Create a new application struct
 //application_t NewApplication(proc_t init, proc_t process, proc_t draw);
 

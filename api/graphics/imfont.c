@@ -36,7 +36,7 @@ int MeasureImString(const char* str) {
     while (*str) {
         char c = *str++;
         c = (c < ' ') ? 0 : c - ' ';
-        w += active_imfont->widths[c];
+        w += active_imfont->widths[(byte)c];
     }
     return w;
 }
@@ -47,8 +47,8 @@ int DrawImChar(char c, uint8 x, uint8 y, color_t color) {
     else
         c -= ' ';
 
-    uint16 offset = active_imfont->offsets[c];
-    uint8 __eds__ *glyph = &active_imfont->data[offset];
+    uint16 offset = active_imfont->offsets[(byte)c];
+    uint8 __eds__ *glyph = &active_imfont->data[(byte)offset];
     uint8 width = active_imfont->widths[c];
     uint8 height = active_imfont->char_height;
 

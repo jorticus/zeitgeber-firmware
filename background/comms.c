@@ -40,7 +40,7 @@
 bool usb_connected = false;
 comms_status_t comms_status = cmDisconnected;
 
-unsigned char tx_buffer[PACKET_SIZE];
+char tx_buffer[PACKET_SIZE];
 
 static task_t* comms_task;
 

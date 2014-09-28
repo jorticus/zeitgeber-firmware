@@ -39,8 +39,12 @@
 #define CMD_SET_DATETIME        0x41
 
 
+// The following structs have __may_alias__ defined to tell the compiler
+// it's ok to use them for aliasing a buffer.
+// IMPORTANT: You must make sure the buffer has at least as many bytes
+// as these structs!!! (Should be 64 bytes)
 
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte reserved;
 
@@ -54,7 +58,7 @@ typedef struct {
     uint8 bq25010_status;
 } battery_info_t;
 
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte reserved;
 
@@ -62,7 +66,7 @@ typedef struct {
     //TODO: add more fields
 } cpu_info_t;
 
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte reserved;
 
@@ -76,14 +80,14 @@ typedef struct {
 } display_query_t;
 
 #define DISP_CHUNK_SIZE 32
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte state;
     uint16 offset;
     byte buf[DISP_CHUNK_SIZE];
 } display_chunk_t;
 
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte reserved;
 
@@ -91,7 +95,7 @@ typedef struct {
     uint8 sensors[32];
 } sensor_query_t;
 
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte reserved;
 
@@ -101,7 +105,7 @@ typedef struct {
 } sensor_packet_t;
 
 #define DEBUG_MESSAGE_MAXLEN  PACKET_SIZE-4
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte reserved;
 
@@ -110,7 +114,7 @@ typedef struct {
     char message[DEBUG_MESSAGE_MAXLEN];
 } message_packet_t;
 
-typedef struct {
+typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
     byte reserved;
 

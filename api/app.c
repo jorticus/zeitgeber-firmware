@@ -8,6 +8,7 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <system.h>
+#include <stdio.h>
 #include "core/kernel.h"
 #include "core/os.h"
 #include "app.h"

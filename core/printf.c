@@ -8,6 +8,7 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <stdio.h>
+#include <string.h>
 #include "system.h"
 #include "drivers/usb/usb.h"
 #include "background/comms.h"

@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "system.h"
 #include "calendar.h"
 #include "api/graphics/gfx.h"

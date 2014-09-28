@@ -211,7 +211,7 @@ static void Draw() {
             i = x + accel_log_index;
             if (i >= ACCEL_LOG_SIZE) i -= ACCEL_LOG_SIZE;
 
-            uint8 *values = &accel_log[i];
+            int8 *values = (int8*)&accel_log[i];
 
             y = GRAPH_Y - values[j];
             if (y >= DISPLAY_HEIGHT-1) y = DISPLAY_HEIGHT-1;

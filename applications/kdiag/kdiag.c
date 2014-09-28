@@ -46,7 +46,6 @@ static void Draw() {
 
     // Draw CPU utilization history graph
     i = cpu_tick_history_idx;
-    uint lx=0, ly=0;
     for (x=0; x<CPU_TICK_HISTORY_LEN; x++) {
 
         uint value = cpu_tick_history[i] * 128 / 1000;
@@ -54,7 +53,6 @@ static void Draw() {
         if (value > 128) value = 128;
         //if (millivalue > 128) millivalue = 128;
 
-        //DrawLine(x,128, x,(128-millivalue), HEXCOLOR32(0x2E3449));
         DrawLine(x,128, x,(128-value), SKYBLUE);
 
         if (i++ == CPU_TICK_HISTORY_LEN)
