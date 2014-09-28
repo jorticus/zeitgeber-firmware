@@ -41,24 +41,14 @@ extern uint num_events;
 // Called when CPU initializes 
 static void Initialize() {
     //                       label      loc     day        hr min
-    AddTimetableEvent("ENCE462", "Er466", dwMonday,    12, 0);
-    AddTimetableEvent("COSC418", "Er235", dwMonday,    15, 0);
-    AddTimetableEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
-    AddTimetableEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
-    AddTimetableEvent("ENCE463", "E11",   dwWednesday, 10, 0);
-    AddTimetableEvent("ENCE463", "KD05",  dwThursday,  11, 0);
-    AddTimetableEvent("ENCE462", "Er466", dwThursday,  14, 0);
-
-    //Shuffled timetable for testing
-    /*AddTimetableEvent("ENCE462", "Er466", dwMonday,    12, 0);
-    AddTimetableEvent("ENCE462", "KD05",  dwTuesday,   12, 0);
-    AddTimetableEvent("ENCE462", "Er466", dwThursday,  14, 0);
-
-    AddTimetableEvent("COSC418", "Er235", dwMonday,    15, 0);
-
-    AddTimetableEvent("ENCE463", "KF07",  dwTuesday,    9, 0);
-    AddTimetableEvent("ENCE463", "E11",   dwWednesday, 10, 0);
-    AddTimetableEvent("ENCE463", "KD05",  dwThursday,  11, 0);*/
+    AddTimetableEvent("ENCE462", "Fri", FRIDAY,  14, 0);
+    AddTimetableEvent("COSC418", "Er235", MONDAY,    15, 0);
+    AddTimetableEvent("ENCE463", "KD05",  THURSDAY,  11, 0);
+    AddTimetableEvent("ENCE462", "Mon", MONDAY,    12, 0);
+    
+    AddTimetableEvent("ENCE463", "KF07",  TUESDAY,    9, 0);
+    AddTimetableEvent("ENCE462", "Tue",  TUESDAY,   12, 0);
+    AddTimetableEvent("ENCE463", "E11",   WEDNESDAY, 10, 0);
 }
 
 // Called periodically when isForeground==true (30Hz)
@@ -70,10 +60,9 @@ static void Draw() {
 
     //SetFontSize(2);
 
-    rtc_time_t time = ClockGetTime();
-    uint8 hour12 = ClockGet12Hour(time.hour);
-    rtc_date_t date = ClockGetDate();
-
+    timestamp_t now = ClockNow();
+    uint8 hour12 = ClockGet12Hour(now.hour);
+    
     //// Analog Clock ////
 #if 0
     DrawString("12", 64-6, 6, GRAY);
@@ -91,99 +80,69 @@ static void Draw() {
     x = 10;
     x = DrawClockInt(x,y, hour12, false);
     x = DrawClockDigit(x,y, CLOCK_DIGIT_COLON);
-    x = DrawClockInt(x,y, time.min, true);
-    x = DrawClockDigit(x,y, (ClockIsPM(time.hour)) ? CLOCK_DIGIT_PM : CLOCK_DIGIT_AM);
+    x = DrawClockInt(x,y, now.min, true);
+    x = DrawClockDigit(x,y, (ClockIsPM(now.hour)) ? CLOCK_DIGIT_PM : CLOCK_DIGIT_AM);
 
     //// Date ////
     y = 45;
 
-    sprintf(s, "%d/%02d", date.day, date.month);
+    sprintf(s, "%d/%02d", now.day, now.month);
     x = 64 - (StringWidth(s) / 2);
     x = DrawImString(s, x,y, WHITE);
 
 
-    x = 128 - 16 - StringWidth(short_days[date.day_of_week]);
-    x = DrawImString(short_days[date.day_of_week], x,y, WHITE);
+    x = 128 - 16 - StringWidth(short_days[now.dow]);
+    x = DrawImString(short_days[now.dow], x,y, WHITE);
 
 
     //// Upcoming Events ////
 
-
     x = 55;
-    y = 55;
+    y = 60;
 
-    //TODO: Sort events in circular order after the current time
-    uint num = 0;
-
-    rtc_dow_t tomorrow = date.day_of_week+1;
-    if (tomorrow > dwSaturday) tomorrow = dwSunday;
-
-    /*for (i=0; i<3; i++) {
-        event_t* event = CalendarGetNextEvent();
+    timestamp_t ts = now;
+    for (i=0; i<3; i++) {
+        
+        event_t* event = CalendarGetNextEvent(ts);
         if (event == NULL)
             break;
 
-        if (event->day == date.day_of_week)
-    }*/
+        ts = event->next_occurrance;
 
-    //TODO: re-implement CalendarGetNextEvent(timestamp);
-    for (i=0; i<num_events; i++) {
-        event_t* event = events[i];
+        bool occurs_today = (event->dow == now.dow);
+        color_t accent = (occurs_today) ? SKYBLUE : HEXCOLOR(0xEEE);
 
-        // First populate today's events
-        if ((event->day == date.day_of_week) && (event->hr > time.hour) && (num < 3)) {
-            uint w;
-            uint x2 = x;
+        uint w;
+        uint x2 = x;
 
-            // Time
-            sprintf(s, "%d:%02d", event->hr, event->min);
-            w = MeasureImString(s) + 4;
-            DrawImString(s, x2-w,y, SKYBLUE);
-            x2 += 4;
+        // Time
+        sprintf(s, "%d:%02d", event->hr, event->min);
+        w = MeasureImString(s) + 4;
+        DrawImString(s, x-w,y, accent);
+        x2 += 4;
 
-            // Label
-            DrawImString(event->label, x2,y, WHITE);
-            y += active_imfont->char_height - 2;
+        // Label
+        DrawImString(event->label, x2,y, WHITE);
+        y += active_imfont->char_height - 2;
 
-            // Location
-            if (event->location[0] != '\0') {
-                DrawImString(event->location, x2,y, GRAY);
-                y += active_imfont->char_height;
-            }
-            //y += 1;
+        bool double_height = false;
 
-            num++;
+        // Location
+        if (event->location[0] != '\0') {
+            DrawImString(event->location, x2,y, GRAY);
+            double_height = true;
         }
 
-        // Then populate tomorrow's events
-        else if ((event->day > date.day_of_week) && (num < 3)) {
-            uint w;
-            uint y2 = y;
-            uint x2 = x;
+        // Day (if not today)
+        if (!occurs_today) {
+            char* day_s = short_days[event->dow];
+            w = MeasureImString(day_s) + 4;
+            DrawImString(day_s, x-w,y, GRAY);
+            double_height = true;
+        }
 
-            // Day & Time
-            sprintf(s, "%d:%02d", event->hr, event->min);
-            w = MeasureImString(s) + 4;
-            DrawImString(s, x2-w,y2, HEXCOLOR(0xEEE));
-            y2 += active_imfont->char_height - 2;
-
-            w = MeasureImString(short_days[event->day]) + 4;
-            DrawImString(short_days[event->day], x2-w,y2, GRAY);
-
-            x2 += 4;
-
-            // Label
-            DrawImString(event->label, x2,y, WHITE);
-            y += active_imfont->char_height - 2;
-
-            // Location
-            if (event->location[0] != '\0') {
-                DrawImString(event->location, x2,y, GRAY);
-            }
-            y += active_imfont->char_height;
-            //y += 1;
-            num++;
-
+        if (double_height) {
+             y += active_imfont->char_height;
         }
     }
 

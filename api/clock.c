@@ -19,7 +19,7 @@
 
 #include "rtc_strings.h"
 
-const int days_in_month[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+const int days_in_month[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
 // Note february will be +1 if year is a leap-year
 
 ////////// Methods /////////////////////////////////////////////////////////////
@@ -97,29 +97,22 @@ int ClockDaySuffix(int day) {
     return i;
 }
 
-rtc_time_t ClockGetTime() {
-    rtc_time_t time;
-    rtccTime tm;
-
-    RtccReadTime(&tm);
-
-    time.hour = bcd2int(tm.f.hour);
-    time.min = bcd2int(tm.f.min);
-    time.sec = bcd2int(tm.f.sec);
-
-    return time;
-}
-
-timestamp_t ClockGetTimestamp() {
-    rtc_time_t time = ClockGetTime();
-    rtc_date_t date = ClockGetDate();
+timestamp_t ClockNow() {
     timestamp_t ts;
-        ts.sec = time.sec;
-        ts.min = time.min;
-        ts.hour = time.hour;
-        ts.day = date.day;
-        ts.month = date.month;
-        ts.year = date.year;
+    rtccTimeDate rtcc;
+
+    RtccReadTimeDate(&rtcc);
+
+    ts.hour = bcd2int(rtcc.f.hour);
+    ts.min = bcd2int(rtcc.f.min);
+    ts.sec = bcd2int(rtcc.f.sec);
+
+    ts.day = bcd2int(rtcc.f.mday);
+    ts.month = bcd2int(rtcc.f.mon);
+    ts.year = bcd2int(rtcc.f.year);
+
+    ts.dow = bcd2int(rtcc.f.wday);
+    
     return ts;
 }
 
@@ -132,19 +125,6 @@ uint8 ClockGet12Hour(uint8 hour24) {
         return hour24 - 12;
     else
         return hour24;
-}
-
-rtc_date_t ClockGetDate() {
-    rtc_date_t date;
-    rtccDate dt;
-
-    RtccReadDate(&dt);
-    date.day_of_week = bcd2int(dt.f.wday);
-    date.day = bcd2int(dt.f.mday);
-    date.month = bcd2int(dt.f.mon);
-    date.year = bcd2int(dt.f.year);
-
-    return date;
 }
 
 bool ClockSetTime(uint8 hour, uint8 minute, uint8 second) {
@@ -161,7 +141,7 @@ bool ClockSetTime(uint8 hour, uint8 minute, uint8 second) {
     return result; // Returns false if values are out of range
 }
 
-bool ClockSetDate(rtc_dow_t day_of_week, uint8 day, uint8 month, uint8 year) {
+bool ClockSetDate(dow_t day_of_week, uint8 day, uint8 month, uint8 year) {
     bool result;
     rtccDate dt;
     dt.l = 0x00000000;
@@ -176,8 +156,75 @@ bool ClockSetDate(rtc_dow_t day_of_week, uint8 day, uint8 month, uint8 year) {
     return result; // Returns false if values are out of range
 }
 
+bool ClockSetTimestamp(timestamp_t ts) {
+    return
+        ClockSetTime(ts.hour, ts.min, ts.sec) &&
+        ClockSetDate(ts.dow, ts.day, ts.month, ts.year);
+}
+
 void RtcSetCalibration(int8 cal) {
     SetRtcWren();
     _CAL = cal;
     ClearRtcWren();
+}
+
+static inline int AddCarry(int a, int b, int min, int max, int* carry) {
+    int result = a + b;
+    int _carry = 0;
+    int delta = max - min + 1;
+
+    while (result > max) {
+        result -= delta;
+        _carry++;
+    }
+    while (result < min) {
+        result += delta;
+        _carry--;
+    }
+
+    if (carry != NULL) *carry = _carry;
+    return result;
+}
+
+void TimestampAddSecond(timestamp_t* ts, int seconds) {
+    int carry = 0;
+    ts->sec = (byte)AddCarry(ts->sec, seconds, 0, 59, &carry);
+    if (carry != 0) {
+        TimestampAddMinute(ts, carry);
+    }
+}
+
+void TimestampAddMinute(timestamp_t* ts, int minutes) {
+    int carry = 0;
+    ts->min = (byte)AddCarry(ts->min, minutes, 0, 59, &carry);
+    if (carry != 0) {
+        TimestampAddHour(ts, carry);
+    }
+}
+
+void TimestampAddHour(timestamp_t* ts, int hours) {
+    int carry = 0;
+    ts->hour = (byte)AddCarry(ts->hour, hours, 1, 12, &carry);
+    if (carry != 0) {
+        TimestampAddDay(ts, carry);
+    }
+}
+
+void TimestampAddDay(timestamp_t* ts, int days) {
+    int dim = days_in_month[ts->month];
+
+    if ((days >= dim) || (days < -dim))
+        return;  // Adding or subtracting more than 1 month is not supported! //TODO: Support
+
+    int carry = 0;
+    ts->day = (byte)AddCarry(ts->day, days, 1, dim, &carry);
+    if (carry != 0) {
+        ts->month = (byte)AddCarry(ts->month, carry, 1, 12, &carry);
+        if (carry != 0) {
+            ts->year += carry;
+        }
+    }
+
+    // Also alter the current day-of-week
+    ts->dow = (byte)AddCarry(ts->dow, days, 0, 6, NULL);
 }

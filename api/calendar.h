@@ -10,7 +10,6 @@
 
 #include "api/graphics/gfx.h"
 #include "api/clock.h"
-#include "util/timestamp.h"
 
 #define MAX_EVENTS 32
 
@@ -51,7 +50,7 @@ typedef struct {
 
     calendar_event_type_t event_type;
 
-    rtc_dow_t day;
+    dow_t dow;
     uint hr;
     uint min;
 
@@ -71,7 +70,7 @@ typedef struct {
     //bool beep;
 
     // Internal state
-    timestamp_t next_run;
+    timestamp_t next_occurrance;
 
 } event_t;
 
@@ -81,10 +80,10 @@ extern event_t *events[MAX_EVENTS];
 extern uint num_events;
 
 // Allocate a new event and store it in the internal calendar
-event_t* AddTimetableEvent(const char* label, const char* location, rtc_dow_t day, uint hr, uint min);
+event_t* AddTimetableEvent(const char* label, const char* location, dow_t day_of_week, uint hr, uint min);
 
 // Calculate the timestamp of the next occurrance of the given event
-timestamp_t EventGetTimestamp(event_t* event);
+timestamp_t EventGetTimestamp(timestamp_t now, event_t* event);
 
 // Find the next timetabled event in the calendar
 event_t* CalendarGetNextEvent();

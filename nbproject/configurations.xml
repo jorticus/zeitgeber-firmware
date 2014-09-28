@@ -86,7 +86,6 @@
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.h</itemPath>
         <itemPath>util/util.h</itemPath>
-        <itemPath>util/timestamp.h</itemPath>
       </logicalFolder>
       <itemPath>system.h</itemPath>
       <itemPath>hardware.h</itemPath>
@@ -150,7 +149,6 @@
       <logicalFolder name="f5" displayName="util" projectFiles="true">
         <itemPath>util/vector.c</itemPath>
         <itemPath>util/bcd.c</itemPath>
-        <itemPath>util/timestamp.c</itemPath>
         <itemPath>util/str.c</itemPath>
         <itemPath>util/sine.c</itemPath>
       </logicalFolder>

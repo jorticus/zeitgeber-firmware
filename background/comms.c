@@ -275,17 +275,16 @@ void comms_ReceivedPacket(unsigned char* packet) {
         case CMD_GET_DATETIME:
         {
             datetime_packet_t* tx_packet = (datetime_packet_t*)tx_buffer;
-            rtc_time_t time = ClockGetTime();
-            rtc_date_t date = ClockGetDate();
+            timestamp_t ts = ClockNow();
 
-            tx_packet->hour = time.hour;
-            tx_packet->minute = time.min;
-            tx_packet->second = time.sec;
+            tx_packet->hour = ts.hour;
+            tx_packet->minute = ts.min;
+            tx_packet->second = ts.sec;
 
-            tx_packet->day_of_week = date.day_of_week;
-            tx_packet->day = date.day;
-            tx_packet->month = date.month;
-            tx_packet->year = date.year;
+            tx_packet->day_of_week = ts.dow;
+            tx_packet->day = ts.day;
+            tx_packet->month = ts.month;
+            tx_packet->year = ts.year;
             break;
         }
 

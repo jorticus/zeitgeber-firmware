@@ -10,6 +10,7 @@
 #include "system.h"
 #include "calendar.h"
 #include "api/graphics/gfx.h"
+#include "api/clock.h"
 
 
 ////////// Includes ////////////////////////////////////////////////////////////
@@ -40,7 +41,7 @@ event_t* malloc_event() {
     return event;
 }
 
-event_t* AddTimetableEvent(const char* label, const char* location, rtc_dow_t day, uint hr, uint min) {
+event_t* AddTimetableEvent(const char* label, const char* location, dow_t day_of_week, uint hr, uint min) {
     event_t* event = malloc_event();
 
     if (event != NULL) {
@@ -50,9 +51,11 @@ event_t* AddTimetableEvent(const char* label, const char* location, rtc_dow_t da
         strncpy(event->location, location, MAX_LABEL_LEN-1);
         event->location[MAX_LABEL_LEN-1] = '\0';
         
-        event->day = day;
+        event->dow = day_of_week;
         event->hr = hr;
         event->min = min;
+
+        event->event_type = etTimetableEvent;
     }
     return event;
 }
@@ -68,36 +71,58 @@ void CalendarAddEvent(event_t* event) {
 }
 
 
-timestamp_t EventGetTimestamp(event_t* event) {
-    timestamp_t ts = ClockGetTimestamp();
+timestamp_t EventGetTimestamp(timestamp_t ts, event_t* event) {
 
     // Weekly events
-    if (event->event_type == etTimetableEvent) {
-        //ts.day = event->day; TODO: event->day is a day_of_week, so need to find the day of the start of week first!
-        ts.hour = event->hr;
-        ts.min = event->min;
+    switch (event->event_type) {
+        case etTimetableEvent: {
+            // Find the next occurrance of this weekly event (occurring after the provided timestamp)
+
+            int delta = event->dow - ts.dow;
+
+            if (delta < 0)  // If event is in the future
+                delta += 7; // then it must occur next week
+
+            TimestampAddDay(&ts, delta);
+
+            // And set the time to the event's time
+            ts.hour = event->hr;
+            ts.min = event->min;
+            ts.sec = 0;
+            break;
+        }
+        
+        //TODO: other event types
+
+        default: {
+            timestamp_t nullts = {0};
+            return nullts;
+        }
     }
-    //TODO: other event types
+
+    // Cache the result
+    event->next_occurrance = ts;
 
     return ts;
 }
 
 
-event_t* CalendarGetNextEvent() {
+event_t* CalendarGetNextEvent(timestamp_t ts) {
     // Scan the calendar, find the next upcoming event
     uint i;
-    timestamp_t next_ts = {MAX_UINT32};
     event_t* next_event = NULL;
+    uint32 next_ts = MAX_UINT32;
 
     if (num_events == 0)
         return NULL;
 
+    // Find the next event that occurs after the given timestamp
     for (i=0; i<num_events; i++) {
-        event_t* event = &events[i];
-        timestamp_t ts = EventGetTimestamp(event);
+        event_t* event = events[i];
+        timestamp_t evt_ts = EventGetTimestamp(ts, event);
 
-        if (ts.ts < next_ts.ts) {
-            next_ts = ts;
+        if ((evt_ts.raw > ts.raw) && (evt_ts.raw < next_ts)) {
+            next_ts = evt_ts.raw;
             next_event = event;
         }
     }
