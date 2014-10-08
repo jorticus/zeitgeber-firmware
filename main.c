@@ -66,6 +66,8 @@
     _CONFIG3(0xFFFF);
 #endif
 
+extern int current_app; // os.c
+
 void Initialize() {
     InitializeIO();
     InitializeOsc();
@@ -134,9 +136,9 @@ int main() {
     KernelSetSP(); // Sets stack_base to the current stack address
     Initialize();
 
+    RegisterUserApplication(&apptest);
     RegisterUserApplication(&appclock);
     RegisterUserApplication(&appimu);
-    RegisterUserApplication(&apptest);
     RegisterUserApplication(&appkdiag);
 
     ClrWdt();
@@ -148,6 +150,7 @@ int main() {
     SetForegroundApp(&appclock);
     //SetForegroundApp(&apptest);
     //SetForegroundApp(&appimu);
+    current_app = 1;
 
     ClrWdt();
     KernelStart();

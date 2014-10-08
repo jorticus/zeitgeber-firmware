@@ -22,12 +22,14 @@
 #include "peripherals/adc.h"
 #include "api/calendar.h"
 
-#include "gui/Wallpapers/wallpaper7.h"
-#define wallpaper img_wallpaper7
+//#include "gui/Wallpapers/wallpaper7.h"
+//#define wallpaper img_wallpaper7
 //#include "gui/Wallpapers/gaben.h"
 //#define wallpaper img_gaben
 //#include "gui/Wallpapers/leaves.h"
 //#define wallpaper img_leaves
+#include "gui/Wallpapers/hackaday_thp.h"
+#define wallpaper img_hackaday_thp
 
 // Sample 128x128 image
 // 5:6:5 16-bit pixel format, RGB ordering
@@ -100,23 +102,10 @@ static void DrawTestGradient() {
     return;
 }
 
-
-void TestEDS() {
-    __eds__ color_t* c = wallpaper7_bytes;
-    uint ix,iy;
-    for (iy=0; iy<wallpaper.height; iy++) {
-        for (ix=0; ix<wallpaper.width; ix++) {
-            SetPixel(ix,iy,*c++);
-        }
-    }
-}
-
 // Called periodically when isForeground==true (30Hz)
 static void Draw() {
-
+    
     //DrawTestGradient();
-
     DrawImage(0,0,&wallpaper);
-    //TestEDS();
-
+    
 }

@@ -48,6 +48,7 @@ uint current_app = 0;
 
 volatile bool lock_display = false;
 volatile bool display_frame_ready = false;
+volatile int wipe_frame = 0;
 
 // Note: button indicies start at 1
 static uint btn_debounce_tick[5];
@@ -169,14 +170,22 @@ void ProcessCore() {
 
 static void NextApp() {
     if (current_app <= app_count-2) {
-        current_app++;
-        SetForegroundApp(installed_apps[current_app]);
+        if (wipe_frame == 0) { //TODO: queue up events instead of ignoring
+            current_app++;
+            SetForegroundApp(installed_apps[current_app]);
+
+            wipe_frame = +1;
+        }
     }
 }
 static void PrevApp() {
     if (current_app > 0) {
-        current_app--;
-        SetForegroundApp(installed_apps[current_app]);
+        if (wipe_frame == 0) {
+            current_app--;
+            SetForegroundApp(installed_apps[current_app]);
+
+            wipe_frame = -1;
+        }
     }
 }
 
@@ -320,16 +329,15 @@ void DrawFrame() {
     }
 
     // Framerate debug info
-    if (displayOn)
-    {
-        char s[8];
-        sprintf(s, "%d", draw_ticks);
-        DrawString(s, 4,5, DARKGREEN);
-    }
+//    char s[8];
+//    sprintf(s, "%d", draw_ticks);
+//    DrawString(s, 4,5, DARKGREEN);
 }
 
 // Called periodically
 void DrawLoop() {
+    static uint scroll = 1;
+    
     while (1) {
         uint t1, t2;
         uint next_tick = systick + DRAW_INTERVAL;
@@ -343,9 +351,15 @@ void DrawLoop() {
         
             display_frame_ready = true;
 
-            //_LAT(LED1) = 1;
-            UpdateDisplay();
-            //_LAT(LED1) = 0;
+            if (wipe_frame == 0) {
+                //_LAT(LED1) = 1;
+                UpdateDisplay();
+                //_LAT(LED1) = 0;
+            } else {
+                // Blocking call
+                UpdateDisplayWipeIn(wipe_frame);
+                wipe_frame = 0;
+            }
         }
 
         t2 = systick;

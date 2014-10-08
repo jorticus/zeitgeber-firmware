@@ -49,6 +49,10 @@ void UpdateDisplay() {
     ssd1351_UpdateScreen(screen, DISPLAY_SIZE);
 }
 
+void UpdateDisplayWipeIn(int dir) {
+    ssd1351_WipeIn(screen, dir);
+}
+
 ////////// Low Level Functions /////////////////////////////////////////////////
 
 
