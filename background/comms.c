@@ -19,6 +19,7 @@
 #include "./USB/usb_function_hid.h"
 
 #include "api/clock.h"
+#include "api/calendar.h"
 #include "background/power_monitor.h"
 #include "api/graphics/gfx.h"
 #include "drivers/ssd1351.h"
@@ -311,8 +312,73 @@ void comms_ReceivedPacket(unsigned char* packet) {
                 rx_packet->month,
                 rx_packet->year
             );
+            break;
+        }
 
+        ////////// Calendar //////////
+        
+        case CMD_CLEAR_CALENDAR:
+        {
+            CalendarClear();
+            break;
+        }
 
+        case CMD_ADD_CALENDAR_EVT:
+        {
+            calendar_event_packet_t* rx_packet = (calendar_event_packet_t*)packet;
+            event_t event;
+
+            event.event_type = rx_packet->event_type;
+
+            strncpy(event.label, rx_packet->label, MAX_LABEL_LEN);
+            strncpy(event.location, rx_packet->location, MAX_LOCATION_LEN);
+
+            event.color = rx_packet->color;
+
+            // Timetable events
+            event.dow = rx_packet->dow;
+            event.hr = rx_packet->hr;
+            event.min = rx_packet->min;
+
+            if (CalendarAddEvent(&event) == NULL) {
+                SetTxErrorCode(ERR_OUT_OF_RAM);
+                break;
+            }
+
+            break;
+        }
+
+        case CMD_GET_CALENDAR_INFO:
+        {
+            calendar_info_packet_t* tx_packet = (calendar_info_packet_t*)tx_buffer;
+            tx_packet->num_events = CalendarGetNumEvents();
+            break;
+        }
+
+        case CMD_GET_CALENDAR_EVT:
+        {
+            calendar_event_packet_t* rx_packet = (calendar_event_packet_t*)packet;
+            calendar_event_packet_t* tx_packet  = (calendar_event_packet_t*)tx_buffer;
+
+            int16 index = rx_packet->index;
+            event_t* event = CalendarGetEvent(index);
+
+            if (event == NULL) {
+                SetTxErrorCode(ERR_INVALID_INDEX);
+                break;
+            }
+
+            tx_packet->index = index;
+            tx_packet->event_type = event->event_type;
+
+            strncpy(tx_packet->label, event->label, MAX_LABEL_LEN);
+            strncpy(tx_packet->location, event->location, MAX_LOCATION_LEN);
+
+            tx_packet->color = event->color;
+
+            tx_packet->dow = event->dow;
+            tx_packet->hr = event->hr;
+            tx_packet->min = event->min;
 
             break;
         }

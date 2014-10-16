@@ -11,6 +11,7 @@
 #include "drivers/usb/usb.h" // PACKET_SIZE
 #include "background/power_monitor.h"
 #include "api/clock.h"
+#include "api/calendar.h" // MAX_LABEL_LEN, MAX_LOCATION_LEN
 
 #define CMD_PING                0x01
 #define CMD_RESET               0x02
@@ -38,6 +39,11 @@
 #define CMD_GET_DATETIME        0x40
 #define CMD_SET_DATETIME        0x41
 
+// Calendar
+#define CMD_CLEAR_CALENDAR      0x50
+#define CMD_ADD_CALENDAR_EVT    0x51
+#define CMD_GET_CALENDAR_INFO   0x52
+#define CMD_GET_CALENDAR_EVT    0x53
 
 // Error codes
 #define ERR_OK                  0x00
@@ -148,6 +154,31 @@ typedef struct __attribute__((packed, __may_alias__)) {
     uint8 month;            // 1-12
     uint8 year;             // 0-99
 } datetime_packet_t;
+
+typedef struct __attribute__((packed, __may_alias__)) {
+    byte command;
+    byte error;
+
+    int16 index;
+    byte event_type; // calendar_event_type_t
+
+    char label[MAX_LABEL_LEN];
+    char location[MAX_LOCATION_LEN];
+    uint16 color; // reserved, color_t
+
+    // Weekly calendar events
+    uint8 dow; // dow_t
+    uint16 hr;
+    uint16 min;
+
+} calendar_event_packet_t;
+
+typedef struct __attribute__((packed, __may_alias__)) {
+    byte command;
+    byte error;
+
+    uint16 num_events;
+} calendar_info_packet_t;
 
 typedef enum {
     cmDisconnected,     // USB not connected
