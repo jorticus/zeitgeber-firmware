@@ -8,6 +8,7 @@
 ////////// Includes ////////////////////////////////////////////////////////////
 
 #include <system.h>
+#include <string.h>
 #include "hardware.h"
 #include "drivers/usb/usb.h"
 #include "background/comms.h"
@@ -29,6 +30,8 @@
 // Run this as fast as possible, since usually it's only
 // checking if data is received and nothing else.
 #define PROCESS_COMMS_INTERVAL 25
+
+#define SetTxErrorCode(code) (tx_buffer[1] = code)
 
 ////////// Variables ///////////////////////////////////////////////////////////
 
@@ -114,6 +117,8 @@ void comms_ReceivedPacket(unsigned char* packet) {
 
     //NOTE: If transferring multiple packets,
     // it might pay to temporarily reduce the task interval.
+
+    SetTxErrorCode(ERR_OK);
 
     switch (packet[0]) {
 
@@ -213,6 +218,7 @@ void comms_ReceivedPacket(unsigned char* packet) {
         case CMD_DISPLAY_WRITEBUF:
         {
             //TODO: Will require multiple RX packets
+            SetTxErrorCode(ERR_NOT_IMPLEMENTED);
             break;
         }
 
@@ -245,7 +251,7 @@ void comms_ReceivedPacket(unsigned char* packet) {
 
             tx_packet->count = 0;
             //TODO: Dynamically populate with known system sensors
-            
+            SetTxErrorCode(ERR_NOT_IMPLEMENTED);
             break;
         }
 
@@ -256,7 +262,7 @@ void comms_ReceivedPacket(unsigned char* packet) {
             // TODO: Enable/disable the specified sensor/
             // may already be enabled by the system,
             // and may be re-enabled by the system as required.
-
+            SetTxErrorCode(ERR_NOT_IMPLEMENTED);
             break;
         }
 
@@ -267,6 +273,7 @@ void comms_ReceivedPacket(unsigned char* packet) {
             // TODO: Return the data for the specified sensor index.
             // Won't return the data until the sensor has been updated,
             // will return 0 if the sensor is currently disabled.
+            SetTxErrorCode(ERR_NOT_IMPLEMENTED);
             break;
         }
 
@@ -315,6 +322,6 @@ void comms_ReceivedPacket(unsigned char* packet) {
             return; // Don't send any response
     }
 
-    tx_buffer[0] = packet[0];
+    tx_buffer[0] = packet[0]; // Set command field
     USBSendPacket(tx_buffer);
 }

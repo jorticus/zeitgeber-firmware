@@ -39,6 +39,15 @@
 #define CMD_SET_DATETIME        0x41
 
 
+// Error codes
+#define ERR_OK                  0x00
+#define ERR_UNKNOWN             0x01
+#define ERR_OUT_OF_RAM          0x10
+#define ERR_NOT_IMPLEMENTED     0x11
+#define ERR_INVALID_INDEX       0x12
+#define ERR_INVALID_PARAM       0x13
+
+
 // The following structs have __may_alias__ defined to tell the compiler
 // it's ok to use them for aliasing a buffer.
 // IMPORTANT: You must make sure the buffer has at least as many bytes
@@ -46,7 +55,17 @@
 
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
-    byte reserved;
+    byte error;
+
+    union {
+        byte bytes[62];
+        uint16 value;
+    };
+} generic_packet_t;
+
+typedef struct __attribute__((packed, __may_alias__)) {
+    byte command;
+    byte error;
 
     uint16 level;
     uint16 voltage;
@@ -60,7 +79,7 @@ typedef struct __attribute__((packed, __may_alias__)) {
 
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
-    byte reserved;
+    byte error;
 
     uint16 systick;
     //TODO: add more fields
@@ -68,7 +87,7 @@ typedef struct __attribute__((packed, __may_alias__)) {
 
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
-    byte reserved;
+    byte error;
 
     // Device-dependant constants
     uint16 width;
@@ -82,6 +101,8 @@ typedef struct __attribute__((packed, __may_alias__)) {
 #define DISP_CHUNK_SIZE 32
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
+    byte error;
+
     byte state;
     uint16 offset;
     byte buf[DISP_CHUNK_SIZE];
@@ -89,7 +110,7 @@ typedef struct __attribute__((packed, __may_alias__)) {
 
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
-    byte reserved;
+    byte error;
 
     uint16 count;
     uint8 sensors[32];
@@ -97,7 +118,7 @@ typedef struct __attribute__((packed, __may_alias__)) {
 
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
-    byte reserved;
+    byte error;
 
     uint16 size;        // Number of bytes returned by the sensor (0 if sensor is disabled)
 
@@ -107,7 +128,7 @@ typedef struct __attribute__((packed, __may_alias__)) {
 #define DEBUG_MESSAGE_MAXLEN  PACKET_SIZE-4
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
-    byte reserved;
+    byte error;
 
     uint16 len;
 
@@ -116,7 +137,7 @@ typedef struct __attribute__((packed, __may_alias__)) {
 
 typedef struct __attribute__((packed, __may_alias__)) {
     byte command;
-    byte reserved;
+    byte error;
 
     uint8 hour;             // 0-24
     uint8 minute;           // 0-59
