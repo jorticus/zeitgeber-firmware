@@ -185,8 +185,11 @@
           <linkerLibItems>
           </linkerLibItems>
         </linkerTool>
+        <archiverTool>
+        </archiverTool>
         <loading>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
+          <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
       </compileType>
@@ -237,6 +240,8 @@
         <property key="scalar-model" value="large-scalar"/>
         <property key="use-cci" value="true"/>
       </C30>
+      <C30-AR>
+      </C30-AR>
       <C30-AS>
         <property key="assembler-symbols" value=""/>
         <property key="expand-macros" value="false"/>
@@ -342,6 +347,8 @@
           <property key="scalar-model" value="default"/>
           <property key="use-cci" value="true"/>
         </C30>
+        <C30-AR>
+        </C30-AR>
         <C30-AS>
         </C30-AS>
         <C30-LD>
@@ -429,6 +436,8 @@
           <property key="scalar-model" value="large-scalar"/>
           <property key="use-cci" value="true"/>
         </C30>
+        <C30-AR>
+        </C30-AR>
         <C30-AS>
         </C30-AS>
         <C30-LD>
@@ -475,6 +484,8 @@
           <property key="scalar-model" value="large-scalar"/>
           <property key="use-cci" value="true"/>
         </C30>
+        <C30-AR>
+        </C30-AR>
         <C30-AS>
         </C30-AS>
         <C30-LD>
@@ -521,6 +532,8 @@
           <property key="scalar-model" value="large-scalar"/>
           <property key="use-cci" value="true"/>
         </C30>
+        <C30-AR>
+        </C30-AR>
         <C30-AS>
         </C30-AS>
         <C30-LD>
@@ -567,6 +580,8 @@
           <property key="scalar-model" value="default"/>
           <property key="use-cci" value="true"/>
         </C30>
+        <C30-AR>
+        </C30-AR>
         <C30-AS>
         </C30-AS>
         <C30-LD>
