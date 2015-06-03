@@ -22,14 +22,8 @@
 #include "peripherals/adc.h"
 #include "api/calendar.h"
 
-//#include "gui/Wallpapers/wallpaper7.h"
-//#define wallpaper img_wallpaper7
-//#include "gui/Wallpapers/gaben.h"
-//#define wallpaper img_gaben
-//#include "gui/Wallpapers/leaves.h"
-//#define wallpaper img_leaves
-#include "gui/Wallpapers/hackaday_thp.h"
-#define wallpaper img_hackaday_thp
+#include "gui/Wallpapers/wallpaper7.h"
+#define wallpaper img_wallpaper7
 
 // Sample 128x128 image
 // 5:6:5 16-bit pixel format, RGB ordering
