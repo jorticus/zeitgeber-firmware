@@ -91,6 +91,15 @@ event_t* CalendarGetNextEvent();
 // Draw an event to the screen
 int CalendarDrawEvent(uint8 x, uint8 y, event_t* event, color_t color);
 
+// Remove all calendar items
+void CalendarClear();
+
+// Return the number of events currently stored in RAM
+int CalendarGetNumEvents();
+
+// Get a specific event by index
+event_t* CalendarGetEvent(uint index);
+
 
 #endif	/* CALENDAR_H */
 

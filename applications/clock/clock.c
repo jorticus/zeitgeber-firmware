@@ -40,15 +40,7 @@ extern uint num_events;
 
 // Called when CPU initializes 
 static void Initialize() {
-    //                label      loc      day        hr min
-    AddTimetableEvent("ENCE462", "Er446", MONDAY,    12, 0);
-    AddTimetableEvent("COSC418", "Er235", MONDAY,    15, 0);
-    AddTimetableEvent("ENCE463", "KF07",  TUESDAY,    9, 0);
-    AddTimetableEvent("ENCE462", "KD05",  TUESDAY,   12, 0);
-    AddTimetableEvent("ENEL400", "Erskine", WEDNESDAY,  9, 0);
-    AddTimetableEvent("ENCE463", "E11",   WEDNESDAY, 10, 0);
-    AddTimetableEvent("ENCE463", "KD05",  THURSDAY,  11, 0);
-    AddTimetableEvent("ENCE462", "Er446", THURSDAY,  14, 0);
+
 }
 
 // Called periodically when isForeground==true (30Hz)

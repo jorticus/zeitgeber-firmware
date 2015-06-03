@@ -157,3 +157,19 @@ int CalendarDrawEvent(uint8 x, uint8 y, event_t* event, color_t color) {
 
     return y;
 }
+
+void CalendarClear() {
+    num_events = 0;
+    // Don't need to clear the event array itself
+}
+
+int CalendarGetNumEvents() {
+    return num_events;
+}
+
+event_t* CalendarGetEvent(uint index) {
+    if (index >= num_events)
+        return NULL;
+
+    return events[index];
+}
